@@ -2,6 +2,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import {
   boolean,
+  customType,
   index,
   integer,
   jsonb,
@@ -242,6 +243,32 @@ export const menuItems = pgTable(
     index("menu_items_restaurant_idx").on(table.restaurantId),
     index("menu_items_category_idx").on(table.categoryId),
   ],
+);
+
+// ─── Item photos (tenant-owned; served publicly at /api/photos/{id} — ADR-008) ───
+
+/** Postgres bytea ↔ Node Buffer (drizzle has no built-in bytea column). */
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType() {
+    return "bytea";
+  },
+});
+
+export const itemPhotos = pgTable(
+  "item_photos",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    restaurantId: text("restaurant_id")
+      .notNull()
+      .references(() => restaurants.id, { onDelete: "cascade" }),
+    mimeType: text("mime_type").notNull(),
+    sizeBytes: integer("size_bytes").notNull(),
+    data: bytea("data").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index("item_photos_restaurant_idx").on(table.restaurantId)],
 );
 
 // ─── Rate limiting (Postgres-backed fixed window) ───

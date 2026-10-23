@@ -95,6 +95,7 @@ export function MenuManager({
                 key={category.id}
                 category={category}
                 locale={locale}
+                restaurantId={restaurantId}
                 isFirst={index === 0}
                 isLast={index === menu.length - 1}
                 disabled={busy}

@@ -27,6 +27,10 @@ origin HOST (no `https://`), so the `allowedOrigins` entry must be host-only.
 
 ## Quirks
 
+- Item photos are stored in Postgres and served publicly at `/api/photos/{id}`
+  (ADR-008); the Server Action body limit is raised to 5 MB in `next.config.ts`
+  for the 4 MB photo uploads.
+
 - Money is integer piastres everywhere (`src/lib/money.ts`); formatting uses
   ICU `ar-EG`/`en-EG` — exact expected strings live in `tests/unit/money.test.ts`.
 - `env` validation runs at module import (`src/lib/env.ts`); any new secret

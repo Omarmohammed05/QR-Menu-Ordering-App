@@ -26,7 +26,12 @@ const nameEn = z.string().trim().max(80).optional();
 const description = z.string().trim().max(500).optional();
 const price = z.string().trim().regex(/^\d+(\.\d{1,2})?$/);
 const direction = z.enum(["up", "down"]);
-const imageUrl = z.url().optional();
+// Either an external absolute URL or an internal photo path (uploaded photos,
+// ADR-008) — relative paths are required so photos keep working when the
+// public origin changes.
+const imageUrl = z
+  .union([z.url(), z.string().regex(/^\/api\/photos\/[a-z0-9]+$/i)])
+  .optional();
 
 const categoryValues = { nameAr, nameEn } as const;
 

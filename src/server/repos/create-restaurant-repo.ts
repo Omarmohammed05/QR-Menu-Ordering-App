@@ -1,6 +1,13 @@
 import { and, asc, count, eq, max } from "drizzle-orm";
 import { db, type DbExecutor } from "@/server/db/client";
-import { invitations, menuCategories, menuItems, restaurantMembers, restaurants } from "@/server/db/tenant-tables";
+import {
+  invitations,
+  itemPhotos,
+  menuCategories,
+  menuItems,
+  restaurantMembers,
+  restaurants,
+} from "@/server/db/tenant-tables";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export type Invitation = InferSelectModel<typeof invitations>;
@@ -10,6 +17,8 @@ export type MenuCategory = InferSelectModel<typeof menuCategories>;
 export type NewMenuCategory = InferInsertModel<typeof menuCategories>;
 export type MenuItem = InferSelectModel<typeof menuItems>;
 export type NewMenuItem = InferInsertModel<typeof menuItems>;
+export type ItemPhoto = InferSelectModel<typeof itemPhotos>;
+export type NewItemPhoto = InferInsertModel<typeof itemPhotos>;
 
 /**
  * Scoped repo factory (spec 3.2): every method already applies
@@ -181,6 +190,12 @@ export function createRestaurantRepo(restaurantId: string, client: DbExecutor = 
     },
   };
 
+  const photos = {
+    create(values: Omit<NewItemPhoto, "restaurantId">) {
+      return client.insert(itemPhotos).values({ ...values, restaurantId }).returning();
+    },
+  };
+
   const settings = {
     /** Owner-editable restaurant settings, scoped like every other query here. */
     update(values: { whatsappNumber: string | null }) {
@@ -192,5 +207,13 @@ export function createRestaurantRepo(restaurantId: string, client: DbExecutor = 
     },
   };
 
-  return { restaurantId, members, invitations: invitationsApi, categories, items: itemsApi, settings };
+  return {
+    restaurantId,
+    members,
+    invitations: invitationsApi,
+    categories,
+    items: itemsApi,
+    photos,
+    settings,
+  };
 }

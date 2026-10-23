@@ -12,6 +12,7 @@ import { ItemForm, type ItemFormValues } from "./item-form";
 export function ItemRow({
   item,
   locale,
+  restaurantId,
   isFirst,
   isLast,
   disabled,
@@ -22,6 +23,7 @@ export function ItemRow({
 }: {
   item: MenuItemDto;
   locale: AppLocale;
+  restaurantId: string;
   isFirst: boolean;
   isLast: boolean;
   disabled: boolean;
@@ -37,6 +39,7 @@ export function ItemRow({
     return (
       <li className="py-3">
         <ItemForm
+          restaurantId={restaurantId}
           initial={{
             nameAr: item.name.ar,
             nameEn: item.name.en ?? "",

@@ -14,6 +14,7 @@ import { ItemRow } from "./item-row";
 export function CategoryCard({
   category,
   locale,
+  restaurantId,
   isFirst,
   isLast,
   disabled,
@@ -28,6 +29,7 @@ export function CategoryCard({
 }: {
   category: MenuCategoryDto;
   locale: AppLocale;
+  restaurantId: string;
   isFirst: boolean;
   isLast: boolean;
   disabled: boolean;
@@ -100,6 +102,7 @@ export function CategoryCard({
               key={item.id}
               item={item}
               locale={locale}
+              restaurantId={restaurantId}
               isFirst={index === 0}
               isLast={index === category.items.length - 1}
               disabled={disabled}
@@ -114,6 +117,7 @@ export function CategoryCard({
 
       {addingItem ? (
         <ItemForm
+          restaurantId={restaurantId}
           submitLabel={t("addItem")}
           onCancel={() => setAddingItem(false)}
           onSubmit={async (values) => {

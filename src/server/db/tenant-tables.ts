@@ -4,4 +4,11 @@
  * this module by an ESLint no-restricted-imports rule — all tenant queries go
  * through createRestaurantRepo() or the platform repos.
  */
-export { restaurants, restaurantMembers, invitations, menuCategories, menuItems } from "./schema";
+export {
+  restaurants,
+  restaurantMembers,
+  invitations,
+  menuCategories,
+  menuItems,
+  itemPhotos,
+} from "./schema";

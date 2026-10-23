@@ -13,6 +13,7 @@ Next.js 16 (App Router, Turbopack) + React 19 + TypeScript (strict, `noUnchecked
 - `HUSKY=0` is set in compose and CI so hook installation is skipped where git runs outside the container — do not remove it; husky hooks are for developers' local clones.
 - `next.config.ts` adds `allowedDevOrigins` **only** when `BASE44_PREVIEW_MODE === "1"` (sandbox preview). Keep that gating.
 - `src/components/base44-preview-hmr-shim.tsx` (rendered by the root layout, same flag gating): the sandbox preview gateway cannot upgrade WebSockets (502), so the dev server's HMR socket (`/_next/hmr`) can never connect through it. The shim swaps in an idle fake WebSocket for HMR URLs only — without it every preview load logs a WebSocket error. Live reload in the sandbox degrades to a manual page refresh (the upgrade was always blocked, so nothing is lost); outside the sandbox it renders nothing and HMR works normally.
+- Platform preview browser (sandbox only): client-side navigations through the preview proxy hard-load the document (the platform's pushState `navigate()` helper never re-renders in the Next App Router, and clicking the app's own `<Link>`s replaces the document). Hard loads are user-fine — pages render at their destination — but a preview script cannot cross a navigation. Verify multi-page flows server-side (curl with a cookie jar hits the same endpoints the forms call; e.g. Phase 2 auth was verified this way) and keep preview scripts to a single page.
 
 ## Conventions
 

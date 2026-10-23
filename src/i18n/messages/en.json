@@ -2,7 +2,34 @@
   "placeholder": {
     "title": "Menu",
     "tagline": "Digital menus for restaurants — under construction",
-    "phase": "Phase 0 · Foundation",
-    "switchLocale": "العربية"
+    "phase": "Phase 2 · Authentication",
+    "switchLocale": "العربية",
+    "login": "Log in"
+  },
+  "auth": {
+    "loginTitle": "Log in",
+    "loginTagline": "Enter your credentials to reach your restaurant dashboard",
+    "signupTitle": "Create an account",
+    "signupTagline": "Create your account and start with the menu platform",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "login": "Log in",
+    "signup": "Create account",
+    "working": "One moment…",
+    "noAccount": "No account yet?",
+    "createOne": "Create one",
+    "haveAccount": "Already have an account?",
+    "signIn": "Log in",
+    "dashboardTitle": "Dashboard",
+    "signedInAs": "Signed in as",
+    "signOut": "Sign out",
+    "phase": "Phase 2 · Authentication",
+    "errors": {
+      "invalidCredentials": "Incorrect email or password",
+      "emailTaken": "This email is already in use",
+      "weakPassword": "Password is too short — at least 8 characters",
+      "generic": "Something went wrong, try again"
+    }
   }
 }

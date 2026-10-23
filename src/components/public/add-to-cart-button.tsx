@@ -22,7 +22,7 @@ export function AddToCartButton({
       <button
         type="button"
         onClick={() => add({ id: itemId, name, pricePiastres })}
-        className="inline-flex min-h-10 shrink-0 self-center rounded-[var(--radius-pill)] border border-[var(--line-strong)] px-4 text-sm font-medium"
+        className="press inline-flex min-h-10 shrink-0 self-center rounded-[var(--radius-pill)] bg-[var(--invert-bg)] px-4 text-sm font-medium text-[var(--invert-fg)] shadow-[var(--shadow-sm)]"
       >
         {t("addToCart")}
       </button>
@@ -30,21 +30,21 @@ export function AddToCartButton({
   }
 
   return (
-    <div className="inline-flex min-h-10 shrink-0 self-center items-center rounded-[var(--radius-pill)] border border-[var(--line-strong)]">
+    <div className="press inline-flex min-h-10 shrink-0 self-center items-center rounded-[var(--radius-pill)] border border-[var(--line-strong)]">
       <button
         type="button"
         aria-label={t("decreaseQty")}
         onClick={() => setQty(itemId, qty - 1)}
-        className="flex size-10 items-center justify-center text-lg"
+        className="flex size-10 items-center justify-center text-lg text-[var(--fg-muted)]"
       >
         −
       </button>
-      <span className="min-w-8 text-center text-sm font-semibold tabular-nums">{qty}</span>
+      <span className="min-w-6 text-center text-sm font-semibold tabular-nums">{qty}</span>
       <button
         type="button"
         aria-label={t("increaseQty")}
         onClick={() => setQty(itemId, qty + 1)}
-        className="flex size-10 items-center justify-center text-lg"
+        className="flex size-10 items-center justify-center text-lg text-[var(--fg-muted)]"
       >
         +
       </button>

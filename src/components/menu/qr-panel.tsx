@@ -33,7 +33,7 @@ export function QrPanel({
   }
 
   return (
-    <section className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--line)] p-5">
+    <section className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--line)] bg-[var(--bg-subtle)] p-5 shadow-[var(--shadow-sm)]">
       <h2 className="text-lg font-semibold">{t("title")}</h2>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}

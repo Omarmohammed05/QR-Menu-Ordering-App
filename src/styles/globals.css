@@ -8,6 +8,7 @@
 
 html {
   color-scheme: light;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html[data-theme="dark"] {
@@ -19,6 +20,8 @@ body {
   color: var(--fg);
   font-family: var(--font-sans);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 /* Arabic needs a taller default rhythm (spec 14.2). */
@@ -26,9 +29,53 @@ html[lang="ar"] body {
   line-height: 1.7;
 }
 
+::selection {
+  background-color: var(--invert-bg);
+  color: var(--invert-fg);
+}
+
 :focus-visible {
   outline: 2px solid var(--fg);
   outline-offset: 2px;
+}
+
+/*
+ * Fluid-interface primitives (Apple "Designing Fluid Interfaces"):
+ * feedback on pointer-down, not on release — the press class below scales
+ * a control the instant it is touched, with a fast exit-only ease.
+ */
+.press {
+  transition:
+    transform 140ms var(--ease-out),
+    background-color 140ms var(--ease-out),
+    opacity 140ms var(--ease-out);
+}
+
+.press:active {
+  transform: scale(0.97);
+}
+
+/* Translucent material for floating layers (cart bar, sheets). */
+.material {
+  background-color: color-mix(in srgb, var(--bg) 78%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  backdrop-filter: blur(20px) saturate(1.6);
+}
+
+/* Entrance: content rises into place; staggered per-section via inline delay. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.5s var(--ease-spring) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

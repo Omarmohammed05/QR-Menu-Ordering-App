@@ -40,10 +40,10 @@ export function CartBar({
       : null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--line)] bg-[var(--bg)] pb-[env(safe-area-inset-bottom)]">
-      <div className="mx-auto flex w-full max-w-xl items-center gap-3 px-5 py-3">
-        <span className="flex min-w-0 flex-col">
-          <span className="text-xs text-[var(--fg-muted)]">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <div className="material pointer-events-auto mx-auto flex w-[calc(100%-2rem)] max-w-md items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--line)] px-3 py-2 shadow-[var(--shadow-lg)]">
+        <span className="flex min-w-0 flex-1 flex-col pl-1">
+          <span className="text-xs leading-snug text-[var(--fg-muted)]">
             {t("itemCount", { count })}
           </span>
           <span className="font-semibold tabular-nums">{formatMoney(totalPiastres, locale)}</span>
@@ -51,7 +51,7 @@ export function CartBar({
         <button
           type="button"
           onClick={clear}
-          className="inline-flex min-h-12 items-center rounded-[var(--radius-pill)] border border-[var(--line-strong)] px-4 text-sm"
+          className="press inline-flex min-h-11 items-center rounded-[var(--radius-pill)] px-3 text-sm text-[var(--fg-muted)]"
         >
           {t("clearCart")}
         </button>
@@ -60,14 +60,14 @@ export function CartBar({
             href={orderUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-12 flex-1 items-center justify-center rounded-[var(--radius-pill)] bg-[var(--invert-bg)] px-5 py-2 text-sm font-medium text-[var(--invert-fg)]"
+            className="press inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--radius-pill)] bg-[var(--invert-bg)] px-4 text-sm font-medium text-[var(--invert-fg)]"
           >
             {t("orderWhatsApp")}
           </a>
         ) : (
           <span
             aria-disabled="true"
-            className="inline-flex min-h-12 flex-1 items-center justify-center rounded-[var(--radius-pill)] bg-[var(--invert-bg)] px-5 py-2 text-sm font-medium text-[var(--invert-fg)] opacity-50"
+            className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--radius-pill)] bg-[var(--invert-bg)] px-4 text-sm font-medium text-[var(--invert-fg)] opacity-40"
           >
             {t("orderWhatsApp")}
           </span>

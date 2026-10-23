@@ -41,74 +41,84 @@ export async function MenuView({
 
   return (
     <CartProvider>
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-8 px-5 py-10 pb-32">
-      <header className="flex flex-col gap-3">
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-10 px-5 pb-32 pt-8">
+      <header className="rise flex flex-col gap-2">
         <div className="flex items-start justify-between gap-4">
-          <h1 className="text-2xl font-semibold leading-relaxed">{pickLocalized(name, locale)}</h1>
+          <h1 className="text-3xl font-semibold leading-tight tracking-tight">
+            {pickLocalized(name, locale)}
+          </h1>
           <Link
             href={`/menu/${slug}`}
             locale={target}
-            className="inline-flex min-h-12 shrink-0 items-center rounded-[var(--radius-pill)] border border-[var(--line-strong)] px-5 py-2 text-sm"
+            className="press inline-flex min-h-10 shrink-0 items-center rounded-[var(--radius-pill)] border border-[var(--line-strong)] px-4 text-sm text-[var(--fg-muted)]"
           >
             {t("language")}
           </Link>
         </div>
         {description ? (
-          <p className="text-sm text-[var(--fg-muted)]">{pickLocalized(description, locale)}</p>
+          <p className="text-sm leading-relaxed text-[var(--fg-muted)]">
+            {pickLocalized(description, locale)}
+          </p>
         ) : null}
       </header>
 
       {whatsappNumber && !acceptingOrders ? (
-        <p className="rounded-[var(--radius-md)] border border-[var(--line)] bg-[var(--bg-subtle)] p-4 text-sm text-[var(--fg-muted)]">
+        <p className="rise rounded-[var(--radius-md)] border border-[var(--line)] bg-[var(--bg-subtle)] p-4 text-sm text-[var(--fg-muted)]">
           {t("notAccepting")}
         </p>
       ) : null}
 
       {categories.length === 0 ? (
-        <p className="text-sm text-[var(--fg-muted)]">{t("empty")}</p>
+        <p className="rise text-sm text-[var(--fg-muted)]">{t("empty")}</p>
       ) : (
-        <div className="flex flex-col gap-8">
-          {categories.map((category) => (
-            <section key={category.id} aria-labelledby={`category-${category.id}`} className="flex flex-col gap-4">
-              <h2 id={`category-${category.id}`} className="text-lg font-semibold">
+        <div className="flex flex-col gap-10">
+          {categories.map((category, sectionIndex) => (
+            <section
+              key={category.id}
+              aria-labelledby={`category-${category.id}`}
+              className="rise flex flex-col"
+              style={{ animationDelay: `${(sectionIndex + 1) * 70}ms` }}
+            >
+              <h2
+                id={`category-${category.id}`}
+                className="border-b border-[var(--line-strong)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--fg-muted)]"
+              >
                 {pickLocalized(category.name, locale)}
               </h2>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col">
                 {category.items.map((item) => {
                   const itemName = pickLocalized(item.name, locale);
                   return (
                     <li
                       key={item.id}
-                      className="flex gap-4 rounded-[var(--radius-md)] border border-[var(--line)] bg-[var(--bg-subtle)] p-4"
+                      className="flex items-center gap-4 border-b border-[var(--line)] py-4 last:border-b-0"
                     >
                       {item.imageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={item.imageUrl}
                           alt={itemName}
-                          className="h-20 w-20 shrink-0 rounded-[var(--radius-sm)] object-cover"
+                          className="h-16 w-16 shrink-0 rounded-[var(--radius-md)] object-cover"
                         />
                       ) : null}
-                      <div className="flex min-w-0 flex-1 flex-col gap-1">
-                        <div className="flex items-baseline justify-between gap-3">
-                          <h3 className="min-w-0 font-medium">{itemName}</h3>
-                          <span className="shrink-0 font-medium tabular-nums">
-                            {formatMoney(item.pricePiastres, locale)}
-                          </span>
-                        </div>
+                      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                        <h3 className="min-w-0 font-medium">{itemName}</h3>
                         {item.description ? (
                           <p className="text-sm leading-relaxed text-[var(--fg-muted)]">
                             {pickLocalized(item.description, locale)}
                           </p>
                         ) : null}
-                        {orderingEnabled ? (
-                          <AddToCartButton
-                            itemId={item.id}
-                            name={itemName}
-                            pricePiastres={item.pricePiastres}
-                          />
-                        ) : null}
+                        <span className="mt-0.5 text-sm font-medium tabular-nums text-[var(--fg-muted)]">
+                          {formatMoney(item.pricePiastres, locale)}
+                        </span>
                       </div>
+                      {orderingEnabled ? (
+                        <AddToCartButton
+                          itemId={item.id}
+                          name={itemName}
+                          pricePiastres={item.pricePiastres}
+                        />
+                      ) : null}
                     </li>
                   );
                 })}

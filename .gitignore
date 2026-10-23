@@ -3,3 +3,22 @@ research/
 
 # Node
 node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Environment — never commit real values (.env.example is the template)
+.env
+.env.local
+.env.*.local
+
+# Tooling
+coverage/
+.husky/_/
+
+# OS
+.DS_Store

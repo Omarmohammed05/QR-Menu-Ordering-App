@@ -1,0 +1,47 @@
+/*
+ * Design tokens — strict monochrome (spec §14.1).
+ * Light is default; `.dark` overrides. Only grays from the monochrome scale.
+ */
+:root {
+  /* Surfaces */
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-raised: #fafafa;
+
+  /* Ink */
+  --foreground: #000000;
+  --muted: #f4f4f4;
+  --muted-foreground: #6e6e73;
+
+  /* Hairlines */
+  --hairline: #e6e6e6;
+  --hairline-strong: #c7c7cc;
+
+  /* Focus & overlays */
+  --focus: #000000;
+  --backdrop: rgb(0 0 0 / 0.4);
+
+  /* Geometry */
+  --radius: 12px;
+
+  /* Type: Geist renders Latin; Arabic codepoints fall through to IBM Plex Sans Arabic */
+  --font-sans: var(--font-geist-sans), var(--font-plex-arabic), ui-sans-serif, system-ui,
+    sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+.dark {
+  --background: #000000;
+  --surface: #000000;
+  --surface-raised: #1c1c1e;
+
+  --foreground: #ffffff;
+  --muted: #111111;
+  --muted-foreground: #98989d;
+
+  --hairline: #2c2c2e;
+  --hairline-strong: #48484a;
+
+  --focus: #ffffff;
+  --backdrop: rgb(0 0 0 / 0.6);
+}

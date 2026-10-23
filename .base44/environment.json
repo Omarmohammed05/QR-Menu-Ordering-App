@@ -1,0 +1,17 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/api/health",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "BETTER_AUTH_SECRET",
+      "description": "Better Auth session signing secret (>= 32 chars)",
+      "requiredAtBoot": true
+    },
+    {
+      "name": "BLOB_READ_WRITE_TOKEN",
+      "description": "File storage token for image uploads (Phase 2+; not needed at boot)",
+      "requiredAtBoot": false
+    }
+  ]
+}

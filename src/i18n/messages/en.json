@@ -94,6 +94,12 @@
   "menu": {
     "title": "Menu management",
     "viewPublic": "View public menu",
+    "qr": {
+      "title": "Menu QR code",
+      "alt": "QR code to open the public menu",
+      "copy": "Copy link",
+      "download": "Download image"
+    },
     "categories": "Categories",
     "noCategories": "No categories yet — create your first category to start adding items.",
     "addCategory": "Add category",

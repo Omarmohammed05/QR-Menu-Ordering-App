@@ -1,4 +1,6 @@
 import { notFound, redirect } from "next/navigation";
+import { headers } from "next/headers";
+import QRCode from "qrcode";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { can } from "@/server/auth/rbac";
@@ -8,6 +10,7 @@ import { getRestaurantBySlug } from "@/server/repos/restaurants";
 import { listMenu } from "@/server/services/menu";
 import { pickLocalized } from "@/lib/localized-text";
 import { MenuManager } from "@/components/menu/menu-manager";
+import { QrPanel } from "@/components/menu/qr-panel";
 
 export default async function ManageRestaurantPage({
   params,
@@ -32,6 +35,14 @@ export default async function ManageRestaurantPage({
 
   const menu = await listMenu(restaurant.id);
 
+  // The QR encodes the absolute public menu URL — built from the request host
+  // so it is correct in every environment without extra configuration.
+  const requestHeaders = await headers();
+  const host = requestHeaders.get("host");
+  const proto = requestHeaders.get("x-forwarded-proto") ?? "http";
+  const publicMenuUrl = `${proto}://${host}/${locale}/menu/${restaurant.slug}`;
+  const qrDataUrl = await QRCode.toDataURL(publicMenuUrl, { width: 512, margin: 2 });
+
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col gap-8 px-6 py-12">
       <header>
@@ -46,6 +57,7 @@ export default async function ManageRestaurantPage({
           {t("viewPublic")}
         </Link>
       </header>
+      <QrPanel dataUrl={qrDataUrl} url={publicMenuUrl} fileName={`${restaurant.slug}-menu-qr`} />
       <MenuManager restaurantId={restaurant.id} initialMenu={menu} locale={locale as "ar" | "en"} />
     </main>
   );

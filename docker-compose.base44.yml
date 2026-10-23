@@ -19,6 +19,31 @@ services:
       timeout: 3s
       retries: 10
 
+  migrate:
+    image: node:22-bookworm
+    restart: "no"
+    labels:
+      base44.project: QR Menu Migrations
+      base44.kind: worker
+    working_dir: /app
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - /run/base44/app.env
+    environment:
+      DATABASE_URL: postgres://qrmenu:qrmenu@db:5432/qrmenu
+    volumes:
+      - .:/app
+      - web-node-modules:/app/node_modules
+    command:
+      - sh
+      - -ec
+      - |
+        corepack enable
+        pnpm install --no-frozen-lockfile
+        pnpm db:migrate
+
   web:
     image: node:22-bookworm
     restart: on-failure
@@ -30,6 +55,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    env_file:
+      - /run/base44/app.env
     environment:
       DATABASE_URL: postgres://qrmenu:qrmenu@db:5432/qrmenu
       NEXT_TELEMETRY_DISABLED: "1"

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
@@ -8,7 +9,9 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["tests/unit/**/*.test.ts"],
+    include: ["tests/unit/**/*.test.ts", "tests/integration/**/*.test.ts"],
     environment: "node",
+    hookTimeout: 30_000,
+    testTimeout: 30_000,
   },
 });

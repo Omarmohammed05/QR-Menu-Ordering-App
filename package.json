@@ -20,6 +20,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx scripts/seed.ts",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -32,12 +33,20 @@
     ]
   },
   "dependencies": {
-    "drizzle-orm": "^0.44.2",
+    "@better-auth/drizzle-adapter": "^1.7.12",
+    "@hookform/resolvers": "^6.0.0",
+    "@paralleldrive/cuid2": "^3.3.0",
+    "better-auth": "^1.7.12",
+    "drizzle-orm": "^0.45.4",
+    "nanoid": "^6.0.2",
     "next": "^15.5.4",
     "next-intl": "^4.3.0",
     "pg": "^8.16.0",
+    "pino": "^10.4.0",
+    "qrcode": "^1.5.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-hook-form": "^7.90.0",
     "zod": "^4.0.0"
   },
   "devDependencies": {
@@ -45,10 +54,11 @@
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^22.15.0",
     "@types/pg": "^8.15.0",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "dotenv": "^17.2.0",
-    "drizzle-kit": "^0.31.4",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9.30.0",
     "eslint-config-next": "^15.5.4",
     "husky": "^9.1.7",
@@ -56,6 +66,7 @@
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.1.11",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }

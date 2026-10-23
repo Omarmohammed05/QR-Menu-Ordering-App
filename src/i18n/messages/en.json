@@ -8,5 +8,119 @@
       "light": "Light",
       "dark": "Dark"
     }
+  },
+  "common": {
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "cancel": "Cancel",
+    "copy": "Copy",
+    "copied": "Copied",
+    "loading": "Working…",
+    "back": "Back"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in",
+      "heading": "Sign in",
+      "submit": "Sign in",
+      "email": "Email",
+      "invalidEmail": "Enter a valid email address",
+      "invalid": "Incorrect email or password",
+      "generic": "Could not sign in, please try again",
+      "twoFactorCode": "Verification code (6 digits)",
+      "twoFactorSubmit": "Verify",
+      "twoFactorInvalid": "Incorrect code",
+      "loading": "Signing in…"
+    },
+    "signOut": "Sign out",
+    "reset": {
+      "title": "Reset password",
+      "heading": "Reset password",
+      "submit": "Send reset link",
+      "sent": "If the email is registered, a message with the reset link will arrive.",
+      "devHint": "In local development the link is printed to the server log (no email provider yet).",
+      "confirmHeading": "New password",
+      "confirmSubmit": "Save",
+      "success": "Password updated — sign in now.",
+      "invalidToken": "The link is invalid or expired",
+      "loading": "Sending…"
+    },
+    "invite": {
+      "title": "Accept invitation",
+      "heading": "You're invited",
+      "youAreInvited": "You've been invited to manage “{restaurant}” as {role}.",
+      "roleOwner": "owner",
+      "roleManager": "manager",
+      "roleStaff": "staff",
+      "accountFor": "The account will be created for {email}",
+      "submit": "Create account",
+      "passwordHint": "At least 10 characters",
+      "success": "Account created. Sign in to continue.",
+      "invalid": "The invitation is invalid or expired",
+      "userExists": "An account with this email already exists. Sign in or request a new invitation.",
+      "generic": "Could not create the account, please try again",
+      "goSignIn": "Go to sign in"
+    },
+    "security": {
+      "title": "Security",
+      "heading": "Two-factor authentication",
+      "statusEnabled": "Enabled",
+      "statusDisabled": "Disabled",
+      "enable": "Enable",
+      "disable": "Disable",
+      "passwordPrompt": "Confirm your password to continue",
+      "scanQr": "Scan the QR code with an authenticator app, or enter the key manually",
+      "secret": "Secret key",
+      "verify": "Verify and enable",
+      "codeLabel": "Verification code",
+      "backupCodes": "Backup codes",
+      "backupCodesHint": "Store them somewhere safe; each code works once.",
+      "verified": "Two-factor authentication is now enabled",
+      "invalidCode": "Incorrect code",
+      "wrongPassword": "Incorrect password",
+      "generic": "Something went wrong, please try again"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {name}",
+    "yourRestaurants": "Your restaurants",
+    "noRestaurants": "No restaurant is linked to your account yet.",
+    "comingSoon": "Menu and order management is built in the next phase.",
+    "goAdmin": "Platform admin",
+    "goSecurity": "Security & 2FA"
+  },
+  "admin": {
+    "title": "Platform admin",
+    "heading": "Restaurants",
+    "create": "Create restaurant",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English, optional)",
+    "slug": "Slug",
+    "slugHint": "Lowercase letters, digits and hyphens only (3–32), not a reserved word",
+    "ownerEmail": "Owner email",
+    "created": "Restaurant created",
+    "inviteLink": "Owner invitation link",
+    "inviteLinkHint": "Send this link to the owner to create their account. It is shown only once.",
+    "slugTaken": "Slug already taken",
+    "slugInvalid": "Invalid slug",
+    "genericError": "Something went wrong, please try again",
+    "noRestaurants": "No restaurants yet",
+    "columns": {
+      "name": "Name",
+      "slug": "Slug",
+      "status": "Status",
+      "plan": "Plan",
+      "created": "Created"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "plan": {
+      "free": "Free",
+      "pro": "Pro"
+    }
   }
 }

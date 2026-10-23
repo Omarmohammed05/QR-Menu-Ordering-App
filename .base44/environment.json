@@ -2,5 +2,12 @@
   "previewPort": 3000,
   "healthPath": "/api/health",
   "startCommand": "docker compose -f docker-compose.base44.yml up -d",
-  "secrets": []
+  "secrets": [
+    {
+      "name": "BETTER_AUTH_SECRET",
+      "description": "Better Auth session signing key (openssl rand -base64 32). Generated for development; replace for production.",
+      "requiredAtBoot": true,
+      "generatedForDevelopment": true
+    }
+  ]
 }

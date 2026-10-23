@@ -5,6 +5,7 @@ import {NextIntlClientProvider} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {directionFor} from '@/i18n/locale';
 import {routing} from '@/i18n/routing';
+import {Base44PreviewHmrShim} from '@/components/base44-preview-hmr-shim';
 import '@/styles/globals.css';
 
 const geistSans = Geist({
@@ -52,6 +53,7 @@ export default async function LocaleLayout({children, params}: Props) {
       className={`${geistSans.variable} ${geistMono.variable} ${plexArabic.variable}`}
     >
       <body>
+        <Base44PreviewHmrShim />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>

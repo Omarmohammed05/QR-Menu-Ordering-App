@@ -2,7 +2,7 @@
   "placeholder": {
     "title": "Menu",
     "tagline": "Digital menus for restaurants — under construction",
-    "phase": "Phase 2 · Authentication",
+    "phase": "Phase 3 · Tenant scoping",
     "switchLocale": "العربية",
     "login": "Log in"
   },
@@ -21,15 +21,39 @@
     "createOne": "Create one",
     "haveAccount": "Already have an account?",
     "signIn": "Log in",
-    "dashboardTitle": "Dashboard",
-    "signedInAs": "Signed in as",
     "signOut": "Sign out",
-    "phase": "Phase 2 · Authentication",
     "errors": {
       "invalidCredentials": "Incorrect email or password",
       "emailTaken": "This email is already in use",
       "weakPassword": "Password is too short — at least 8 characters",
       "generic": "Something went wrong, try again"
+    }
+  },
+  "onboarding": {
+    "title": "Create your restaurant",
+    "tagline": "One short step before your restaurant dashboard",
+    "nameAr": "Restaurant name in Arabic",
+    "nameEn": "Name in English (optional)",
+    "whatsapp": "WhatsApp number to receive orders",
+    "whatsappPlaceholder": "+201234567890",
+    "submit": "Create restaurant",
+    "working": "One moment…",
+    "errors": {
+      "nameAr": "Enter the restaurant name in Arabic",
+      "whatsapp": "Invalid WhatsApp number — international format like +201234567890",
+      "generic": "Something went wrong, try again"
+    }
+  },
+  "dashboard": {
+    "phase": "Phase 3 · Tenant scoping",
+    "signedInAs": "Signed in as",
+    "publicSlug": "Public link:",
+    "whatsappLabel": "WhatsApp for orders:",
+    "roleLabel": "Role:",
+    "role": {
+      "owner": "Owner",
+      "manager": "Manager",
+      "staff": "Staff"
     }
   }
 }

@@ -3,6 +3,11 @@ import {createItemsRepo} from './items';
 import {createOrdersRepo} from './orders';
 
 export {restaurantsRepo, type NewRestaurant} from './restaurants';
+export {
+  membersRepo,
+  type Membership,
+  type MembershipRole
+} from './members';
 export {type CategoriesRepo, type NewCategory} from './categories';
 export {type ItemsRepo, type NewMenuItem} from './items';
 export {type NewOrder, type NewOrderItem, type OrdersRepo} from './orders';
@@ -13,7 +18,8 @@ export {type NewOrder, type NewOrderItem, type OrdersRepo} from './orders';
  * data access. Every member injects and filters by this `restaurantId` —
  * callers never pass it, so tenant scoping cannot be forgotten or forged.
  *
- * Tenant-root lookups (login, QR-slug resolution) use `restaurantsRepo`.
+ * Tenant-root lookups (login, QR-slug resolution) use `restaurantsRepo`;
+ * session→tenant resolution (dashboard, onboarding) uses `membersRepo`.
  */
 export function createRestaurantRepos(restaurantId: string) {
   return {

@@ -39,7 +39,7 @@ jobs:
         run: pnpm typecheck
       - name: Lint
         run: pnpm lint
-      - name: Unit tests
+      - name: Tests (unit + tenancy-isolation integration)
         run: pnpm test
       - name: Build
         run: pnpm build

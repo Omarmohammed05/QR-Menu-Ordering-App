@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { can } from "@/server/auth/rbac";
 import { requireSession } from "@/server/auth/session";
 import { createRestaurantRepo } from "@/server/repos/create-restaurant-repo";
@@ -38,6 +39,12 @@ export default async function ManageRestaurantPage({
           {pickLocalized(restaurant.name, locale as "ar" | "en")}
         </h1>
         <p className="text-sm text-[var(--fg-muted)]">{t("title")}</p>
+        <Link
+          href={`/menu/${restaurant.slug}`}
+          className="mt-3 inline-flex min-h-12 w-fit items-center rounded-[var(--radius-pill)] border border-[var(--line-strong)] px-5 py-2 text-sm"
+        >
+          {t("viewPublic")}
+        </Link>
       </header>
       <MenuManager restaurantId={restaurant.id} initialMenu={menu} locale={locale as "ar" | "en"} />
     </main>

@@ -93,6 +93,7 @@
   },
   "menu": {
     "title": "Menu management",
+    "viewPublic": "View public menu",
     "categories": "Categories",
     "noCategories": "No categories yet — create your first category to start adding items.",
     "addCategory": "Add category",
@@ -153,5 +154,9 @@
       "free": "Free",
       "pro": "Pro"
     }
+  },
+  "publicMenu": {
+    "language": "العربية",
+    "empty": "No items are on display right now."
   }
 }

@@ -54,6 +54,34 @@
       "owner": "مالك",
       "manager": "مدير",
       "staff": "موظف"
+    },
+    "nav": {
+      "overview": "الرئيسية",
+      "menu": "القائمة"
+    }
+  },
+  "menuManagement": {
+    "title": "إدارة القائمة",
+    "tagline": "الأقسام والأطباق التي يراها عملاؤك",
+    "addCategoryTitle": "إضافة قسم",
+    "categoryName": "اسم القسم",
+    "createCategory": "إنشاء القسم",
+    "emptyCategories": "لا توجد أقسام بعد — أضف أول قسم لقائمتك",
+    "addItem": "إضافة طبق",
+    "itemName": "اسم الطبق",
+    "itemDescription": "الوصف (اختياري)",
+    "price": "السعر (جنيه)",
+    "pricePlaceholder": "مثال: 85.50",
+    "emptyItems": "لا توجد أطباق في هذا القسم بعد",
+    "hide": "إخفاء",
+    "show": "إظهار",
+    "working": "لحظة…",
+    "errors": {
+      "nameAr": "اكتب الاسم بالعربية",
+      "price": "سعر غير صالح — مثل 85.50",
+      "category": "القسم غير موجود",
+      "forbidden": "ليست لديك صلاحية تعديل القائمة",
+      "generic": "حدث خطأ ما، حاول مرة أخرى"
     }
   }
 }

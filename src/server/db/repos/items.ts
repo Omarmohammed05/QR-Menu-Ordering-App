@@ -40,6 +40,19 @@ export function createItemsRepo(restaurantId: string) {
         .returning();
       if (!row) throw new Error('menu item insert returned no row');
       return row;
+    },
+
+    /**
+     * Flip availability — the "sold out today" lever. Returns false when the
+     * id belongs to another tenant, so a cross-tenant toggle is a no-op.
+     */
+    async setAvailable(id: string, isAvailable: boolean) {
+      const rows = await db
+        .update(menuItems)
+        .set({isAvailable, updatedAt: new Date()})
+        .where(and(eq(menuItems.id, id), eq(menuItems.restaurantId, restaurantId)))
+        .returning({id: menuItems.id});
+      return rows.length > 0;
     }
   };
 }

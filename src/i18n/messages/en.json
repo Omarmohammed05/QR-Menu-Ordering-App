@@ -54,6 +54,34 @@
       "owner": "Owner",
       "manager": "Manager",
       "staff": "Staff"
+    },
+    "nav": {
+      "overview": "Overview",
+      "menu": "Menu"
+    }
+  },
+  "menuManagement": {
+    "title": "Menu management",
+    "tagline": "The sections and dishes your customers see",
+    "addCategoryTitle": "Add a section",
+    "categoryName": "Section name",
+    "createCategory": "Create section",
+    "emptyCategories": "No sections yet — add the first section to your menu",
+    "addItem": "Add dish",
+    "itemName": "Dish name",
+    "itemDescription": "Description (optional)",
+    "price": "Price (EGP)",
+    "pricePlaceholder": "e.g. 85.50",
+    "emptyItems": "No dishes in this section yet",
+    "hide": "Hide",
+    "show": "Show",
+    "working": "One moment…",
+    "errors": {
+      "nameAr": "Enter the name in Arabic",
+      "price": "Invalid price — e.g. 85.50",
+      "category": "Section not found",
+      "forbidden": "You don't have permission to edit the menu",
+      "generic": "Something went wrong, try again"
     }
   }
 }

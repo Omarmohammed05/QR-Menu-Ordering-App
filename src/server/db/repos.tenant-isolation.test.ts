@@ -159,4 +159,12 @@ describe('tenant isolation (integration)', () => {
       })
     );
   });
+
+  it('makes a cross-tenant availability toggle a no-op', async () => {
+    expect(await reposB.items.setAvailable(itemA.id, false)).toBe(false);
+    expect((await reposA.items.findById(itemA.id))?.isAvailable).toBe(true);
+    expect(await reposA.items.setAvailable(itemA.id, false)).toBe(true);
+    expect((await reposA.items.findById(itemA.id))?.isAvailable).toBe(false);
+    await reposA.items.setAvailable(itemA.id, true);
+  });
 });

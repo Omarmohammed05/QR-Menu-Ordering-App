@@ -29,7 +29,9 @@ services:
       - .:/workspace
       - menu-node-modules:/workspace/node_modules
     environment:
-      - NODE_ENV=development
+      # NODE_ENV is intentionally NOT set: `next dev` forces development and
+      # `next build` forces production themselves — a leaked NODE_ENV=development
+      # crashes `pnpm build` inside this container (/_global-error prerender error).
       - DATABASE_URL=postgresql://menu:menu_dev_password@db:5432/menu
       # Skip git hook installation inside the sandbox/CI (husky is for local dev machines)
       - HUSKY=0

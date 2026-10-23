@@ -7,6 +7,7 @@ Next.js 16 (App Router, Turbopack) + React 19 + TypeScript (strict, `noUnchecked
 ## Environment
 
 - Dev runs via `docker compose -f docker-compose.base44.yml up -d`: `db` (postgres:16) + `web` (node:22, source bind-mounted, `pnpm install --frozen-lockfile && pnpm dev`). Web is on http://localhost:3000; `pnpm dev` binds 0.0.0.0.
+- `NODE_ENV` must never be set in compose or CI: `next dev` and `next build` set it correctly per mode, and a leaked `NODE_ENV=development` crashes `pnpm build` inside the container (`/_global-error` prerender, vercel/next.js#86178).
 - `DATABASE_URL` and Postgres credentials are local-infra values set in the compose file — not secrets.
 - `BETTER_AUTH_SECRET` comes from the platform-managed env file; never commit secrets.
 - `HUSKY=0` is set in compose and CI so hook installation is skipped where git runs outside the container — do not remove it; husky hooks are for developers' local clones.

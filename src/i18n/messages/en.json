@@ -1,0 +1,12 @@
+{
+  "placeholder": {
+    "heading": "Foundation ready",
+    "body": "This is a placeholder page to verify Arabic/English and page direction support before product build begins.",
+    "language": "العربية",
+    "theme": {
+      "toggle": "Toggle theme",
+      "light": "Light",
+      "dark": "Dark"
+    }
+  }
+}

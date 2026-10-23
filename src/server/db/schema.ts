@@ -198,6 +198,52 @@ export const invitations = pgTable(
   ],
 );
 
+// ─── Menu (tenant-owned; both tables denormalize restaurant_id for the scoped repo) ───
+
+export const menuCategories = pgTable(
+  "menu_categories",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    restaurantId: text("restaurant_id")
+      .notNull()
+      .references(() => restaurants.id, { onDelete: "cascade" }),
+    name: jsonb("name").$type<LocalizedText>().notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("menu_categories_restaurant_idx").on(table.restaurantId)],
+);
+
+export const menuItems = pgTable(
+  "menu_items",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    restaurantId: text("restaurant_id")
+      .notNull()
+      .references(() => restaurants.id, { onDelete: "cascade" }),
+    categoryId: text("category_id")
+      .notNull()
+      .references(() => menuCategories.id, { onDelete: "cascade" }),
+    name: jsonb("name").$type<LocalizedText>().notNull(),
+    description: jsonb("description").$type<LocalizedText>(),
+    pricePiastres: integer("price_piastres").notNull(),
+    imageUrl: text("image_url"),
+    isAvailable: boolean("is_available").notNull().default(true),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("menu_items_restaurant_idx").on(table.restaurantId),
+    index("menu_items_category_idx").on(table.categoryId),
+  ],
+);
+
 // ─── Rate limiting (Postgres-backed fixed window) ───
 
 export const rateLimits = pgTable(
@@ -214,11 +260,27 @@ export const rateLimits = pgTable(
 
 export const restaurantsRelations = relations(restaurants, ({ many }) => ({
   members: many(restaurantMembers),
+  menuCategories: many(menuCategories),
 }));
 
 export const restaurantMembersRelations = relations(restaurantMembers, ({ one }) => ({
   restaurant: one(restaurants, {
     fields: [restaurantMembers.restaurantId],
     references: [restaurants.id],
+  }),
+}));
+
+export const menuCategoriesRelations = relations(menuCategories, ({ one, many }) => ({
+  restaurant: one(restaurants, {
+    fields: [menuCategories.restaurantId],
+    references: [restaurants.id],
+  }),
+  items: many(menuItems),
+}));
+
+export const menuItemsRelations = relations(menuItems, ({ one }) => ({
+  category: one(menuCategories, {
+    fields: [menuItems.categoryId],
+    references: [menuCategories.id],
   }),
 }));

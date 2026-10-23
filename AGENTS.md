@@ -32,3 +32,6 @@ origin HOST (no `https://`), so the `allowedOrigins` entry must be host-only.
 - `env` validation runs at module import (`src/lib/env.ts`); any new secret
   must be added to `.env.example` too.
 - Husky runs `lint-staged` on commit; CI enforces typecheck/lint/test/build.
+- Base44 preview: the platform navigation helper raw-pushes URLs, which the
+  Next App Router ignores — drive routes in verification scripts with
+  `window.next.router.push` (dev-only global).

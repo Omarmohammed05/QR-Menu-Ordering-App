@@ -28,15 +28,22 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
             {memberships.map((membership) => (
               <li
                 key={membership.restaurantId}
-                className="flex items-center justify-between py-3 text-sm"
+                className="flex items-center justify-between gap-4 py-3 text-sm"
               >
-                <span>{pickLocalized(membership.name, locale as "ar" | "en")}</span>
-                <span className="font-mono text-xs text-[var(--fg-subtle)]">{membership.slug}</span>
+                <span className="flex flex-col">
+                  <span>{pickLocalized(membership.name, locale as "ar" | "en")}</span>
+                  <span className="font-mono text-xs text-[var(--fg-subtle)]">{membership.slug}</span>
+                </span>
+                <Link
+                  href={`/dashboard/${membership.slug}`}
+                  className="underline underline-offset-4"
+                >
+                  {t("manage")}
+                </Link>
               </li>
             ))}
           </ul>
         )}
-        <p className="text-xs text-[var(--fg-subtle)]">{t("comingSoon")}</p>
       </section>
 
       <footer className="flex flex-wrap gap-4 text-sm">

@@ -19,9 +19,11 @@ and `web` (node:22, source bind-mounted at `/app`, deps in the
 `web-node-modules` named volume, `pnpm install` on boot). Health endpoint:
 `GET /api/health` (checks the DB).
 
-Sandbox-only override: `next.config.ts` appends `https://3000-$BASE44_PUBLIC_HOST_SUFFIX`
-to `allowedDevOrigins` **only** when `BASE44_PREVIEW_MODE === "1"`; with the
-flag unset the config is untouched.
+Sandbox-only override: `next.config.ts` appends the preview host to
+`allowedDevOrigins` and to `experimental.serverActions.allowedOrigins`
+**only** when `BASE44_PREVIEW_MODE === "1"`; with the flag unset the config
+is untouched. Note: Next 15.5's Server-Actions CSRF check compares the bare
+origin HOST (no `https://`), so the `allowedOrigins` entry must be host-only.
 
 ## Quirks
 

@@ -15,7 +15,9 @@ const nextConfig: NextConfig = {
     ? {
         allowedDevOrigins: [`3000-${previewSuffix}`],
         experimental: {
-          serverActions: { allowedOrigins: [`https://3000-${previewSuffix}`] },
+          // Next 15.5 compares the bare origin HOST against allowedOrigins
+          // (no protocol), so the entry must be host-only to match.
+          serverActions: { allowedOrigins: [`3000-${previewSuffix}`] },
         },
       }
     : {}),

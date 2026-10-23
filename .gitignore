@@ -1,0 +1,5 @@
+# Private research workspace — never commit anything from here
+research/
+
+# Node
+node_modules/

@@ -100,6 +100,15 @@
       "copy": "Copy link",
       "download": "Download image"
     },
+    "settings": {
+      "title": "Restaurant settings",
+      "whatsappLabel": "WhatsApp number for receiving orders",
+      "whatsappHint": "International format, e.g. +201000000000",
+      "save": "Save",
+      "savedMsg": "Saved",
+      "invalidPhone": "Enter a valid international-format number",
+      "genericError": "Could not save, please try again"
+    },
     "categories": "Categories",
     "noCategories": "No categories yet — create your first category to start adding items.",
     "addCategory": "Add category",
@@ -163,6 +172,13 @@
   },
   "publicMenu": {
     "language": "العربية",
-    "empty": "No items are on display right now."
+    "empty": "No items are on display right now.",
+    "notAccepting": "This restaurant is not accepting orders right now.",
+    "addToCart": "Add",
+    "increaseQty": "Increase quantity",
+    "decreaseQty": "Decrease quantity",
+    "clearCart": "Clear",
+    "orderWhatsApp": "Order via WhatsApp",
+    "itemCount": "{count, plural, one {# item} other {# items}}"
   }
 }

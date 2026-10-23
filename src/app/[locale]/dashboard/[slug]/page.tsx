@@ -11,6 +11,7 @@ import { listMenu } from "@/server/services/menu";
 import { pickLocalized } from "@/lib/localized-text";
 import { MenuManager } from "@/components/menu/menu-manager";
 import { QrPanel } from "@/components/menu/qr-panel";
+import { RestaurantSettingsPanel } from "@/components/menu/restaurant-settings";
 
 export default async function ManageRestaurantPage({
   params,
@@ -29,9 +30,11 @@ export default async function ManageRestaurantPage({
 
   // Non-members are redirected: slug probing must not reveal restaurant menus.
   const member = await createRestaurantRepo(restaurant.id).members.getByUserId(session.user.id);
-  if (!can({ memberRole: member?.role ?? null, superAdmin: session.user.superAdmin ?? false }, "menu.edit")) {
+  const authContext = { memberRole: member?.role ?? null, superAdmin: session.user.superAdmin ?? false };
+  if (!can(authContext, "menu.edit")) {
     redirect(`/${locale}/dashboard`);
   }
+  const canEditSettings = can(authContext, "restaurant.edit");
 
   const menu = await listMenu(restaurant.id);
 
@@ -58,6 +61,9 @@ export default async function ManageRestaurantPage({
         </Link>
       </header>
       <QrPanel dataUrl={qrDataUrl} url={publicMenuUrl} fileName={`${restaurant.slug}-menu-qr`} />
+      {canEditSettings ? (
+        <RestaurantSettingsPanel restaurantId={restaurant.id} initialWhatsappNumber={restaurant.whatsappNumber ?? ""} />
+      ) : null}
       <MenuManager restaurantId={restaurant.id} initialMenu={menu} locale={locale as "ar" | "en"} />
     </main>
   );

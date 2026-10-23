@@ -100,6 +100,15 @@
       "copy": "نسخ الرابط",
       "download": "تنزيل الصورة"
     },
+    "settings": {
+      "title": "إعدادات المطعم",
+      "whatsappLabel": "رقم واتساب لاستلام الطلبات",
+      "whatsappHint": "بصيغة دولية، مثل ‎+201000000000",
+      "save": "حفظ",
+      "savedMsg": "تم الحفظ",
+      "invalidPhone": "أدخل رقمًا صحيحًا بصيغة دولية",
+      "genericError": "تعذر الحفظ، حاول مرة أخرى"
+    },
     "categories": "الأقسام",
     "noCategories": "لا توجد أقسام بعد — أنشئ أول قسم لتبدأ بإضافة الأطباق.",
     "addCategory": "إضافة قسم",
@@ -163,6 +172,13 @@
   },
   "publicMenu": {
     "language": "English",
-    "empty": "لا توجد أطباق معروضة حاليًا."
+    "empty": "لا توجد أطباق معروضة حاليًا.",
+    "notAccepting": "المطعم لا يستقبل الطلبات حاليًا.",
+    "addToCart": "إضافة",
+    "increaseQty": "زيادة الكمية",
+    "decreaseQty": "إنقاص الكمية",
+    "clearCart": "تفريغ",
+    "orderWhatsApp": "اطلب عبر واتساب",
+    "itemCount": "{count, plural, one {# عنصر} other {# عناصر}}"
   }
 }

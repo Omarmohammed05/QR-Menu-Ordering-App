@@ -4,10 +4,15 @@ import type { AppLocale } from "@/i18n/routing";
 import { pickLocalized, type LocalizedText } from "@/lib/localized-text";
 import { formatMoney } from "@/lib/money";
 import type { MenuSnapshot } from "@/server/services/menu";
+import { CartProvider } from "./cart-provider";
+import { CartBar } from "./cart-bar";
+import { AddToCartButton } from "./add-to-cart-button";
 
 /**
  * Customer-facing menu (the QR target). Server-rendered and read-only:
  * unavailable items are hidden, and empty categories never appear.
+ * Ordering (cart + WhatsApp handoff, ADR-007) appears only when the
+ * restaurant has a WhatsApp number and is accepting orders.
  */
 export async function MenuView({
   slug,
@@ -15,22 +20,28 @@ export async function MenuView({
   description,
   menu,
   locale,
+  whatsappNumber,
+  acceptingOrders,
 }: {
   slug: string;
   name: LocalizedText;
   description: LocalizedText | null;
   menu: MenuSnapshot;
   locale: AppLocale;
+  whatsappNumber: string | null;
+  acceptingOrders: boolean;
 }) {
   const t = await getTranslations("publicMenu");
   const target: AppLocale = locale === "ar" ? "en" : "ar";
+  const orderingEnabled = Boolean(whatsappNumber) && acceptingOrders;
 
   const categories = menu
     .map((category) => ({ ...category, items: category.items.filter((item) => item.isAvailable) }))
     .filter((category) => category.items.length > 0);
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-8 px-5 py-10">
+    <CartProvider>
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-8 px-5 py-10 pb-32">
       <header className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-4">
           <h1 className="text-2xl font-semibold leading-relaxed">{pickLocalized(name, locale)}</h1>
@@ -46,6 +57,12 @@ export async function MenuView({
           <p className="text-sm text-[var(--fg-muted)]">{pickLocalized(description, locale)}</p>
         ) : null}
       </header>
+
+      {whatsappNumber && !acceptingOrders ? (
+        <p className="rounded-[var(--radius-md)] border border-[var(--line)] bg-[var(--bg-subtle)] p-4 text-sm text-[var(--fg-muted)]">
+          {t("notAccepting")}
+        </p>
+      ) : null}
 
       {categories.length === 0 ? (
         <p className="text-sm text-[var(--fg-muted)]">{t("empty")}</p>
@@ -84,6 +101,13 @@ export async function MenuView({
                             {pickLocalized(item.description, locale)}
                           </p>
                         ) : null}
+                        {orderingEnabled ? (
+                          <AddToCartButton
+                            itemId={item.id}
+                            name={itemName}
+                            pricePiastres={item.pricePiastres}
+                          />
+                        ) : null}
                       </div>
                     </li>
                   );
@@ -94,5 +118,13 @@ export async function MenuView({
         </div>
       )}
     </main>
+    {orderingEnabled && whatsappNumber ? (
+      <CartBar
+        locale={locale}
+        restaurantName={pickLocalized(name, locale)}
+        whatsappNumber={whatsappNumber}
+      />
+    ) : null}
+    </CartProvider>
   );
 }

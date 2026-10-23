@@ -1,6 +1,6 @@
 import { and, asc, count, eq, max } from "drizzle-orm";
 import { db, type DbExecutor } from "@/server/db/client";
-import { invitations, menuCategories, menuItems, restaurantMembers } from "@/server/db/tenant-tables";
+import { invitations, menuCategories, menuItems, restaurantMembers, restaurants } from "@/server/db/tenant-tables";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export type Invitation = InferSelectModel<typeof invitations>;
@@ -181,5 +181,16 @@ export function createRestaurantRepo(restaurantId: string, client: DbExecutor = 
     },
   };
 
-  return { restaurantId, members, invitations: invitationsApi, categories, items: itemsApi };
+  const settings = {
+    /** Owner-editable restaurant settings, scoped like every other query here. */
+    update(values: { whatsappNumber: string | null }) {
+      return client
+        .update(restaurants)
+        .set({ ...values, updatedAt: new Date() })
+        .where(eq(restaurants.id, restaurantId))
+        .returning({ id: restaurants.id, whatsappNumber: restaurants.whatsappNumber });
+    },
+  };
+
+  return { restaurantId, members, invitations: invitationsApi, categories, items: itemsApi, settings };
 }

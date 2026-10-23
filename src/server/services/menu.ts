@@ -28,7 +28,7 @@ export type MenuCategoryDto = {
 export type MenuSnapshot = MenuCategoryDto[];
 
 /** The user must hold `permission` for THIS restaurant (member role or platform admin). */
-async function requirePermission(
+export async function requirePermission(
   user: MenuUser,
   restaurantId: string,
   permission: Permission,

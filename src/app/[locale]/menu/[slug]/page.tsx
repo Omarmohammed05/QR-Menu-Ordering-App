@@ -49,6 +49,8 @@ export default async function PublicMenuPage({
       description={restaurant.description ?? null}
       menu={menu}
       locale={locale as AppLocale}
+      whatsappNumber={restaurant.whatsappNumber ?? null}
+      acceptingOrders={restaurant.acceptingOrders}
     />
   );
 }

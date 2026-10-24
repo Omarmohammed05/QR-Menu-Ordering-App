@@ -81,7 +81,7 @@ export default async function TablesPage({params}: Props) {
       {/* Master QR banner */}
       <section className="flex flex-col gap-6 rounded-xl border border-hairline bg-surface p-6 lg:flex-row lg:items-center">
         <div
-          className="grid size-36 shrink-0 place-items-center rounded-lg border border-hairline bg-surface p-2 self-center"
+          className="grid size-36 shrink-0 place-items-center self-center overflow-hidden rounded-lg border border-hairline bg-surface p-2 [&>svg]:size-full"
           dangerouslySetInnerHTML={{__html: masterQr}}
         />
         <div className="flex min-w-0 flex-col gap-2">
@@ -132,7 +132,7 @@ export default async function TablesPage({params}: Props) {
                 )}
               </div>
               <div
-                className={`grid place-items-center self-center rounded-lg border border-hairline p-3 ${
+                className={`grid place-items-center self-center overflow-hidden rounded-lg border border-hairline p-2 [&>svg]:size-32 ${
                   card.isActive ? '' : 'opacity-40'
                 }`}
                 dangerouslySetInnerHTML={{__html: card.qr}}

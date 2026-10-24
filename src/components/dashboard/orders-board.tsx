@@ -109,7 +109,7 @@ export function OrdersBoard({orders, tableLabels}: Props) {
   return (
     <div className="flex flex-col gap-6">
       {/* Filter & search deck */}
-      <div className="flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="animate-fade-in flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0" role="group">
           {chips.map(({key, label}) => {
             const selected = channel === key;
@@ -161,11 +161,19 @@ export function OrdersBoard({orders, tableLabels}: Props) {
 
       {/* Kanban stage */}
       <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {COLUMNS.map((status) => (
-          <section key={status} className="flex min-w-0 flex-col gap-3">
+        {COLUMNS.map((status, index) => (
+          <section
+            key={status}
+            style={{animationDelay: `${index * 70}ms`}}
+            className="animate-float-up [animation-fill-mode:backwards] flex min-w-0 flex-col gap-3"
+          >
             <header className="flex items-center justify-between gap-2 px-1">
               <div className="flex items-center gap-2">
-                <span className="size-2.5 rounded-full bg-foreground" />
+                <span
+                  className={`size-2.5 rounded-full bg-foreground ${
+                    status === 'pending' ? 'motion-safe:animate-pulse' : ''
+                  }`}
+                />
                 <h2 className="text-sm font-semibold">{t(`board.${status}`)}</h2>
                 <span className="rounded-full bg-foreground px-2 py-0.5 text-[11px] font-semibold leading-none text-background">
                   {countFor(status)}
@@ -188,7 +196,7 @@ export function OrdersBoard({orders, tableLabels}: Props) {
                   />
                 ))}
               {countFor(status) === 0 ? (
-                <p className="rounded-xl border border-dashed border-hairline px-3 py-6 text-center text-xs text-muted-foreground">
+                <p className="animate-fade-in rounded-xl border border-dashed border-hairline px-3 py-6 text-center text-xs text-muted-foreground">
                   {t('emptyColumn')}
                 </p>
               ) : null}
@@ -215,7 +223,7 @@ function OrderCard({order, items, tableLabel, locale}: CardProps) {
 
   return (
     <article
-      className={`relative flex flex-col gap-2.5 overflow-hidden rounded-xl border border-hairline bg-surface p-4 transition-[transform] duration-100 ${
+      className={`animate-float-up [animation-fill-mode:backwards] relative flex flex-col gap-2.5 overflow-hidden rounded-xl border border-hairline bg-surface p-4 transition-[transform,border-color,box-shadow] duration-100 hover:border-hairline-strong hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
         isDone ? 'opacity-70' : ''
       }`}
     >

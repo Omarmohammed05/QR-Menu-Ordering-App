@@ -46,7 +46,11 @@ export function DashboardShell({
   children
 }: Props) {
   const t = useTranslations('dashboard');
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  // Tri-state so the drawer can play its exit animation before unmounting.
+  const [drawerState, setDrawerState] = useState<'closed' | 'open' | 'closing'>('closed');
+  const openDrawer = () => setDrawerState('open');
+  const closeDrawer = () =>
+    setDrawerState((state) => (state === 'open' ? 'closing' : state));
   // `usePathname()` includes the locale prefix; strip it so nav `href`s match.
   const pathname = usePathname().replace(/^\/(ar|en)(?=\/|$)/, '');
 
@@ -90,7 +94,7 @@ export function DashboardShell({
             href={href}
             onClick={onNavigate}
             aria-current={active ? 'page' : undefined}
-            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2 text-sm transition-colors ${
+            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2 text-sm transition-[transform,background-color,color] duration-100 active:scale-[0.98] ${
               active
                 ? 'bg-foreground font-medium text-background'
                 : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -131,29 +135,40 @@ export function DashboardShell({
         {connectionCard}
       </aside>
 
-      {/* Mobile drawer */}
-      {drawerOpen ? (
+      {/* Mobile drawer — enters/exits along its start-side path (globals.css) */}
+      {drawerState !== 'closed' ? (
         <div className="fixed inset-0 z-50 lg:hidden print:hidden">
           <button
             type="button"
             aria-label={t('shell.closeMenu')}
-            onClick={() => setDrawerOpen(false)}
-            className="absolute inset-0 bg-[var(--backdrop)]"
+            onClick={closeDrawer}
+            className={`absolute inset-0 bg-[var(--backdrop)] ${
+              drawerState === 'closing' ? 'animate-fade-out' : 'animate-fade-in'
+            }`}
           />
-          <div className="absolute inset-y-0 start-0 flex w-72 max-w-[85%] flex-col justify-between border-e border-hairline bg-surface">
+          <div
+            onAnimationEnd={(event) => {
+              if (drawerState === 'closing' && event.target === event.currentTarget) {
+                setDrawerState('closed');
+              }
+            }}
+            className={`absolute inset-y-0 start-0 flex w-72 max-w-[85%] flex-col justify-between border-e border-hairline bg-surface ${
+              drawerState === 'closing' ? 'animate-drawer-out' : 'animate-drawer-in'
+            }`}
+          >
             <div className="flex flex-col">
               <div className="flex items-center justify-between border-b border-hairline pe-2">
                 {brandBlock}
                 <button
                   type="button"
                   aria-label={t('shell.closeMenu')}
-                  onClick={() => setDrawerOpen(false)}
+                  onClick={closeDrawer}
                   className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
                   <CloseIcon className="size-5" />
                 </button>
               </div>
-              {navList(() => setDrawerOpen(false))}
+              {navList(closeDrawer)}
             </div>
             {connectionCard}
           </div>
@@ -167,8 +182,8 @@ export function DashboardShell({
             <button
               type="button"
               aria-label={t('shell.openMenu')}
-              onClick={() => setDrawerOpen(true)}
-              className="grid size-9 shrink-0 place-items-center rounded-lg border border-hairline text-muted-foreground transition-colors hover:text-foreground lg:hidden"
+              onClick={openDrawer}
+              className="grid size-9 shrink-0 place-items-center rounded-lg border border-hairline text-muted-foreground transition-[transform,color] duration-100 hover:text-foreground active:scale-[0.95] lg:hidden"
             >
               <MenuBarsIcon className="size-5" />
             </button>

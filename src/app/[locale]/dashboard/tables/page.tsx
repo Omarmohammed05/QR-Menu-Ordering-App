@@ -59,29 +59,29 @@ export default async function TablesPage({params}: Props) {
       <div className="grid grid-cols-2 gap-3 print:hidden">
         <div
           style={{animationDelay: '0ms'}}
-          className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-xl border border-hairline bg-surface p-4"
+          className="brand-gradient animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-2xl p-4 text-white shadow-[0_8px_20px_rgba(255,87,34,0.3)]"
         >
           <span className="flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">{t('stats.total')}</span>
-            <span className="text-lg font-semibold">{tables.length}</span>
+            <span className="text-xs text-white/85">{t('stats.total')}</span>
+            <span className="text-lg font-semibold tabular-nums">{tables.length}</span>
           </span>
-          <span className="grid size-9 place-items-center rounded-full bg-muted">
+          <span className="grid size-9 place-items-center rounded-full bg-white/20 text-white">
             <QrCodeIcon className="size-4" />
           </span>
         </div>
         <div
           style={{animationDelay: '60ms'}}
-          className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-xl border border-hairline bg-surface p-4"
+          className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-2xl border border-hairline bg-surface shadow-card p-4"
         >
           <span className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">{t('stats.active')}</span>
             <span className="flex items-center gap-1.5 text-lg font-semibold">
-              <span className="inline-block size-2 rounded-full bg-foreground motion-safe:animate-pulse" />
+              <span className="inline-block size-2 rounded-full bg-success motion-safe:animate-pulse" />
               {activeCount}
             </span>
           </span>
-          <span className="grid size-9 place-items-center rounded-full bg-muted">
-            <span className="inline-block size-2 rounded-full bg-foreground" />
+          <span className="grid size-9 place-items-center rounded-full bg-brand-soft text-brand">
+            <span className="inline-block size-2 rounded-full bg-brand" />
           </span>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default async function TablesPage({params}: Props) {
       {/* Master QR banner */}
       <section
         style={{animationDelay: '120ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-6 rounded-xl border border-hairline bg-surface p-6 lg:flex-row lg:items-center"
+        className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-6 rounded-2xl border border-hairline bg-surface shadow-card p-6 lg:flex-row lg:items-center"
       >
         <div
           className="grid size-36 shrink-0 place-items-center self-center overflow-hidden rounded-lg border border-hairline bg-surface p-2 [&>svg]:size-full"
@@ -97,7 +97,7 @@ export default async function TablesPage({params}: Props) {
         />
         <div className="flex min-w-0 flex-col gap-2">
           <span className="flex w-fit items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium">
-            <span className="inline-block size-1.5 rounded-full bg-foreground" />
+            <span className="inline-block size-1.5 rounded-full bg-brand" />
             {t('masterQr.badge')}
           </span>
           <h2 className="text-lg font-semibold">{t('masterQr.title')}</h2>
@@ -109,7 +109,7 @@ export default async function TablesPage({params}: Props) {
             <a
               href={svgDataUrl(masterQr)}
               download={`${membership.restaurant.slug}-qr.svg`}
-              className="flex h-10 items-center gap-2 rounded-full bg-foreground px-4 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] print:hidden"
+              className="flex h-10 items-center gap-2 rounded-full bg-brand px-4 text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98] print:hidden"
             >
               <DownloadIcon className="size-4" />
               {t('masterQr.download')}
@@ -122,7 +122,7 @@ export default async function TablesPage({params}: Props) {
       {/* Tables & their QRs */}
       <div
         style={{animationDelay: '180ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 print:hidden"
+        className="animate-float-up [animation-fill-mode:backwards] rounded-2xl border border-hairline bg-surface shadow-card p-5 print:hidden"
       >
         <CreateTableForm locale={locale} />
       </div>
@@ -136,12 +136,12 @@ export default async function TablesPage({params}: Props) {
             <li
               key={card.id}
               style={{animationDelay: `${(index + 2) * 70}ms`}}
-              className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-4 transition-[transform,border-color,box-shadow] duration-100 hover:border-hairline-strong hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)] print:break-inside-avoid print:hover:shadow-none"
+              className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-3 rounded-2xl border border-hairline bg-surface shadow-card p-4 transition-[transform,border-color,box-shadow] duration-100 hover:border-hairline-strong hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)] print:break-inside-avoid print:hover:shadow-none"
             >
               <div className="flex items-center justify-between gap-2 print:hidden">
                 <span className="font-semibold">{card.label}</span>
                 {card.isActive ? (
-                  <span className="rounded-full bg-foreground px-2.5 py-0.5 text-[11px] font-medium text-background">
+                  <span className="rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-medium text-white">
                     {t('active')}
                   </span>
                 ) : (
@@ -163,7 +163,7 @@ export default async function TablesPage({params}: Props) {
                 <a
                   href={svgDataUrl(card.qr)}
                   download={`qr-${card.token.slice(0, 8)}.svg`}
-                  className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-full border border-hairline text-xs font-medium transition-colors hover:border-foreground"
+                  className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-full border border-hairline text-xs font-medium transition-colors hover:border-brand"
                 >
                   <DownloadIcon className="size-3.5" />
                   {t('downloadSvg')}
@@ -174,7 +174,7 @@ export default async function TablesPage({params}: Props) {
                   <input type="hidden" name="makeActive" value={String(!card.isActive)} />
                   <button
                     type="submit"
-                    className="h-9 w-full rounded-full bg-foreground text-xs font-medium text-background transition-[transform] duration-100 active:scale-[0.98]"
+                    className="h-9 w-full rounded-full bg-brand text-xs font-medium text-white transition-[transform] duration-100 active:scale-[0.98]"
                   >
                     {card.isActive ? t('archive') : t('restore')}
                   </button>

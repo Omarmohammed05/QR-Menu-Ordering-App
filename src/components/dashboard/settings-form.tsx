@@ -76,7 +76,7 @@ export function SettingsForm({locale, restaurant}: Props) {
   const slugBlocked = availability !== null && !availability.available;
 
   const inputClass =
-    'rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground';
+    'rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand';
 
   return (
     <form action={formAction} className="flex flex-col gap-4" noValidate>
@@ -144,7 +144,7 @@ export function SettingsForm({locale, restaurant}: Props) {
           autoComplete="off"
           spellCheck={false}
           className={`${inputClass} font-mono ${
-            slugBlocked ? 'border-destructive' : slugDirty ? 'border-foreground' : ''
+            slugBlocked ? 'border-destructive' : slugDirty ? 'border-brand' : ''
           }`}
         />
         {slugDirty && checking ? (
@@ -166,7 +166,7 @@ export function SettingsForm({locale, restaurant}: Props) {
         <button
           type="submit"
           disabled={pending || (slugDirty && (checking || slugBlocked))}
-          className="self-start rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
+          className="self-start rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
         >
           {pending ? t('working') : t('save')}
         </button>

@@ -69,14 +69,28 @@ export default async function DashboardPage({params}: Props) {
 
       {/* Today's headline numbers */}
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {stats.map(({label, value, icon}) => (
+        {stats.map(({label, value, icon}, index) => (
           <div
             key={label}
-            className="flex flex-col justify-between gap-4 rounded-xl border border-hairline bg-surface p-4 sm:p-5"
+            className={`flex flex-col justify-between gap-4 rounded-2xl border p-4 sm:p-5 ${
+              index === 0
+                ? 'brand-gradient border-transparent text-white shadow-[0_8px_20px_rgba(255,87,34,0.3)]'
+                : 'border-hairline bg-surface shadow-card'
+            }`}
           >
             <span className="flex items-start justify-between gap-2">
-              <span className="text-xs leading-relaxed text-muted-foreground">{label}</span>
-              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-muted">
+              <span
+                className={`text-xs leading-relaxed ${
+                  index === 0 ? 'text-white/85' : 'text-muted-foreground'
+                }`}
+              >
+                {label}
+              </span>
+              <span
+                className={`grid size-8 shrink-0 place-items-center rounded-full ${
+                  index === 0 ? 'bg-white/20 text-white' : 'bg-brand-soft text-brand'
+                }`}
+              >
                 {icon}
               </span>
             </span>
@@ -95,10 +109,10 @@ export default async function DashboardPage({params}: Props) {
             <li key={href}>
               <Link
                 href={href}
-                className="flex items-center justify-between gap-3 rounded-xl border border-hairline bg-surface p-4 transition-[background-color] duration-100 hover:bg-muted/50 active:bg-muted"
+                className="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface shadow-card p-4 transition-[background-color] duration-100 hover:bg-muted/50 active:bg-muted"
               >
                 <span className="flex min-w-0 items-center gap-3">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-muted">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">
                     {icon}
                   </span>
                   <span className="flex min-w-0 flex-col">

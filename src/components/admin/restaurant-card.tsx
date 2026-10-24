@@ -34,7 +34,7 @@ export async function RestaurantCard({
     : null;
 
   return (
-    <li className="flex flex-col gap-4 rounded-xl border border-hairline bg-surface p-5">
+    <li className="flex flex-col gap-4 rounded-2xl border border-hairline bg-surface shadow-card p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
           <span className="truncate text-base font-semibold">{restaurant.nameAr}</span>
@@ -44,7 +44,7 @@ export async function RestaurantCard({
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {restaurant.isActive ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-2.5 py-0.5 text-[11px] font-medium text-background">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-medium text-white">
               <span className="size-1.5 rounded-full bg-current" />
               {t('active')}
             </span>
@@ -60,7 +60,7 @@ export async function RestaurantCard({
             <input type="hidden" name="makeActive" value={String(!restaurant.isActive)} />
             <button
               type="submit"
-              className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-foreground active:scale-[0.95]"
+              className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-brand active:scale-[0.95]"
             >
               {restaurant.isActive ? t('deactivate') : t('activate')}
             </button>
@@ -111,7 +111,7 @@ export async function RestaurantCard({
               href={shareUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-foreground px-4 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98]"
+              className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-brand px-4 text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98]"
             >
               <WhatsAppIcon className="size-4" />
               {t('sendInvite')}
@@ -121,7 +121,7 @@ export async function RestaurantCard({
               <input type="hidden" name="restaurantId" value={restaurant.id} />
               <button
                 type="submit"
-                className="h-10 w-full rounded-full border border-hairline text-sm font-medium transition-[transform,border-color] duration-100 hover:border-foreground active:scale-[0.98]"
+                className="h-10 w-full rounded-full border border-hairline text-sm font-medium transition-[transform,border-color] duration-100 hover:border-brand active:scale-[0.98]"
               >
                 {t('regenerate')}
               </button>
@@ -136,7 +136,7 @@ export async function RestaurantCard({
           <input type="hidden" name="restaurantId" value={restaurant.id} />
           <button
             type="submit"
-            className="h-9 rounded-full border border-hairline px-4 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-foreground active:scale-[0.95]"
+            className="h-9 rounded-full border border-hairline px-4 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-brand active:scale-[0.95]"
           >
             {t('issueInvite')}
           </button>

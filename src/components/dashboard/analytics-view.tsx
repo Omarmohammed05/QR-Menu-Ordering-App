@@ -40,13 +40,13 @@ export function AnalyticsView({series, topDishes, currency}: Props) {
           <div
             key={label}
             style={{animationDelay: `${index * 60}ms`}}
-            className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between gap-3 rounded-xl border border-hairline bg-surface p-4"
+            className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface shadow-card p-4"
           >
             <span className="flex min-w-0 flex-col gap-1">
               <span className="text-xs text-muted-foreground">{label}</span>
               <span className="truncate text-lg font-semibold tracking-tight">{value}</span>
             </span>
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-muted">
+            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-soft text-brand">
               {icon === 'views' ? (
                 <QrCodeIcon className="size-4" />
               ) : icon === 'orders' ? (
@@ -59,12 +59,12 @@ export function AnalyticsView({series, topDishes, currency}: Props) {
         ))}
       </div>
 
-      <section className="animate-fade-in flex flex-col gap-4 rounded-xl border border-hairline bg-surface p-5">
+      <section className="animate-fade-in flex flex-col gap-4 rounded-2xl border border-hairline bg-surface shadow-card p-5">
         <header className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-sm font-semibold">{t('chart.title')}</h2>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <span className="size-2 rounded-full bg-foreground" />
+              <span className="size-2 rounded-full bg-brand" />
               {t('chart.views')}
             </span>
             <span className="flex items-center gap-1.5">
@@ -82,7 +82,7 @@ export function AnalyticsView({series, topDishes, currency}: Props) {
               <div key={point.day} className="flex h-full flex-1 flex-col items-center justify-end gap-1.5">
                 <div className="flex h-36 w-full items-end justify-center gap-0.5" title={t('chart.tip', {views: point.views, orders: point.orders})}>
                   <span
-                    className="w-full max-w-2 rounded-t-sm bg-foreground"
+                    className="w-full max-w-2 rounded-t-sm bg-brand"
                     style={{height: point.views > 0 ? `${Math.max(4, (point.views / max) * 100)}%` : '0%'}}
                   />
                   <span
@@ -99,7 +99,7 @@ export function AnalyticsView({series, topDishes, currency}: Props) {
         )}
       </section>
 
-      <section className="animate-fade-in flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-5">
+      <section className="animate-fade-in flex flex-col gap-3 rounded-2xl border border-hairline bg-surface shadow-card p-5">
         <h2 className="text-sm font-semibold">{t('topDishes.title')}</h2>
         {topDishes.length === 0 ? (
           <p className="py-4 text-center text-xs text-muted-foreground">{t('topDishes.empty')}</p>

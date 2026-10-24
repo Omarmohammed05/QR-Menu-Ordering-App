@@ -21,7 +21,7 @@ export function CopyLinkButton({url}: {url: string}) {
           /* clipboard unavailable (http origin) — the URL is shown next to it */
         }
       }}
-      className="flex h-10 shrink-0 items-center gap-2 rounded-full border border-hairline bg-surface px-4 text-sm font-medium transition-colors hover:border-foreground print:hidden"
+      className="flex h-10 shrink-0 items-center gap-2 rounded-full border border-hairline bg-surface px-4 text-sm font-medium transition-colors hover:border-brand print:hidden"
     >
       {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
       {copied ? t('copied') : t('copyLink')}

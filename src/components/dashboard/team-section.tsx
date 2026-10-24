@@ -13,7 +13,7 @@ import {
 const ADD_INITIAL: AddMemberState = {};
 
 const inputClassName =
-  'h-10 min-w-0 flex-1 rounded-full border border-hairline bg-surface px-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground';
+  'h-10 min-w-0 flex-1 rounded-full border border-hairline bg-surface px-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand';
 
 export type TeamMemberView = {
   userId: string;
@@ -61,7 +61,7 @@ export function TeamSection({
     <div className="flex flex-col gap-6">
       {canManage ? (
         <section
-          className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+          className="animate-float-up [animation-fill-mode:backwards] rounded-2xl border border-hairline bg-surface shadow-card p-5 sm:p-6"
         >
           <h2 className="text-sm font-semibold">{t('add.title')}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{t('add.tagline')}</p>
@@ -92,7 +92,7 @@ export function TeamSection({
               <button
                 type="submit"
                 disabled={addPending}
-                className="h-10 shrink-0 rounded-full bg-foreground px-5 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
+                className="h-10 shrink-0 rounded-full bg-brand px-5 text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
               >
                 {addPending ? t('add.working') : t('add.submit')}
               </button>
@@ -108,7 +108,7 @@ export function TeamSection({
 
       <section
         style={{animationDelay: canManage ? '70ms' : '0ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+        className="animate-float-up [animation-fill-mode:backwards] rounded-2xl border border-hairline bg-surface shadow-card p-5 sm:p-6"
       >
         <h2 className="text-sm font-semibold">{t('list.title')}</h2>
         <p className="mt-1 text-xs text-muted-foreground">{t('list.tagline')}</p>
@@ -144,7 +144,7 @@ export function TeamSection({
                         formData.set('role', event.currentTarget.value);
                         runMutation(updateMemberRoleAction, formData);
                       }}
-                      className="h-8 rounded-full border border-hairline bg-surface px-2 text-xs outline-none transition-colors focus:border-foreground"
+                      className="h-8 rounded-full border border-hairline bg-surface px-2 text-xs outline-none transition-colors focus:border-brand"
                     >
                       {roles.map((role) => (
                         <option key={role} value={role}>
@@ -161,7 +161,7 @@ export function TeamSection({
                         formData.set('userId', member.userId);
                         runMutation(removeMemberAction, formData);
                       }}
-                      className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-colors hover:border-foreground disabled:opacity-50"
+                      className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-colors hover:border-brand disabled:opacity-50"
                     >
                       {t('remove')}
                     </button>

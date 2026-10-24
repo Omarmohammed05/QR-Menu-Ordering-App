@@ -73,7 +73,7 @@ export default async function DashboardDemoPage({params}: Props) {
           <div
             key={label}
             style={{animationDelay: `${index * 60}ms`}}
-            className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-xl border border-hairline bg-surface p-4"
+            className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-2xl border border-hairline bg-surface shadow-card p-4"
           >
             <span className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">{label}</span>
@@ -85,7 +85,7 @@ export default async function DashboardDemoPage({params}: Props) {
               ) : icon === 'orders' ? (
                 <OrdersIcon className="size-4" />
               ) : (
-                <span className="size-2 rounded-full bg-foreground" />
+                <span className="size-2 rounded-full bg-brand" />
               )}
             </span>
           </div>
@@ -103,11 +103,11 @@ export default async function DashboardDemoPage({params}: Props) {
             <section
               key={category.id}
               style={{animationDelay: `${(index + 1) * 70}ms`}}
-              className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-5"
+              className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-3 rounded-2xl border border-hairline bg-surface shadow-card p-5"
             >
               <h2 className="flex items-center gap-2 text-lg font-semibold">
                 {localizedName(currentLocale, category)}
-                <span className="rounded-full bg-foreground px-2 py-0.5 text-[11px] font-semibold leading-none text-background">
+                <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold leading-none text-white">
                   {formatNumber(categoryItems.length, currentLocale)}
                 </span>
               </h2>

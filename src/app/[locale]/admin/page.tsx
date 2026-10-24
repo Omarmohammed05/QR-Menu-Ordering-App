@@ -44,7 +44,7 @@ export default async function AdminPage({params}: Props) {
         </div>
         <Link
           href="/dashboard"
-          className="flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-hairline bg-surface px-4 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-foreground active:scale-[0.97]"
+          className="flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-hairline bg-surface px-4 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-brand active:scale-[0.97]"
         >
           <ChevronDownIcon className="size-4 rotate-90 rtl:-rotate-90" />
           {t('backToDashboard')}
@@ -59,7 +59,7 @@ export default async function AdminPage({params}: Props) {
         {stats.map(({label, value, icon}) => (
           <div
             key={label}
-            className="flex flex-col justify-between gap-3 rounded-xl border border-hairline bg-surface p-4 sm:p-5"
+            className="flex flex-col justify-between gap-3 rounded-2xl border border-hairline bg-surface shadow-card p-4 sm:p-5"
           >
             <span className="flex items-start justify-between gap-2">
               <span className="text-xs leading-relaxed text-muted-foreground">{label}</span>
@@ -76,7 +76,7 @@ export default async function AdminPage({params}: Props) {
 
       <section
         style={{animationDelay: '120ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+        className="animate-float-up [animation-fill-mode:backwards] rounded-2xl border border-hairline bg-surface shadow-card p-5 sm:p-6"
       >
         <div className="flex items-center gap-2.5">
           <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted">

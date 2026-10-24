@@ -1,31 +1,45 @@
 /*
- * Design tokens — strict monochrome (spec §14.1).
- * Light is default; `.dark` overrides. Only grays from the monochrome scale.
+ * Design tokens — warm orange brand system (D.CC reference).
+ * Light is default; `.dark` overrides. Surfaces stay neutral, the brand
+ * orange is the single accent family.
  */
 :root {
-  /* Surfaces */
-  --background: #ffffff;
+  /* Surfaces — light-gray canvas, white cards */
+  --background: #f5f5f5;
   --surface: #ffffff;
-  --surface-raised: #fafafa;
+  --surface-raised: #f5f5f5;
 
   /* Ink */
   --foreground: #000000;
   --muted: #f4f4f4;
-  --muted-foreground: #6e6e73;
+  --muted-foreground: #757575;
 
   /* Hairlines */
-  --hairline: #e6e6e6;
-  --hairline-strong: #c7c7cc;
+  --hairline: #e0e0e0;
+  --hairline-strong: #bdbdbd;
 
-  /* Destructive — the one non-monochrome exception (spec: cancel/error only) */
-  --destructive: #dc2626;
+  /* Brand — primary accent, gradient pair, and its soft tint */
+  --brand: #ff5722;
+  --brand-strong: #e64a19;
+  --brand-soft: #fff3e0;
+
+  /* Status */
+  --success: #28a745;
+  --warning: #ffc107;
+  --info: #3498db;
+
+  /* Destructive — errors and destructive actions only */
+  --destructive: #ff4d4f;
 
   /* Focus & overlays */
-  --focus: #000000;
+  --focus: #ff5722;
   --backdrop: rgb(0 0 0 / 0.4);
 
   /* Geometry */
   --radius: 12px;
+
+  /* Soft card shadow (D.CC cards: thin stroke + subtle lift) */
+  --shadow-card: 0 2px 12px rgb(0 0 0 / 0.07);
 
   /* Type: Geist renders Latin; Arabic codepoints fall through to IBM Plex Sans Arabic */
   --font-sans: var(--font-geist-sans), var(--font-plex-arabic), ui-sans-serif, system-ui,
@@ -34,19 +48,27 @@
 }
 
 .dark {
-  --background: #000000;
-  --surface: #000000;
-  --surface-raised: #1c1c1e;
+  --background: #141210;
+  --surface: #1c1917;
+  --surface-raised: #141210;
 
   --foreground: #ffffff;
-  --muted: #111111;
-  --muted-foreground: #98989d;
+  --muted: #262220;
+  --muted-foreground: #a3a3a3;
 
-  --hairline: #2c2c2e;
-  --hairline-strong: #48484a;
+  --hairline: #33302e;
+  --hairline-strong: #4a4644;
 
-  --destructive: #ef4444;
+  --brand: #ff6b36;
+  --brand-strong: #ff8c5a;
+  --brand-soft: rgb(255 107 54 / 0.14);
 
-  --focus: #ffffff;
+  --success: #28a745;
+  --warning: #ffc107;
+  --info: #3498db;
+
+  --destructive: #ff4d4f;
+
+  --focus: #ff6b36;
   --backdrop: rgb(0 0 0 / 0.6);
 }

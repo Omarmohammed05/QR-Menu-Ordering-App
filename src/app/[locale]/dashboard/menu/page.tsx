@@ -52,7 +52,7 @@ export default async function MenuManagementPage({params}: Props) {
           <div
             key={label}
             style={{animationDelay: `${index * 60}ms`}}
-            className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-xl border border-hairline bg-surface p-4"
+            className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-2xl border border-hairline bg-surface shadow-card p-4"
           >
             <span className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">{label}</span>
@@ -64,7 +64,7 @@ export default async function MenuManagementPage({params}: Props) {
               ) : icon === 'orders' ? (
                 <OrdersIcon className="size-4" />
               ) : (
-                <span className="size-2 rounded-full bg-foreground" />
+                <span className="size-2 rounded-full bg-brand" />
               )}
             </span>
           </div>
@@ -72,7 +72,7 @@ export default async function MenuManagementPage({params}: Props) {
       </div>
 
       {/* New section */}
-      <section className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-4 rounded-xl border border-hairline bg-surface p-5">
+      <section className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-4 rounded-2xl border border-hairline bg-surface shadow-card p-5">
         <h2 className="text-base font-semibold">{t('addCategoryTitle')}</h2>
         <AddCategoryForm locale={locale} />
       </section>
@@ -88,17 +88,17 @@ export default async function MenuManagementPage({params}: Props) {
             <section
               key={category.id}
               style={{animationDelay: `${(index + 1) * 70}ms`}}
-              className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-5"
+              className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-3 rounded-2xl border border-hairline bg-surface shadow-card p-5"
             >
               <details>
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
                   <h2 className="flex items-center gap-2 text-lg font-semibold">
                     {category.nameAr}
-                    <span className="rounded-full bg-foreground px-2 py-0.5 text-[11px] font-semibold leading-none text-background">
+                    <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold leading-none text-white">
                       {formatNumber(categoryItems.length, locale)}
                     </span>
                   </h2>
-                  <span className="shrink-0 rounded-full border border-hairline px-3 py-1.5 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-foreground active:scale-[0.98]">
+                  <span className="shrink-0 rounded-full border border-hairline px-3 py-1.5 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-brand active:scale-[0.98]">
                     {t('edit')}
                   </span>
                 </summary>
@@ -175,7 +175,7 @@ export default async function MenuManagementPage({params}: Props) {
                           />
                           <button
                             type="submit"
-                            className="rounded-full border border-hairline px-3 py-1 text-[11px] font-medium transition-[transform,border-color] duration-100 hover:border-foreground active:scale-[0.98]"
+                            className="rounded-full border border-hairline px-3 py-1 text-[11px] font-medium transition-[transform,border-color] duration-100 hover:border-brand active:scale-[0.98]"
                           >
                             {item.isAvailable ? t('hide') : t('show')}
                           </button>

@@ -8,7 +8,6 @@ import {SignOutButton} from '@/components/auth/sign-out-button';
 import {RestaurantSwitcher} from '@/components/dashboard/restaurant-switcher';
 import {
   ChartIcon,
-  CloudIcon,
   CloseIcon,
   LogoGlyphIcon,
   MenuBarsIcon,
@@ -24,6 +23,7 @@ type Props = {
   restaurantName: string;
   restaurants: {id: string; nameAr: string}[];
   activeRestaurantId: string;
+  userName: string;
   userEmail: string;
   /** Platform owner sees the admin link — sign-up is closed, only they creates restaurants. */
   showAdmin?: boolean;
@@ -41,6 +41,7 @@ export function DashboardShell({
   restaurantName,
   restaurants,
   activeRestaurantId,
+  userName,
   userEmail,
   showAdmin = false,
   children
@@ -60,19 +61,22 @@ export function DashboardShell({
     {href: '/dashboard/analytics', label: t('nav.analytics'), icon: <ChartIcon className="size-[18px]" />},
     {href: '/dashboard/menu', label: t('nav.menu'), icon: <MenuBookIcon className="size-[18px]" />},
     {href: '/dashboard/tables', label: t('nav.tables'), icon: <QrCodeIcon className="size-[18px]" />},
-    {href: '/dashboard/team', label: t('nav.team'), icon: <PersonIcon className="size-[18px]" />},
-    {href: '/dashboard/settings', label: t('nav.settings'), icon: <SettingsIcon className="size-[18px]" />}
+    {href: '/dashboard/team', label: t('nav.team'), icon: <PersonIcon className="size-[18px]" />}
   ];
   if (showAdmin) {
     nav.push({href: '/admin', label: t('nav.admin'), icon: <StoreIcon className="size-[18px]" />});
   }
+  // "Others" group sits under the main menu (D.CC sidebar reference)
+  const others: NavItem[] = [
+    {href: '/dashboard/settings', label: t('nav.settings'), icon: <SettingsIcon className="size-[18px]" />}
+  ];
 
   const isActive = (href: string) =>
     href === '/dashboard' ? pathname === href : pathname.startsWith(href);
 
   const brandBlock = (
     <div className="flex h-16 shrink-0 items-center gap-3 border-b border-hairline px-5">
-      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-foreground text-background">
+      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-brand text-white">
         <LogoGlyphIcon className="size-[18px]" />
       </span>
       <span className="flex min-w-0 flex-col">
@@ -84,9 +88,9 @@ export function DashboardShell({
     </div>
   );
 
-  const navList = (onNavigate?: () => void) => (
+  const navList = (items: NavItem[], onNavigate?: () => void) => (
     <nav className="flex flex-col gap-1 px-3 py-2" aria-label={t('shell.mainMenu')}>
-      {nav.map(({href, label, icon}) => {
+      {items.map(({href, label, icon}) => {
         const active = isActive(href);
         return (
           <Link
@@ -94,9 +98,9 @@ export function DashboardShell({
             href={href}
             onClick={onNavigate}
             aria-current={active ? 'page' : undefined}
-            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2 text-sm transition-[transform,background-color,color] duration-100 active:scale-[0.98] ${
+            className={`flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm transition-[transform,background-color,color] duration-100 active:scale-[0.98] ${
               active
-                ? 'bg-foreground font-medium text-background'
+                ? 'brand-gradient font-medium text-white shadow-[0_6px_16px_rgba(255,87,34,0.35)]'
                 : 'text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
           >
@@ -108,17 +112,31 @@ export function DashboardShell({
     </nav>
   );
 
-  const connectionCard = (
-    <div className="p-4">
-      <div className="flex items-center justify-between rounded-lg border border-hairline bg-muted p-3">
-        <span className="flex flex-col">
-          <span className="text-[11px] text-muted-foreground">{t('shell.connectionLabel')}</span>
-          <span className="mt-0.5 flex items-center gap-1.5 text-sm font-semibold">
-            <span className="inline-block size-2 rounded-full bg-foreground" />
-            {t('shell.connected')}
+  // "Others" group sits under the main menu (D.CC sidebar reference)
+  const othersList = (onNavigate?: () => void) => (
+    <div className="flex flex-col">
+      <p className="px-5 pt-4 text-[11px] text-muted-foreground">{t('shell.others')}</p>
+      {navList(others, onNavigate)}
+    </div>
+  );
+
+  // Sidebar footer — user profile card (D.CC reference: avatar, name, role, action)
+  const profileCard = (
+    <div className="border-t border-hairline p-4">
+      <div className="flex items-center gap-3 rounded-xl bg-muted/60 p-3">
+        <span className="grid size-10 shrink-0 place-items-center rounded-full brand-gradient text-sm font-semibold text-white">
+          {(userName.trim()[0] ?? '?').toUpperCase()}
+        </span>
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className="truncate text-sm font-semibold leading-tight">{userName}</span>
+          <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <span className="inline-block size-1.5 rounded-full bg-success" />
+            {t('shell.roleOwner')}
           </span>
         </span>
-        <CloudIcon className="size-5" />
+      </div>
+      <div className="mt-2 flex justify-end">
+        <SignOutButton />
       </div>
     </div>
   );
@@ -130,9 +148,10 @@ export function DashboardShell({
         <div className="flex flex-col">
           {brandBlock}
           <p className="px-5 pt-4 text-[11px] text-muted-foreground">{t('shell.mainMenu')}</p>
-          {navList()}
+          {navList(nav)}
+          {othersList()}
         </div>
-        {connectionCard}
+        {profileCard}
       </aside>
 
       {/* Mobile drawer — enters/exits along its start-side path (globals.css) */}
@@ -168,9 +187,10 @@ export function DashboardShell({
                   <CloseIcon className="size-5" />
                 </button>
               </div>
-              {navList(closeDrawer)}
+              {navList(nav, closeDrawer)}
+              {othersList(closeDrawer)}
             </div>
-            {connectionCard}
+            {profileCard}
           </div>
         </div>
       ) : null}

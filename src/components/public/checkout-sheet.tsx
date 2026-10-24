@@ -136,7 +136,7 @@ export function CheckoutSheet({
                     <label
                       key={method}
                       className={`flex cursor-pointer items-center justify-center rounded-full px-3 py-2 text-sm transition-[transform,background-color] duration-100 active:scale-[0.98] ${
-                        selected ? 'bg-foreground font-medium text-background' : 'text-muted-foreground'
+                        selected ? 'bg-brand font-medium text-white' : 'text-muted-foreground'
                       }`}
                     >
                       <input
@@ -203,7 +203,7 @@ export function CheckoutSheet({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-base bg-foreground px-4 py-3 text-sm font-medium text-background transition-transform duration-100 active:scale-[0.99] disabled:opacity-50"
+            className="brand-gradient rounded-xl px-4 py-3 text-sm font-medium text-white shadow-[0_6px_16px_rgba(255,87,34,0.35)] transition-transform duration-100 active:scale-[0.99] disabled:opacity-50"
           >
             {pending ? t('working') : t('sendOnWhatsApp')}
           </button>

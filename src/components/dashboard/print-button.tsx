@@ -10,7 +10,7 @@ export function PrintButton() {
     <button
       type="button"
       onClick={() => window.print()}
-      className="flex h-10 items-center gap-2 rounded-full border border-hairline bg-surface px-4 text-sm font-medium transition-colors hover:border-foreground print:hidden"
+      className="flex h-10 items-center gap-2 rounded-full border border-hairline bg-surface px-4 text-sm font-medium transition-colors hover:border-brand print:hidden"
     >
       <PrinterIcon className="size-4" />
       {t('printAll')}

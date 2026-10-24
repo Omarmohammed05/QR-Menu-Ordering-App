@@ -37,7 +37,7 @@ export default async function SettingsPage({params}: Props) {
 
       <section
         style={{animationDelay: '0ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+        className="animate-float-up [animation-fill-mode:backwards] rounded-2xl border border-hairline bg-surface shadow-card p-5 sm:p-6"
       >
         <h2 className="text-sm font-semibold">{t('profile.title')}</h2>
         <p className="mt-1 text-xs text-muted-foreground">{t('profile.tagline')}</p>
@@ -58,7 +58,7 @@ export default async function SettingsPage({params}: Props) {
 
       <section
         style={{animationDelay: '70ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+        className="animate-float-up [animation-fill-mode:backwards] rounded-2xl border border-hairline bg-surface shadow-card p-5 sm:p-6"
       >
         <h2 className="text-sm font-semibold">{t('branch.title')}</h2>
         <p className="mt-1 text-xs text-muted-foreground">{t('branch.tagline')}</p>
@@ -67,7 +67,7 @@ export default async function SettingsPage({params}: Props) {
 
       <section
         style={{animationDelay: '140ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+        className="animate-float-up [animation-fill-mode:backwards] rounded-2xl border border-hairline bg-surface shadow-card p-5 sm:p-6"
       >
         <h2 className="text-sm font-semibold">{t('addresses.title')}</h2>
         <p className="mt-1 text-xs text-muted-foreground">{t('addresses.tagline')}</p>
@@ -79,7 +79,7 @@ export default async function SettingsPage({params}: Props) {
 
       <section
         style={{animationDelay: '210ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+        className="animate-float-up [animation-fill-mode:backwards] rounded-2xl border border-hairline bg-surface shadow-card p-5 sm:p-6"
       >
         <h2 className="text-sm font-semibold">{t('hours.title')}</h2>
         <p className="mt-1 text-xs text-muted-foreground">{t('hours.tagline')}</p>
@@ -96,7 +96,7 @@ export default async function SettingsPage({params}: Props) {
 
       <section
         style={{animationDelay: '280ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+        className="animate-float-up [animation-fill-mode:backwards] rounded-2xl border border-hairline bg-surface shadow-card p-5 sm:p-6"
       >
         <h2 className="text-sm font-semibold">{t('info.title')}</h2>
         <dl className="mt-4 flex flex-col divide-y divide-hairline border-t border-hairline pt-1 text-sm">

@@ -8,7 +8,7 @@ import {updateBranchInfoAction, type UpdateBranchInfoState} from '@/server/actio
 const INITIAL_STATE: UpdateBranchInfoState = {};
 
 const selectClassName =
-  'h-10 w-full rounded-full border border-hairline bg-surface px-4 text-sm text-foreground outline-none transition-colors focus:border-foreground';
+  'h-10 w-full rounded-full border border-hairline bg-surface px-4 text-sm text-foreground outline-none transition-colors focus:border-brand';
 
 /**
  * Branch preferences: the timezone every opening-hours check runs in, and
@@ -62,7 +62,7 @@ export function BranchInfoForm({
         <button
           type="submit"
           disabled={pending}
-          className="h-10 rounded-full bg-foreground px-5 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
+          className="h-10 rounded-full bg-brand px-5 text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
         >
           {pending ? t('working') : t('save')}
         </button>

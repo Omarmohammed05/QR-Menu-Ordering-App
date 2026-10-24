@@ -92,7 +92,7 @@ export function ImageUpload({value, name, rounded = 'lg', onUploaded, persist}: 
             type="button"
             disabled={busy}
             onClick={() => fileRef.current?.click()}
-            className="rounded-full border border-hairline px-3 py-1.5 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-foreground active:scale-[0.98] disabled:opacity-50"
+            className="rounded-full border border-hairline px-3 py-1.5 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-brand active:scale-[0.98] disabled:opacity-50"
           >
             {busy ? t('uploading') : url ? t('change') : t('upload')}
           </button>

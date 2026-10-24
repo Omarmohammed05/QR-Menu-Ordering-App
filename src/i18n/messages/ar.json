@@ -283,7 +283,9 @@
       "connectionLabel": "حالة الاتصال",
       "systemTagline": "نظام إدارة المطعم",
       "openMenu": "فتح القائمة",
-      "closeMenu": "إغلاق القائمة"
+      "closeMenu": "إغلاق القائمة",
+      "others": "أخرى",
+      "roleOwner": "مالك"
     },
     "team": {
       "title": "الفريق",

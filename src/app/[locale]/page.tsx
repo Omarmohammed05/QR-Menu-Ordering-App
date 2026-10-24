@@ -14,7 +14,7 @@ export default function Page() {
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center">
-      <span className="rounded-full border border-hairline px-3 py-1 text-xs tracking-wide text-muted-foreground">
+      <span className="rounded-full bg-brand-soft px-3 py-1 text-xs font-medium tracking-wide text-brand-strong">
         {t('badge')}
       </span>
       <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{t('title')}</h1>
@@ -22,19 +22,19 @@ export default function Page() {
       <div className="mt-2 flex flex-col items-center gap-3 sm:flex-row">
         <Link
           href="/demo"
-          className="rounded-base border border-hairline px-5 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
+          className="rounded-xl border border-hairline bg-surface px-5 py-2.5 text-sm font-medium shadow-card transition-colors hover:border-brand hover:text-brand"
         >
           {t('demo')}
         </Link>
         <Link
           href="/dashboard-demo"
-          className="rounded-base border border-hairline px-5 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
+          className="rounded-xl border border-hairline bg-surface px-5 py-2.5 text-sm font-medium shadow-card transition-colors hover:border-brand hover:text-brand"
         >
           {t('demoDashboard')}
         </Link>
         <Link
           href="/login"
-          className="rounded-base bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98]"
+          className="brand-gradient rounded-xl px-5 py-2.5 text-sm font-medium text-white shadow-[0_6px_16px_rgba(255,87,34,0.35)] transition-[transform] duration-100 active:scale-[0.98]"
         >
           {t('login')}
         </Link>

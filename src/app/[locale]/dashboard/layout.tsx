@@ -25,6 +25,7 @@ export default async function DashboardLayout({children, params}: Props) {
         nameAr: m.restaurant.nameAr
       }))}
       activeRestaurantId={membership.restaurant.id}
+      userName={session.user.name}
       userEmail={session.user.email}
       showAdmin={isPlatformOwner(session.user.email)}
     >

@@ -27,6 +27,15 @@ const POLL_MS = 15_000;
 /** Board columns in workflow order; cancelled orders stay off the board. */
 const COLUMNS: OrderStatus[] = ['pending', 'accepted', 'ready', 'completed'];
 
+/** Column status dots (D.CC status palette: orange → blue → amber → green). */
+const STATUS_DOT: Record<OrderStatus, string> = {
+  pending: 'bg-brand',
+  accepted: 'bg-info',
+  ready: 'bg-warning',
+  completed: 'bg-success',
+  cancelled: 'bg-destructive'
+};
+
 /** Compacts elapsed time into the design's "منذ ٣ د" label. */
 function timeAgo(date: Date, t: ReturnType<typeof useTranslations>, locale: string): string {
   const minutes = Math.max(0, Math.floor((Date.now() - date.getTime()) / 60_000));
@@ -105,7 +114,7 @@ export function OrdersBoard({orders, tableLabels, currency}: Props) {
   return (
     <div className="flex flex-col gap-6">
       {/* Filter & search deck */}
-      <div className="animate-fade-in flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="animate-fade-in flex flex-col gap-3 rounded-2xl border border-hairline bg-surface shadow-card p-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0" role="group">
           {chips.map(({key, label}) => {
             const selected = channel === key;
@@ -117,14 +126,14 @@ export function OrdersBoard({orders, tableLabels, currency}: Props) {
                 aria-pressed={selected}
                 className={`flex h-9 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm transition-[transform] duration-100 active:scale-[0.98] ${
                   selected
-                    ? 'bg-foreground text-background'
+                    ? 'bg-brand text-white'
                     : 'bg-muted text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {label}
                 <span
                   className={`rounded-full px-1.5 py-0.5 text-[11px] font-semibold leading-none ${
-                    selected ? 'bg-background/20' : 'bg-background'
+                    selected ? 'bg-white/20' : 'bg-background'
                   }`}
                 >
                   {channelCounts[key]}
@@ -141,7 +150,7 @@ export function OrdersBoard({orders, tableLabels, currency}: Props) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t('searchPlaceholder')}
-              className="h-9 w-full rounded-lg border border-hairline bg-surface ps-9 pe-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+              className="h-9 w-full rounded-lg border border-hairline bg-surface ps-9 pe-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-brand"
             />
           </div>
           <button
@@ -166,12 +175,12 @@ export function OrdersBoard({orders, tableLabels, currency}: Props) {
             <header className="flex items-center justify-between gap-2 px-1">
               <div className="flex items-center gap-2">
                 <span
-                  className={`size-2.5 rounded-full bg-foreground ${
+                  className={`size-2.5 rounded-full ${STATUS_DOT[status]} ${
                     status === 'pending' ? 'motion-safe:animate-pulse' : ''
                   }`}
                 />
                 <h2 className="text-sm font-semibold">{t(`board.${status}`)}</h2>
-                <span className="rounded-full bg-foreground px-2 py-0.5 text-[11px] font-semibold leading-none text-background">
+                <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold leading-none text-white">
                   {countFor(status)}
                 </span>
               </div>
@@ -222,12 +231,12 @@ function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
 
   return (
     <article
-      className={`animate-float-up [animation-fill-mode:backwards] relative flex flex-col gap-2.5 overflow-hidden rounded-xl border border-hairline bg-surface p-4 transition-[transform,border-color,box-shadow] duration-100 hover:border-hairline-strong hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
+      className={`animate-float-up [animation-fill-mode:backwards] relative flex flex-col gap-2.5 overflow-hidden rounded-2xl border border-hairline bg-surface shadow-card p-4 transition-[transform,border-color,box-shadow] duration-100 hover:border-hairline-strong hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
         isDone ? 'opacity-70' : ''
       }`}
     >
       {order.status === 'pending' ? (
-        <span className="absolute inset-y-0 start-0 w-1 bg-foreground" />
+        <span className="absolute inset-y-0 start-0 w-1 bg-brand" />
       ) : null}
       <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
@@ -316,7 +325,7 @@ function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
                     maxLength={200}
                     required
                     placeholder={t('cancelReasonPlaceholder')}
-                    className="h-10 min-w-0 flex-1 rounded-full border border-hairline bg-surface px-4 text-sm outline-none placeholder:text-muted-foreground focus:border-foreground"
+                    className="h-10 min-w-0 flex-1 rounded-full border border-hairline bg-surface px-4 text-sm outline-none placeholder:text-muted-foreground focus:border-brand"
                   />
                   <button
                     type="submit"
@@ -343,7 +352,7 @@ function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
               <input type="hidden" name="status" value={next} />
               <button
                 type="submit"
-                className="h-10 w-full rounded-full bg-foreground text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] active:opacity-90"
+                className="h-10 w-full rounded-full bg-brand text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98] active:opacity-90"
               >
                 {t(`action.${next}`)}
               </button>

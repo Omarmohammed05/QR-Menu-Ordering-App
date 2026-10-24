@@ -13,7 +13,7 @@ export async function ContactAdminCard() {
   const whatsappUrl = contactAdminUrl(t('prefilled'));
 
   return (
-    <div className="flex flex-col items-center gap-4 rounded-xl border border-hairline bg-surface p-8 text-center">
+    <div className="flex flex-col items-center gap-4 rounded-2xl border border-hairline bg-surface shadow-card p-8 text-center">
       <span className="grid size-12 place-items-center rounded-full bg-muted text-muted-foreground">
         <StoreIcon className="size-6" />
       </span>
@@ -25,7 +25,7 @@ export async function ContactAdminCard() {
         href={whatsappUrl}
         target="_blank"
         rel="noreferrer"
-        className="flex h-11 items-center gap-2 rounded-full bg-foreground px-5 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98]"
+        className="flex h-11 items-center gap-2 rounded-full bg-brand px-5 text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98]"
       >
         <WhatsAppIcon className="size-4" />
         {t('button')}

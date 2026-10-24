@@ -22,7 +22,7 @@ export function AddCategoryForm({locale}: {locale: string}) {
           name="nameAr"
           required
           autoComplete="off"
-          className="rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+          className="rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand"
         />
       </label>
       {error ? (
@@ -33,7 +33,7 @@ export function AddCategoryForm({locale}: {locale: string}) {
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded-base bg-foreground px-4 py-2.5 text-base font-medium text-background transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
+        className="self-start rounded-base bg-brand px-4 py-2.5 text-base font-medium text-white transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
       >
         {pending ? t('working') : t('createCategory')}
       </button>

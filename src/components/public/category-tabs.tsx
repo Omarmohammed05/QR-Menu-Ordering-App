@@ -74,7 +74,7 @@ export function CategoryTabs({categories}: Props) {
               aria-current={isActive ? 'true' : undefined}
               className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm transition-colors duration-100 ${
                 isActive
-                  ? 'bg-foreground font-medium text-background'
+                  ? 'brand-gradient font-medium text-white shadow-[0_4px_12px_rgba(255,87,34,0.35)]'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >

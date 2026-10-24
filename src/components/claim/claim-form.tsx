@@ -7,7 +7,7 @@ import {claimInviteAction, type ClaimState} from '@/server/actions/claim';
 const INITIAL_STATE: ClaimState = {};
 
 const inputClassName =
-  'rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-foreground';
+  'rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-brand';
 
 /**
  * Invite claim: code + the owner's details. One code creates exactly one
@@ -75,7 +75,7 @@ export function ClaimForm({locale, initialCode}: {locale: string; initialCode: s
       <button
         type="submit"
         disabled={pending}
-        className="mt-1 rounded-base bg-foreground px-4 py-2.5 text-base font-medium text-background transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
+        className="mt-1 rounded-base bg-brand px-4 py-2.5 text-base font-medium text-white transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
       >
         {pending ? t('working') : t('submit')}
       </button>

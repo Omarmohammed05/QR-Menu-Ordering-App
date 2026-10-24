@@ -40,7 +40,7 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
             {localizedDescription(locale, item)}
           </span>
         ) : null}
-        <span className="mt-1 text-sm font-medium tabular-nums">{priceLabel}</span>
+        <span className="mt-1 text-sm font-semibold text-brand-strong tabular-nums">{priceLabel}</span>
       </div>
 
       {quantity === 0 ? (
@@ -48,7 +48,7 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
           type="button"
           onClick={onIncrement}
           aria-label={`${t('add')} ${localizedName(locale, item)}`}
-          className="grid size-10 shrink-0 place-items-center rounded-full border border-hairline-strong transition duration-100 hover:bg-muted active:scale-95"
+          className="grid size-10 shrink-0 place-items-center rounded-full border border-hairline-strong text-brand transition duration-100 hover:border-brand hover:bg-brand-soft active:scale-95"
         >
           <PlusIcon className="size-4" />
         </button>
@@ -56,13 +56,13 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
         <div
           role="group"
           aria-label={t('quantity')}
-          className="animate-pop-in flex shrink-0 items-center gap-0.5 rounded-full bg-foreground p-0.5 text-background"
+          className="animate-pop-in flex shrink-0 items-center gap-0.5 rounded-full bg-brand p-0.5 text-white"
         >
           <button
             type="button"
             onClick={onDecrement}
             aria-label={t('decrease')}
-            className="grid size-9 place-items-center rounded-full transition duration-100 hover:bg-background/10 active:scale-90"
+            className="grid size-9 place-items-center rounded-full transition duration-100 hover:bg-white/10 active:scale-90"
           >
             <MinusIcon className="size-4" />
           </button>
@@ -73,7 +73,7 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
             type="button"
             onClick={onIncrement}
             aria-label={t('increase')}
-            className="grid size-9 place-items-center rounded-full transition duration-100 hover:bg-background/10 active:scale-90"
+            className="grid size-9 place-items-center rounded-full transition duration-100 hover:bg-white/10 active:scale-90"
           >
             <PlusIcon className="size-4" />
           </button>

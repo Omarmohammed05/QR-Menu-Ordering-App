@@ -129,7 +129,7 @@ export function MenuView({menu, tableToken}: Props) {
           </div>
         </>
       ) : (
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-hairline bg-surface px-6 py-14 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-hairline bg-surface shadow-card px-6 py-14 text-center">
           <span className="grid size-12 place-items-center rounded-full bg-muted text-muted-foreground">
             <MenuBookIcon className="size-6" />
           </span>

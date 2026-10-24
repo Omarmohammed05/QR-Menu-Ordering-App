@@ -68,7 +68,7 @@ export default async function PublicMenuPage({params, searchParams}: Props) {
             className="size-12 rounded-xl object-cover"
           />
         ) : (
-          <span className="grid size-12 place-items-center rounded-xl bg-foreground text-background">
+          <span className="grid size-12 place-items-center rounded-xl bg-brand text-white">
             <StoreIcon className="size-6" />
           </span>
         )}
@@ -90,7 +90,7 @@ export default async function PublicMenuPage({params, searchParams}: Props) {
           >
             <span
               className={`size-1.5 rounded-full ${
-                menu.isOpen ? 'bg-foreground' : 'bg-muted-foreground'
+                menu.isOpen ? 'bg-brand' : 'bg-muted-foreground'
               }`}
             />
             {tMenu(menu.isOpen ? 'openNow' : 'closedNow')}

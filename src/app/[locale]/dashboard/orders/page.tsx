@@ -63,7 +63,7 @@ export default async function OrdersPage({params}: Props) {
           <div
             key={label}
             style={{animationDelay: `${index * 60}ms`}}
-            className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-xl border border-hairline bg-surface p-4"
+            className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-2xl border border-hairline bg-surface shadow-card p-4"
           >
             <span className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">{label}</span>
@@ -71,7 +71,7 @@ export default async function OrdersPage({params}: Props) {
             </span>
             <span className="grid size-9 shrink-0 place-items-center rounded-full bg-muted">
               {icon === 'pulse' ? (
-                <span className="size-2 rounded-full bg-foreground motion-safe:animate-pulse" />
+                <span className="size-2 rounded-full bg-brand motion-safe:animate-pulse" />
               ) : icon === 'check' ? (
                 <CheckIcon className="size-4" />
               ) : icon === 'clock' ? (

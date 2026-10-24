@@ -22,12 +22,12 @@ export function CreateTableForm({locale}: {locale: string}) {
             required
             autoComplete="off"
             placeholder={t('labelPlaceholder')}
-            className="h-10 min-w-0 flex-1 rounded-full border border-hairline bg-surface px-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+            className="h-10 min-w-0 flex-1 rounded-full border border-hairline bg-surface px-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand"
           />
           <button
             type="submit"
             disabled={pending}
-            className="h-10 shrink-0 rounded-full bg-foreground px-5 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
+            className="h-10 shrink-0 rounded-full bg-brand px-5 text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
           >
             {pending ? t('working') : t('create')}
           </button>

@@ -46,7 +46,7 @@ export default async function OrderStatusPage({params}: Props) {
       <header className="flex flex-col gap-4">
         <Link
           href={publicMenuPath(restaurant.slug, routeLocale)}
-          className="flex items-center gap-1.5 self-start rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium transition-colors hover:border-foreground"
+          className="flex items-center gap-1.5 self-start rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium transition-colors hover:border-brand"
         >
           <ChevronDownIcon className="size-3.5 rotate-90 rtl:-rotate-90" />
           {t('backToMenu')}
@@ -56,7 +56,7 @@ export default async function OrderStatusPage({params}: Props) {
             // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image
             <img src={restaurant.logoUrl} alt={localizedName(routeLocale, restaurant)} className="size-10 rounded-xl object-cover" />
           ) : (
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-foreground text-background">
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand text-white">
               <StoreIcon className="size-5" />
             </span>
           )}
@@ -74,13 +74,13 @@ export default async function OrderStatusPage({params}: Props) {
       <OrderStatusLive slug={restaurant.slug} publicId={order.order.publicId} initialStatus={order.order.status} />
 
       {cancelledWithReason ? (
-        <p className="rounded-xl border border-hairline bg-surface px-4 py-3 text-sm text-muted-foreground">
+        <p className="rounded-2xl border border-hairline bg-surface shadow-card px-4 py-3 text-sm text-muted-foreground">
           {cancelledWithReason}
         </p>
       ) : null}
 
       {/* The receipt: snapshotted lines — immune to later menu edits */}
-      <section className="flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-5">
+      <section className="flex flex-col gap-3 rounded-2xl border border-hairline bg-surface shadow-card p-5">
         <h2 className="text-sm font-semibold">{t('items')}</h2>
         <ul className="flex flex-col divide-y divide-hairline text-sm">
           {order.items.map((line) => (
@@ -106,14 +106,14 @@ export default async function OrderStatusPage({params}: Props) {
       </section>
 
       {/* The audit trail the dashboard wrote — times in the restaurant's zone */}
-      <section className="flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-5">
+      <section className="flex flex-col gap-3 rounded-2xl border border-hairline bg-surface shadow-card p-5">
         <h2 className="text-sm font-semibold">{t('timeline')}</h2>
         <ul className="flex flex-col gap-2.5">
           {order.events.map((event) => (
             <li key={event.id} className="flex items-center gap-2.5 text-sm">
               <span
                 className={`size-1.5 shrink-0 rounded-full ${
-                  event.toStatus === 'cancelled' ? 'bg-muted-foreground' : 'bg-foreground'
+                  event.toStatus === 'cancelled' ? 'bg-muted-foreground' : 'bg-brand'
                 }`}
               />
               <span className="font-medium">{t(`steps.${event.toStatus}`)}</span>

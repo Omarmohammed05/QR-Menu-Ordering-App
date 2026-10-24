@@ -69,7 +69,7 @@ export function OrderStatusLive({slug, publicId, initialStatus}: Props) {
   const cancelled = status === 'cancelled';
 
   return (
-    <section className="flex flex-col gap-4 rounded-xl border border-hairline bg-surface p-5">
+    <section className="flex flex-col gap-4 rounded-2xl border border-hairline bg-surface shadow-card p-5">
       {/* Progress spine: dots connected by a hairline, current step filled */}
       <div aria-hidden className="flex items-center gap-1.5">
         {STEPS.map((step, index) => {
@@ -78,14 +78,14 @@ export function OrderStatusLive({slug, publicId, initialStatus}: Props) {
             <span key={step} className="flex flex-1 items-center gap-1.5">
               <span
                 className={`grid size-6 shrink-0 place-items-center rounded-full border transition-colors duration-200 ${
-                  reached ? 'border-foreground bg-foreground text-background' : 'border-hairline'
+                  reached ? 'border-brand bg-brand text-white' : 'border-hairline'
                 }`}
               >
                 {reached ? <CheckIcon className="size-3.5" /> : null}
               </span>
               {index < STEPS.length - 1 ? (
                 <span
-                  className={`h-px flex-1 ${!cancelled && stepIndex > index ? 'bg-foreground' : 'bg-hairline'}`}
+                  className={`h-px flex-1 ${!cancelled && stepIndex > index ? 'bg-brand' : 'bg-hairline'}`}
                 />
               ) : null}
             </span>
@@ -116,7 +116,7 @@ export function OrderStatusLive({slug, publicId, initialStatus}: Props) {
             href={whatsappUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex h-11 items-center justify-center gap-2 rounded-full bg-foreground text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98]"
+            className="flex h-11 items-center justify-center gap-2 rounded-full bg-brand text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98]"
           >
             <WhatsAppIcon className="size-4" />
             {t('openWhatsApp')}

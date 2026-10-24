@@ -12,7 +12,7 @@ import {
 const INITIAL_STATE: AddressMutationState = {};
 
 const inputClassName =
-  'h-10 min-w-0 flex-1 rounded-full border border-hairline bg-surface px-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground';
+  'h-10 min-w-0 flex-1 rounded-full border border-hairline bg-surface px-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand';
 
 export type BranchAddress = {id: string; label: string; address: string};
 
@@ -66,7 +66,7 @@ export function AddressesSection({locale, addresses}: {locale: string; addresses
           <button
             type="submit"
             disabled={addPending}
-            className="h-10 shrink-0 rounded-full bg-foreground px-5 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
+            className="h-10 shrink-0 rounded-full bg-brand px-5 text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
           >
             {addPending ? t('working') : t('add')}
           </button>
@@ -117,14 +117,14 @@ export function AddressesSection({locale, addresses}: {locale: string; addresses
                     <button
                       type="submit"
                       disabled={editPending}
-                      className="h-9 rounded-full bg-foreground px-4 text-xs font-medium text-background transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
+                      className="h-9 rounded-full bg-brand px-4 text-xs font-medium text-white transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
                     >
                       {editPending ? t('working') : t('save')}
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditingId(null)}
-                      className="h-9 rounded-full border border-hairline px-4 text-xs font-medium transition-colors hover:border-foreground"
+                      className="h-9 rounded-full border border-hairline px-4 text-xs font-medium transition-colors hover:border-brand"
                     >
                       {t('cancel')}
                     </button>
@@ -140,7 +140,7 @@ export function AddressesSection({locale, addresses}: {locale: string; addresses
                     <button
                       type="button"
                       onClick={() => setEditingId(entry.id)}
-                      className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-colors hover:border-foreground"
+                      className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-colors hover:border-brand"
                     >
                       {t('edit')}
                     </button>
@@ -149,7 +149,7 @@ export function AddressesSection({locale, addresses}: {locale: string; addresses
                       <input type="hidden" name="addressId" value={entry.id} />
                       <button
                         type="submit"
-                        className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-colors hover:border-foreground"
+                        className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-colors hover:border-brand"
                       >
                         {t('delete')}
                       </button>

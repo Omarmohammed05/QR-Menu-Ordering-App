@@ -6,6 +6,7 @@ import {MenuBookIcon, OrdersIcon} from '@/components/icons';
 import {formatNumber} from '@/lib/format';
 import {AddCategoryForm} from '@/components/dashboard/add-category-form';
 import {AddItemForm} from '@/components/dashboard/add-item-form';
+import {AddProductButton} from '@/components/dashboard/add-product-button';
 import {EditCategoryForm} from '@/components/dashboard/edit-category-form';
 import {DeleteCategoryButton} from '@/components/dashboard/delete-category-button';
 import {EditItemForm} from '@/components/dashboard/edit-item-form';
@@ -53,9 +54,15 @@ export default async function MenuManagementPage({params}: Props) {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-1.5">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('tagline')}</p>
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-col gap-1.5">
+          <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('tagline')}</p>
+        </div>
+        <AddProductButton
+          locale={locale}
+          categories={categories.map((category) => ({id: category.id, nameAr: category.nameAr}))}
+        />
       </header>
 
       {/* Operational overview */}

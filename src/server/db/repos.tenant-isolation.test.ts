@@ -196,4 +196,42 @@ describe('tenant isolation (integration)', () => {
     expect(await reposB.tables.setActive(tableA.id, true)).toBe(false);
     expect(await reposA.tables.setActive(tableA.id, true)).toBe(true);
   });
+
+  it('makes a cross-tenant item update and delete a no-op', async () => {
+    expect(await reposB.items.update(itemA.id, {nameAr: 'معدّل'})).toBeNull();
+    expect((await reposA.items.findById(itemA.id))?.nameAr).toBe('كفتة');
+    expect(await reposB.items.remove(itemA.id)).toBe(false);
+    expect(await reposA.items.findById(itemA.id)).not.toBeNull();
+    // Own-tenant update applies.
+    expect((await reposA.items.update(itemA.id, {nameAr: 'كفتة مشوية'}))?.nameAr).toBe(
+      'كفتة مشوية'
+    );
+    await reposA.items.update(itemA.id, {nameAr: 'كفتة'});
+  });
+
+  it('blocks deleting a dish with order history; a history-free dish deletes', async () => {
+    expect(await reposA.items.hasOrderHistory(itemA.id)).toBe(true);
+    const free = await reposA.items.create({
+      categoryId: categoryA.id,
+      nameAr: 'سلطة',
+      pricePiastres: 3000
+    });
+    expect(await reposA.items.hasOrderHistory(free.id)).toBe(false);
+    expect(await reposA.items.remove(free.id)).toBe(true);
+    expect(await reposA.items.findById(free.id)).toBeNull();
+  });
+
+  it('makes a cross-tenant category update and delete a no-op', async () => {
+    expect(await reposB.categories.update(categoryA.id, {nameAr: 'معدّل'})).toBeNull();
+    expect((await reposA.categories.findById(categoryA.id))?.nameAr).toBe('المشويات');
+    expect(await reposB.categories.remove(categoryA.id)).toBe(false);
+    expect(await reposA.categories.findById(categoryA.id)).not.toBeNull();
+
+    // An occupied section reports its dish count (the delete guard).
+    expect(await reposA.categories.countItems(categoryA.id)).toBeGreaterThan(0);
+    // An empty section deletes for its own tenant only.
+    const emptyA = await reposA.categories.create({nameAr: 'حلويات', sortOrder: 9});
+    expect(await reposA.categories.remove(emptyA.id)).toBe(true);
+    expect(await reposA.categories.findById(emptyA.id)).toBeNull();
+  });
 });

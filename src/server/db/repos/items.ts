@@ -1,6 +1,6 @@
 import {and, asc, eq} from 'drizzle-orm';
 import {db} from '@/server/db';
-import {menuItems} from '@/server/db/schema';
+import {menuItems, orderItems} from '@/server/db/schema';
 
 export type NewMenuItem = Omit<
   typeof menuItems.$inferInsert,
@@ -50,6 +50,35 @@ export function createItemsRepo(restaurantId: string) {
       const rows = await db
         .update(menuItems)
         .set({isAvailable, updatedAt: new Date()})
+        .where(and(eq(menuItems.id, id), eq(menuItems.restaurantId, restaurantId)))
+        .returning({id: menuItems.id});
+      return rows.length > 0;
+    },
+
+    /** Edit a dish — null when the id belongs to another tenant. */
+    async update(id: string, values: Partial<Pick<NewMenuItem, 'nameAr' | 'descriptionAr' | 'pricePiastres'>>) {
+      const [row] = await db
+        .update(menuItems)
+        .set({...values, updatedAt: new Date()})
+        .where(and(eq(menuItems.id, id), eq(menuItems.restaurantId, restaurantId)))
+        .returning();
+      return row ?? null;
+    },
+
+    /** True when any order line references the dish — it must be archived, not deleted. */
+    async hasOrderHistory(id: string) {
+      const [row] = await db
+        .select({id: orderItems.id})
+        .from(orderItems)
+        .where(and(eq(orderItems.menuItemId, id), eq(orderItems.restaurantId, restaurantId)))
+        .limit(1);
+      return row !== undefined;
+    },
+
+    /** Delete a dish — false when the id belongs to another tenant. */
+    async remove(id: string) {
+      const rows = await db
+        .delete(menuItems)
         .where(and(eq(menuItems.id, id), eq(menuItems.restaurantId, restaurantId)))
         .returning({id: menuItems.id});
       return rows.length > 0;

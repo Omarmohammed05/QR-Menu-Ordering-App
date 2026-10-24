@@ -11,6 +11,10 @@ type Locale = (typeof routing.locales)[number];
 /** Machine-readable failure codes; the forms map them to locale strings. */
 export type CreateCategoryState = {error?: 'nameAr' | 'forbidden' | 'generic'};
 export type CreateItemState = {error?: 'nameAr' | 'price' | 'category' | 'forbidden' | 'generic'};
+export type UpdateCategoryState = {error?: 'nameAr' | 'forbidden' | 'generic'};
+export type DeleteCategoryState = {error?: 'forbidden' | 'inUse' | 'generic'};
+export type UpdateItemState = {error?: 'nameAr' | 'price' | 'forbidden' | 'generic'};
+export type DeleteItemState = {error?: 'forbidden' | 'inUse' | 'generic'};
 
 const nameArSchema = z.string().trim().min(1, 'nameAr').max(200, 'nameAr');
 const descriptionSchema = z.string().trim().max(1000, 'generic').transform((value) => value || null);
@@ -97,6 +101,111 @@ export async function createItemAction(
   } catch {
     return {error: 'generic'};
   }
+  revalidatePath(`/${locale}/dashboard/menu`);
+  return {};
+}
+
+export async function updateCategoryAction(
+  _prev: UpdateCategoryState,
+  formData: FormData
+): Promise<UpdateCategoryState> {
+  const locale = localeFrom(formData);
+  const {membership} = await requireMember(locale);
+  if (!canManage(membership.role)) return {error: 'forbidden'};
+
+  const parsed = nameArSchema.safeParse(formData.get('nameAr') ?? '');
+  if (!parsed.success) return {error: 'nameAr'};
+
+  const categoryId = z.string().uuid().safeParse(formData.get('categoryId'));
+  if (!categoryId.success) return {error: 'generic'};
+
+  const repos = createRestaurantRepos(membership.restaurant.id);
+  const updated = await repos.categories.update(categoryId.data, {nameAr: parsed.data});
+  if (!updated) return {error: 'generic'};
+
+  revalidatePath(`/${locale}/dashboard/menu`);
+  return {};
+}
+
+export async function deleteCategoryAction(
+  _prev: DeleteCategoryState,
+  formData: FormData
+): Promise<DeleteCategoryState> {
+  const locale = localeFrom(formData);
+  const {membership} = await requireMember(locale);
+  if (!canManage(membership.role)) return {error: 'forbidden'};
+
+  const categoryId = z.string().uuid().safeParse(formData.get('categoryId'));
+  if (!categoryId.success) return {error: 'generic'};
+
+  const repos = createRestaurantRepos(membership.restaurant.id);
+  // The FK cascade would silently drop every dish in the section — an
+  // occupied section must be emptied first.
+  if ((await repos.categories.countItems(categoryId.data)) > 0) return {error: 'inUse'};
+  const removed = await repos.categories.remove(categoryId.data);
+  if (!removed) return {error: 'generic'};
+
+  revalidatePath(`/${locale}/dashboard/menu`);
+  return {};
+}
+
+export async function updateItemAction(
+  _prev: UpdateItemState,
+  formData: FormData
+): Promise<UpdateItemState> {
+  const locale = localeFrom(formData);
+  const {membership} = await requireMember(locale);
+  if (!canManage(membership.role)) return {error: 'forbidden'};
+
+  const itemId = z.string().uuid().safeParse(formData.get('itemId'));
+  if (!itemId.success) return {error: 'generic'};
+
+  const parsed = z
+    .object({
+      nameAr: nameArSchema,
+      descriptionAr: descriptionSchema,
+      price: priceSchema
+    })
+    .safeParse({
+      nameAr: formData.get('nameAr') ?? '',
+      descriptionAr: formData.get('descriptionAr') ?? '',
+      price: formData.get('price') ?? ''
+    });
+  if (!parsed.success) {
+    const first = parsed.error.issues[0]?.message;
+    return {error: first === 'price' ? 'price' : first === 'nameAr' ? 'nameAr' : 'generic'};
+  }
+
+  const repos = createRestaurantRepos(membership.restaurant.id);
+  const updated = await repos.items.update(itemId.data, {
+    nameAr: parsed.data.nameAr,
+    descriptionAr: parsed.data.descriptionAr,
+    pricePiastres: Math.round(parseFloat(parsed.data.price) * 100)
+  });
+  if (!updated) return {error: 'generic'};
+
+  revalidatePath(`/${locale}/dashboard/menu`);
+  return {};
+}
+
+export async function deleteItemAction(
+  _prev: DeleteItemState,
+  formData: FormData
+): Promise<DeleteItemState> {
+  const locale = localeFrom(formData);
+  const {membership} = await requireMember(locale);
+  if (!canManage(membership.role)) return {error: 'forbidden'};
+
+  const itemId = z.string().uuid().safeParse(formData.get('itemId'));
+  if (!itemId.success) return {error: 'generic'};
+
+  const repos = createRestaurantRepos(membership.restaurant.id);
+  // Order history freezes dish snapshots on its lines — a dish that ever
+  // appeared on an order is archived (hidden), never deleted (ADR-002).
+  if (await repos.items.hasOrderHistory(itemId.data)) return {error: 'inUse'};
+  const removed = await repos.items.remove(itemId.data);
+  if (!removed) return {error: 'generic'};
+
   revalidatePath(`/${locale}/dashboard/menu`);
   return {};
 }

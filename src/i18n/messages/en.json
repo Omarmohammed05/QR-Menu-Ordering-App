@@ -144,7 +144,13 @@
       "price": "Invalid price — e.g. 85.50",
       "category": "Section not found",
       "forbidden": "You don't have permission to edit the menu",
-      "generic": "Something went wrong, try again"
-    }
+      "generic": "Something went wrong, try again",
+      "itemInUse": "This dish has past orders — hide it instead",
+      "categoryInUse": "This section still has dishes — delete them first"
+    },
+    "edit": "Edit",
+    "save": "Save",
+    "deleteItem": "Delete dish",
+    "deleteCategory": "Delete section"
   }
 }

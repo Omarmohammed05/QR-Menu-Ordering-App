@@ -1,6 +1,6 @@
-import {and, asc, eq} from 'drizzle-orm';
+import {and, asc, eq, sql} from 'drizzle-orm';
 import {db} from '@/server/db';
-import {menuCategories} from '@/server/db/schema';
+import {menuCategories, menuItems} from '@/server/db/schema';
 
 export type NewCategory = Omit<
   typeof menuCategories.$inferInsert,
@@ -40,6 +40,34 @@ export function createCategoriesRepo(restaurantId: string) {
         .returning();
       if (!row) throw new Error('category insert returned no row');
       return row;
+    },
+
+    /** Rename a section — null when the id belongs to another tenant. */
+    async update(id: string, values: Partial<Pick<NewCategory, 'nameAr'>>) {
+      const [row] = await db
+        .update(menuCategories)
+        .set({...values, updatedAt: new Date()})
+        .where(and(eq(menuCategories.id, id), eq(menuCategories.restaurantId, restaurantId)))
+        .returning();
+      return row ?? null;
+    },
+
+    /** Dishes sitting in this section — it must be emptied before deletion. */
+    async countItems(id: string) {
+      const [row] = await db
+        .select({count: sql<number>`count(*)::int`})
+        .from(menuItems)
+        .where(and(eq(menuItems.categoryId, id), eq(menuItems.restaurantId, restaurantId)));
+      return row?.count ?? 0;
+    },
+
+    /** Delete a section — false when the id belongs to another tenant. */
+    async remove(id: string) {
+      const rows = await db
+        .delete(menuCategories)
+        .where(and(eq(menuCategories.id, id), eq(menuCategories.restaurantId, restaurantId)))
+        .returning({id: menuCategories.id});
+      return rows.length > 0;
     }
   };
 }

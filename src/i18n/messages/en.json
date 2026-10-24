@@ -1,0 +1,484 @@
+{
+  "landing": {
+    "title": "Menu",
+    "tagline": "Scan-to-open digital menu — order on WhatsApp in seconds",
+    "badge": "Digital menus for restaurants",
+    "demo": "View a live demo menu",
+    "switchLocale": "العربية",
+    "login": "Log in"
+  },
+  "auth": {
+    "loginTitle": "Log in",
+    "loginTagline": "Enter your credentials to reach your restaurant dashboard",
+    "email": "Email",
+    "password": "Password",
+    "login": "Log in",
+    "working": "One moment…",
+    "noAccount": "Want an account for your restaurant?",
+    "signOut": "Sign out",
+    "errors": {
+      "invalidCredentials": "Incorrect email or password",
+      "generic": "Something went wrong, try again"
+    },
+    "claimedNote": "Your account is ready — sign in now.",
+    "contact": {
+      "title": "Sign-up is invite-only",
+      "body": "Restaurant owners are added through an invite code from the platform owner. Message us on WhatsApp to get your restaurant set up.",
+      "button": "Contact the admin",
+      "prefilled": "Hi! I'd like to add my restaurant to your digital menus platform.",
+      "backToLogin": "Back to sign in"
+    }
+  },
+  "dashboard": {
+    "switchRestaurant": "Switch restaurant",
+    "overview": {
+      "welcome": "Welcome,",
+      "stats": {
+        "todayOrders": "Orders today",
+        "activeNow": "Active now",
+        "revenueToday": "Revenue today",
+        "activeTables": "Active tables"
+      },
+      "quickLinks": "Quick links",
+      "links": {
+        "orders": "Live order board",
+        "menu": "Sections, dishes, and prices",
+        "tables": "QR codes and printing",
+        "settings": "Restaurant profile and WhatsApp"
+      }
+    },
+    "role": {
+      "owner": "Owner",
+      "manager": "Manager",
+      "staff": "Staff"
+    },
+    "nav": {
+      "overview": "Overview",
+      "menu": "Menu",
+      "orders": "Orders",
+      "tables": "Tables & QR",
+      "settings": "Settings",
+      "admin": "Platform admin",
+      "team": "Team",
+      "analytics": "Analytics"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "tagline": "Menu views and best sellers",
+      "stats": {
+        "views7d": "Views (7 days)",
+        "orders7d": "Orders (7 days)",
+        "topDish": "Most ordered dish"
+      },
+      "chart": {
+        "title": "Last 14 days",
+        "views": "Views",
+        "orders": "Orders",
+        "tip": "{views} views · {orders} orders",
+        "none": "No views yet — the first QR scan shows up here"
+      },
+      "topDishes": {
+        "title": "Most ordered dishes — last 30 days",
+        "empty": "No orders yet — best sellers appear with the first order"
+      }
+    },
+    "orders": {
+      "title": "Orders",
+      "tagline": "Live order board — refreshes automatically",
+      "empty": "No orders yet — the first one appears here the moment it lands",
+      "unknownTable": "Unknown table",
+      "total": "Total",
+      "customerName": "Name",
+      "customerPhone": "Phone",
+      "note": "Note",
+      "status": {
+        "pending": "New",
+        "accepted": "Preparing",
+        "ready": "Ready",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "action": {
+        "accepted": "Start preparing",
+        "ready": "Mark ready",
+        "completed": "Served",
+        "cancelled": "Cancel"
+      },
+      "emptyColumn": "No orders here",
+      "incoming": "incoming",
+      "outside": "Takeaway",
+      "payment": {
+        "cash": "Cash",
+        "instapay": "InstaPay",
+        "proof": "Payment proof"
+      },
+      "refresh": "Refresh",
+      "cancel": "Cancel order",
+      "cancelReasonLabel": "Cancellation reason",
+      "cancelReasonPlaceholder": "Type the reason…",
+      "confirmCancel": "Confirm cancel",
+      "keepOrder": "Keep order",
+      "searchPlaceholder": "Search by order, table, customer…",
+      "board": {
+        "pending": "New",
+        "accepted": "Preparing",
+        "ready": "Ready",
+        "completed": "Completed today"
+      },
+      "filter": {
+        "all": "All",
+        "dineIn": "Dine-in",
+        "takeaway": "Takeaway"
+      },
+      "timeAgo": {
+        "minute": "{count}m ago",
+        "hour": "{count}h ago"
+      },
+      "stats": {
+        "todayCount": "Orders today",
+        "activeNow": "Active now",
+        "completedToday": "Completed today",
+        "avgPrep": "Avg. prep time",
+        "minutesUnit": "min"
+      }
+    },
+    "tables": {
+      "title": "Tables & QR codes",
+      "tagline": "Print the code and stick it on the table — customers scan to open the menu",
+      "label": "Table label",
+      "labelPlaceholder": "e.g. Table 3",
+      "create": "Add table",
+      "working": "One moment…",
+      "empty": "No tables yet — add the first one to print its QR",
+      "active": "Active",
+      "archived": "Archived",
+      "archive": "Archive",
+      "restore": "Restore",
+      "errors": {
+        "label": "Enter the table label",
+        "forbidden": "You don't have permission to manage tables",
+        "generic": "Something went wrong, try again"
+      },
+      "stats": {
+        "total": "Total tables",
+        "active": "Active tables"
+      },
+      "printAll": "Print codes (A4)",
+      "downloadSvg": "Download QR",
+      "masterQr": {
+        "badge": "Master QR",
+        "title": "Restaurant master QR",
+        "description": "Scan to open the menu directly — works for takeaway and delivery",
+        "download": "Download SVG",
+        "copyLink": "Copy link",
+        "copied": "Copied"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "tagline": "Restaurant profile and contact details",
+      "profile": {
+        "title": "Restaurant profile",
+        "tagline": "Shown to customers on the public menu",
+        "nameAr": "Restaurant name (Arabic)",
+        "nameEn": "English name (optional)",
+        "whatsapp": "WhatsApp order number",
+        "whatsappHint": "International format starting with +, e.g. +201234567890",
+        "instapay": "InstaPay address (optional)",
+        "instapayHint": "Customers pay by InstaPay to this address — leave empty for cash only",
+        "save": "Save changes",
+        "working": "Working…",
+        "saved": "Saved"
+      },
+      "slug": {
+        "label": "Public link (slug)",
+        "hint": "Lowercase letters, digits and dashes only — it appears in the menu URL",
+        "checking": "Checking…",
+        "available": "Link is available",
+        "taken": "This link is reserved or already used",
+        "takenWithSuggestion": "This link is taken — try: {suggestion}"
+      },
+      "info": {
+        "title": "Branch info",
+        "slug": "Public link",
+        "role": "Your role"
+      },
+      "errors": {
+        "nameAr": "Enter the name in Arabic",
+        "whatsapp": "Invalid number — must start with + and a country code",
+        "forbidden": "You don't have permission to edit settings",
+        "generic": "Something went wrong, try again",
+        "slugTaken": "This link is already used — pick another one",
+        "slugReserved": "This link is reserved — choose another one",
+        "slugInvalid": "Invalid link — use lowercase letters, digits and dashes only"
+      },
+      "branch": {
+        "title": "Branch preferences",
+        "tagline": "The timezone drives opening hours; the currency is what prices render with",
+        "timezone": "Timezone",
+        "currency": "Currency",
+        "save": "Save",
+        "working": "One moment…",
+        "saved": "Saved",
+        "errors": {
+          "timezone": "Pick a valid timezone",
+          "currency": "Pick a valid currency",
+          "forbidden": "You don't have permission to edit this",
+          "generic": "Something went wrong — try again"
+        }
+      },
+      "addresses": {
+        "title": "Branches & addresses",
+        "tagline": "Your branch addresses are shown to customers below the menu",
+        "labelPlaceholder": "Branch name — e.g. Maadi branch",
+        "addressPlaceholder": "Full address",
+        "add": "Add",
+        "working": "One moment…",
+        "edit": "Edit",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "save": "Save",
+        "empty": "No branches added yet",
+        "errors": {
+          "label": "Enter the branch name",
+          "address": "Enter the address",
+          "notFound": "Branch not found",
+          "forbidden": "You don't have permission to edit this",
+          "generic": "Something went wrong — try again"
+        }
+      },
+      "hours": {
+        "title": "Opening hours",
+        "tagline": "Your weekly schedule drives the open/closed sign on the customer menu — days without hours are always open",
+        "day": "Day",
+        "opens": "Opens",
+        "closes": "Closes",
+        "add": "Add",
+        "working": "One moment…",
+        "closed": "Closed",
+        "delete": "Remove this slot",
+        "days": {
+          "0": "Sunday",
+          "1": "Monday",
+          "2": "Tuesday",
+          "3": "Wednesday",
+          "4": "Thursday",
+          "5": "Friday",
+          "6": "Saturday"
+        },
+        "errors": {
+          "weekday": "Pick a weekday",
+          "times": "Enter valid open and close times",
+          "range": "Open time must be before close time",
+          "duplicate": "A slot with this day and start time already exists",
+          "forbidden": "You don't have permission to edit this",
+          "generic": "Something went wrong — try again"
+        }
+      }
+    },
+    "shell": {
+      "mainMenu": "Main menu",
+      "connected": "Cloud connected",
+      "connectionLabel": "Connection",
+      "systemTagline": "Restaurant console",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "team": {
+      "title": "Team",
+      "tagline": "Who can manage this restaurant from the dashboard",
+      "add": {
+        "title": "Add a team member",
+        "tagline": "Accounts are created by the platform owner — seat an existing account by email",
+        "emailPlaceholder": "member@example.com",
+        "role": "Role",
+        "submit": "Add member",
+        "working": "One moment…"
+      },
+      "list": {
+        "title": "Members",
+        "tagline": "Owners manage the team; managers edit the menu and orders; staff can view"
+      },
+      "you": "You",
+      "remove": "Remove",
+      "errors": {
+        "email": "Enter a valid email address",
+        "role": "Pick a role",
+        "noSuchUser": "No account exists with this email — ask the platform owner to create one first",
+        "alreadyMember": "This person is already on the team",
+        "notFound": "Member not found",
+        "lastOwner": "Every restaurant needs at least one owner",
+        "self": "You can't change your own seat here",
+        "forbidden": "Only owners can manage the team",
+        "generic": "Something went wrong — try again"
+      }
+    }
+  },
+  "publicMenu": {
+    "openNow": "Open now",
+    "closedNow": "Closed now",
+    "add": "Add",
+    "sectionsNav": "Menu sections",
+    "dishCount": "{count, plural, one {# dish} other {# dishes}}",
+    "empty": "No dishes available right now",
+    "increase": "Increase quantity",
+    "decrease": "Decrease quantity",
+    "quantity": "Quantity",
+    "cartCount": "{count, plural, =0 {Cart empty} one {# item} other {# items}}",
+    "checkout": "Review order",
+    "checkoutTitle": "Confirm order",
+    "total": "Total",
+    "customerName": "Name (optional)",
+    "customerPhone": "Phone (optional)",
+    "note": "Note (optional)",
+    "paymentLabel": "Payment method",
+    "payment": {
+      "cash": "Cash",
+      "instapay": "InstaPay"
+    },
+    "instapayHint": "Send {amount} via InstaPay to the address below, then attach the transfer screenshot",
+    "instapayProof": "Transfer screenshot (optional)",
+    "sendOnWhatsApp": "Send on WhatsApp",
+    "working": "One moment…",
+    "close": "Close",
+    "errors": {
+      "cart": "Your cart is no longer valid — refresh the page and try again",
+      "closed": "The restaurant is closed right now",
+      "rate": "Too many attempts — wait a moment and try again",
+      "generic": "Something went wrong, try again"
+    },
+    "branches": "Our branches",
+    "order": {
+      "backToMenu": "Back to the menu",
+      "orderNumber": "Order #{number}",
+      "steps": {
+        "pending": "Under review",
+        "accepted": "Preparing",
+        "ready": "Ready",
+        "completed": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "cancelledNote": "Sorry — the restaurant cancelled this order",
+      "whatsappHint": "Your order is already saved. If WhatsApp didn't open automatically, send the message from here",
+      "openWhatsApp": "Send the message on WhatsApp",
+      "updating": "Status updates automatically…",
+      "items": "Items",
+      "timeline": "Order timeline",
+      "from": "after {from}",
+      "cancelReason": "Cancellation reason: {reason}"
+    }
+  },
+  "menuManagement": {
+    "title": "Menu management",
+    "tagline": "The sections and dishes your customers see",
+    "addCategoryTitle": "Add a section",
+    "stats": {
+      "sections": "Menu sections",
+      "dishes": "Dishes",
+      "unavailable": "Hidden dishes"
+    },
+    "categoryName": "Section name",
+    "createCategory": "Create section",
+    "emptyCategories": "No sections yet — add the first section to your menu",
+    "addItem": "Add dish",
+    "itemName": "Dish name",
+    "itemDescription": "Description (optional)",
+    "price": "Price (EGP)",
+    "pricePlaceholder": "e.g. 85.50",
+    "emptyItems": "No dishes in this section yet",
+    "hide": "Hide",
+    "show": "Show",
+    "working": "One moment…",
+    "errors": {
+      "nameAr": "Enter the name in Arabic",
+      "price": "Invalid price — e.g. 85.50",
+      "category": "Section not found",
+      "forbidden": "You don't have permission to edit the menu",
+      "generic": "Something went wrong, try again",
+      "itemInUse": "This dish has past orders — hide it instead",
+      "categoryInUse": "This section still has dishes — delete them first"
+    },
+    "edit": "Edit",
+    "save": "Save",
+    "deleteItem": "Delete dish",
+    "deleteCategory": "Delete section"
+  },
+  "images": {
+    "upload": "Add image",
+    "change": "Change image",
+    "remove": "Remove",
+    "uploading": "Uploading…",
+    "empty": "IMG",
+    "errors": {
+      "file": "Pick a valid image file",
+      "size": "Image is too large — max 5MB",
+      "forbidden": "You are not allowed to upload images",
+      "imgbb": "Upload failed — check the imgbb key and try again",
+      "save": "Could not save the image — try again"
+    }
+  },
+  "claim": {
+    "title": "Activate your account",
+    "tagline": "Enter the invite code you received, then your details to become the restaurant owner",
+    "code": "Invite code",
+    "codePlaceholder": "e.g. A1B2C3D4",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters",
+    "submit": "Activate account",
+    "working": "One moment…",
+    "errors": {
+      "code": "The code is invalid or was already used",
+      "name": "Enter a valid name",
+      "email": "Enter a valid email",
+      "emailTaken": "This email is already registered — try signing in",
+      "weakPassword": "Password must be at least 8 characters",
+      "generic": "Something went wrong — try again"
+    }
+  },
+  "admin": {
+    "title": "Platform admin",
+    "tagline": "Restaurants and owner invites — the whole platform from here",
+    "backToDashboard": "Back to dashboard",
+    "stats": {
+      "total": "Restaurants",
+      "active": "Active",
+      "pending": "Pending invites"
+    },
+    "create": {
+      "title": "Create a new restaurant",
+      "tagline": "An owner activation code is issued automatically with every new restaurant",
+      "nameAr": "Name in Arabic",
+      "nameArPlaceholder": "e.g. Bait Elsham",
+      "nameEn": "Name in English (optional)",
+      "nameEnPlaceholder": "Bait Elsham",
+      "whatsapp": "Restaurant's WhatsApp number",
+      "submit": "Create",
+      "working": "One moment…",
+      "errors": {
+        "nameAr": "Enter the Arabic name",
+        "whatsapp": "Enter an international-format number like +2010…",
+        "slugTaken": "Couldn't generate a unique link — try another name",
+        "generic": "Something went wrong — try again"
+      }
+    },
+    "list": {
+      "title": "Restaurants",
+      "empty": "No restaurants yet — create the first one above",
+      "publicMenu": "Menu:",
+      "whatsapp": "WhatsApp:",
+      "owner": "Owner:",
+      "ownerPending": "Owner hasn't activated their account yet",
+      "active": "Active",
+      "inactive": "Paused",
+      "activate": "Activate",
+      "deactivate": "Pause",
+      "inviteLink": "Owner activation link",
+      "sendInvite": "Send on WhatsApp",
+      "regenerate": "New code",
+      "issueInvite": "Issue invite code",
+      "shareText": "Hi {name}! Activate your restaurant account on the digital menus platform from this link:\n{url}\nActivation code: {code}"
+    }
+  }
+}

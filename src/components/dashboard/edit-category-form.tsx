@@ -30,7 +30,7 @@ export function EditCategoryForm({locale, category}: Props) {
           defaultValue={category.nameAr}
           required
           autoComplete="off"
-          className="rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground"
+          className="rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
         />
       </label>
       {error ? (

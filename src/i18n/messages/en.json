@@ -224,6 +224,11 @@
     "title": "Menu management",
     "tagline": "The sections and dishes your customers see",
     "addCategoryTitle": "Add a section",
+    "stats": {
+      "sections": "Menu sections",
+      "dishes": "Dishes",
+      "unavailable": "Hidden dishes"
+    },
     "categoryName": "Section name",
     "createCategory": "Create section",
     "emptyCategories": "No sections yet — add the first section to your menu",

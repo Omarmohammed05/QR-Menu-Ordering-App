@@ -224,6 +224,11 @@
     "title": "إدارة القائمة",
     "tagline": "الأقسام والأطباق التي يراها عملاؤك",
     "addCategoryTitle": "إضافة قسم",
+    "stats": {
+      "sections": "أقسام القائمة",
+      "dishes": "الأطباق",
+      "unavailable": "أطباق مخفية"
+    },
     "categoryName": "اسم القسم",
     "createCategory": "إنشاء القسم",
     "emptyCategories": "لا توجد أقسام بعد — أضف أول قسم لقائمتك",

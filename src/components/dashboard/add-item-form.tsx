@@ -11,7 +11,7 @@ export function AddItemForm({locale, categoryId}: {locale: string; categoryId: s
   const error = state.error ? t(`errors.${state.error}`) : null;
 
   const inputClass =
-    'rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground placeholder:text-muted-foreground';
+    'rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground';
 
   return (
     <form action={formAction} className="mt-2 flex flex-col gap-3" noValidate>

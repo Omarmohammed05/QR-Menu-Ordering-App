@@ -1,5 +1,6 @@
 import {createCategoriesRepo} from './categories';
 import {createHoursRepo} from './hours';
+import {createTeamRepo} from './members';
 import {createItemsRepo} from './items';
 import {createOrdersRepo} from './orders';
 import {createTablesRepo} from './tables';
@@ -10,7 +11,9 @@ export {
   membersRepo,
   type Membership,
   type MembershipRole,
-  type Restaurant
+  type Restaurant,
+  type TeamMember,
+  type TeamRepo
 } from './members';
 export {type CategoriesRepo, type NewCategory} from './categories';
 export {type ItemsRepo, type NewMenuItem} from './items';
@@ -46,7 +49,8 @@ export function createRestaurantRepos(restaurantId: string) {
     orders: createOrdersRepo(restaurantId),
     tables: createTablesRepo(restaurantId),
     hours: createHoursRepo(restaurantId),
-    addresses: createAddressesRepo(restaurantId)
+    addresses: createAddressesRepo(restaurantId),
+    team: createTeamRepo(restaurantId)
   };
 }
 

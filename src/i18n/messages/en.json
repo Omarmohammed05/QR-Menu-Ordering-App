@@ -57,7 +57,8 @@
       "orders": "Orders",
       "tables": "Tables & QR",
       "settings": "Settings",
-      "admin": "Platform admin"
+      "admin": "Platform admin",
+      "team": "Team"
     },
     "orders": {
       "title": "Orders",
@@ -223,6 +224,34 @@
           "forbidden": "You don't have permission to edit this",
           "generic": "Something went wrong — try again"
         }
+      },
+      "hours": {
+        "title": "Opening hours",
+        "tagline": "Your weekly schedule drives the open/closed sign on the customer menu — days without hours are always open",
+        "day": "Day",
+        "opens": "Opens",
+        "closes": "Closes",
+        "add": "Add",
+        "working": "One moment…",
+        "closed": "Closed",
+        "delete": "Remove this slot",
+        "days": {
+          "0": "Sunday",
+          "1": "Monday",
+          "2": "Tuesday",
+          "3": "Wednesday",
+          "4": "Thursday",
+          "5": "Friday",
+          "6": "Saturday"
+        },
+        "errors": {
+          "weekday": "Pick a weekday",
+          "times": "Enter valid open and close times",
+          "range": "Open time must be before close time",
+          "duplicate": "A slot with this day and start time already exists",
+          "forbidden": "You don't have permission to edit this",
+          "generic": "Something went wrong — try again"
+        }
       }
     },
     "shell": {
@@ -232,6 +261,35 @@
       "systemTagline": "Restaurant console",
       "openMenu": "Open menu",
       "closeMenu": "Close menu"
+    },
+    "team": {
+      "title": "Team",
+      "tagline": "Who can manage this restaurant from the dashboard",
+      "add": {
+        "title": "Add a team member",
+        "tagline": "Accounts are created by the platform owner — seat an existing account by email",
+        "emailPlaceholder": "member@example.com",
+        "role": "Role",
+        "submit": "Add member",
+        "working": "One moment…"
+      },
+      "list": {
+        "title": "Members",
+        "tagline": "Owners manage the team; managers edit the menu and orders; staff can view"
+      },
+      "you": "You",
+      "remove": "Remove",
+      "errors": {
+        "email": "Enter a valid email address",
+        "role": "Pick a role",
+        "noSuchUser": "No account exists with this email — ask the platform owner to create one first",
+        "alreadyMember": "This person is already on the team",
+        "notFound": "Member not found",
+        "lastOwner": "Every restaurant needs at least one owner",
+        "self": "You can't change your own seat here",
+        "forbidden": "Only owners can manage the team",
+        "generic": "Something went wrong — try again"
+      }
     }
   },
   "publicMenu": {

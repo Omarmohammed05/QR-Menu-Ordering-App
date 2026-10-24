@@ -13,6 +13,7 @@ import {
   MenuBarsIcon,
   MenuBookIcon,
   OrdersIcon,
+  PersonIcon,
   QrCodeIcon,
   SettingsIcon,
   StoreIcon
@@ -53,6 +54,7 @@ export function DashboardShell({
     {href: '/dashboard/orders', label: t('nav.orders'), icon: <OrdersIcon className="size-[18px]" />},
     {href: '/dashboard/menu', label: t('nav.menu'), icon: <MenuBookIcon className="size-[18px]" />},
     {href: '/dashboard/tables', label: t('nav.tables'), icon: <QrCodeIcon className="size-[18px]" />},
+    {href: '/dashboard/team', label: t('nav.team'), icon: <PersonIcon className="size-[18px]" />},
     {href: '/dashboard/settings', label: t('nav.settings'), icon: <SettingsIcon className="size-[18px]" />}
   ];
   if (showAdmin) {

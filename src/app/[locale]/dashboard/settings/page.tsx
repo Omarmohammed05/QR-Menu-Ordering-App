@@ -4,6 +4,7 @@ import {createRestaurantRepos} from '@/server/db/repos';
 import {SettingsForm} from '@/components/dashboard/settings-form';
 import {BranchInfoForm} from '@/components/dashboard/branch-info-form';
 import {AddressesSection} from '@/components/dashboard/addresses-section';
+import {OpeningHoursSection} from '@/components/dashboard/opening-hours-section';
 
 type Props = {params: Promise<{locale: string}>};
 
@@ -16,7 +17,8 @@ export default async function SettingsPage({params}: Props) {
   const {locale} = await params;
   const {membership} = await requireMember(locale);
   const {restaurant, role} = membership;
-  const addresses = await createRestaurantRepos(restaurant.id).addresses.list();
+  const {addresses, hours} = createRestaurantRepos(restaurant.id);
+  const [addressRows, hourRows] = await Promise.all([addresses.list(), hours.list()]);
 
   const t = await getTranslations('dashboard.settings');
   const tRole = await getTranslations('dashboard');
@@ -71,12 +73,29 @@ export default async function SettingsPage({params}: Props) {
         <p className="mt-1 text-xs text-muted-foreground">{t('addresses.tagline')}</p>
         <AddressesSection
           locale={locale}
-          addresses={addresses.map(({id, label, address}) => ({id, label, address}))}
+          addresses={addressRows.map(({id, label, address}) => ({id, label, address}))}
         />
       </section>
 
       <section
         style={{animationDelay: '210ms'}}
+        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+      >
+        <h2 className="text-sm font-semibold">{t('hours.title')}</h2>
+        <p className="mt-1 text-xs text-muted-foreground">{t('hours.tagline')}</p>
+        <OpeningHoursSection
+          locale={locale}
+          slots={hourRows.map(({id, weekday, opensAt, closesAt}) => ({
+            id,
+            weekday,
+            opensAt,
+            closesAt
+          }))}
+        />
+      </section>
+
+      <section
+        style={{animationDelay: '280ms'}}
         className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
       >
         <h2 className="text-sm font-semibold">{t('info.title')}</h2>

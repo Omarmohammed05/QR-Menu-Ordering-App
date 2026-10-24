@@ -1,9 +1,6 @@
 import type {ReactNode} from 'react';
-import {getTranslations} from 'next-intl/server';
-import {Link} from '@/i18n/navigation';
 import {requireMember} from '@/server/dashboard';
-import {SignOutButton} from '@/components/auth/sign-out-button';
-import {RestaurantSwitcher} from '@/components/dashboard/restaurant-switcher';
+import {DashboardShell} from '@/components/dashboard/dashboard-shell';
 
 type Props = {
   children: ReactNode;
@@ -11,50 +8,25 @@ type Props = {
 };
 
 /**
- * The dashboard shell: runs the Phase 3 guard once for every dashboard route
- * (login gate + tenant resolution) and renders the shared header.
+ * The dashboard shell: runs the guard once for every dashboard route
+ * (login gate + tenant resolution) and renders the Stitch chrome —
+ * fixed sidebar, header with the restaurant switcher.
  */
 export default async function DashboardLayout({children, params}: Props) {
   const {locale} = await params;
-  const {membership, memberships} = await requireMember(locale);
-  const t = await getTranslations('dashboard');
+  const {session, membership, memberships} = await requireMember(locale);
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <header className="border-b border-hairline">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-3">
-          <div className="flex min-w-0 flex-col gap-0.5">
-            {memberships.length > 1 ? (
-              <RestaurantSwitcher
-                locale={locale}
-                activeId={membership.restaurant.id}
-                restaurants={memberships.map((m) => ({
-                  id: m.restaurant.id,
-                  nameAr: m.restaurant.nameAr
-                }))}
-              />
-            ) : (
-              <span className="truncate text-sm font-semibold">{membership.restaurant.nameAr}</span>
-            )}
-            <nav className="flex items-center gap-3 text-xs text-muted-foreground">
-              <Link href="/dashboard" className="transition-colors hover:text-foreground">
-                {t('nav.overview')}
-              </Link>
-              <Link href="/dashboard/menu" className="transition-colors hover:text-foreground">
-                {t('nav.menu')}
-              </Link>
-              <Link href="/dashboard/orders" className="transition-colors hover:text-foreground">
-                {t('nav.orders')}
-              </Link>
-              <Link href="/dashboard/tables" className="transition-colors hover:text-foreground">
-                {t('nav.tables')}
-              </Link>
-            </nav>
-          </div>
-          <SignOutButton />
-        </div>
-      </header>
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">{children}</main>
-    </div>
+    <DashboardShell
+      restaurantName={membership.restaurant.nameAr}
+      restaurants={memberships.map((m) => ({
+        id: m.restaurant.id,
+        nameAr: m.restaurant.nameAr
+      }))}
+      activeRestaurantId={membership.restaurant.id}
+      userEmail={session.user.email}
+    >
+      {children}
+    </DashboardShell>
   );
 }

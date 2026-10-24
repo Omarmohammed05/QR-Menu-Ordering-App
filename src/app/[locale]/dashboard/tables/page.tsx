@@ -5,18 +5,13 @@ import {createRestaurantRepos} from '@/server/db/repos';
 import {qrSvg} from '@/lib/qr';
 import {setTableActiveAction} from '@/server/actions/tables';
 import {CreateTableForm} from '@/components/dashboard/create-table-form';
+import {CopyLinkButton} from '@/components/dashboard/copy-link-button';
+import {PrintButton} from '@/components/dashboard/print-button';
+import {DownloadIcon, QrCodeIcon} from '@/components/icons';
 
 type Props = {params: Promise<{locale: string}>};
 
-type TableCard = {
-  id: string;
-  label: string;
-  isActive: boolean;
-  url: string;
-  qr: string;
-};
-
-/** Request origin → the URL encoded into each table's QR. */
+/** Request origin → the URL encoded into the master and per-table QRs. */
 async function requestOrigin(): Promise<string> {
   const h = await headers();
   const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
@@ -24,9 +19,14 @@ async function requestOrigin(): Promise<string> {
   return `${proto}://${host}`;
 }
 
+/** SVG → data URL for the "download QR" anchors (server-side base64). */
+function svgDataUrl(svg: string): string {
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+}
+
 /**
- * Tables & QR: one card per physical table with its printable QR (inline SVG,
- * monochrome) and the public menu URL it encodes.
+ * Tables & QR (Stitch "qr_tables_qr" screen): the branch's master QR plus one
+ * printable card per physical table.
  */
 export default async function TablesPage({params}: Props) {
   const {locale} = await params;
@@ -34,69 +34,145 @@ export default async function TablesPage({params}: Props) {
   const repos = createRestaurantRepos(membership.restaurant.id);
   const t = await getTranslations('dashboard.tables');
 
-  const tables = await repos.tables.list();
-  const origin = await requestOrigin();
-  const cards: TableCard[] = await Promise.all(
-    tables.map(async (table) => {
-      const url = `${origin}/${locale}/r/${membership.restaurant.slug}?t=${table.token}`;
-      return {
-        id: table.id,
-        label: table.label,
-        isActive: table.isActive,
-        url,
-        qr: await qrSvg(url)
-      };
-    })
+  const [tables, origin] = await Promise.all([repos.tables.list(), requestOrigin()]);
+  const publicUrl = `${origin}/${locale}/r/${membership.restaurant.slug}`;
+  const masterQr = await qrSvg(publicUrl);
+  const cards = await Promise.all(
+    tables.map(async (table) => ({
+      ...table,
+      url: `${publicUrl}?t=${table.token}`,
+      qr: await qrSvg(`${publicUrl}?t=${table.token}`)
+    }))
   );
+  const activeCount = cards.filter((card) => card.isActive).length;
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-6 print:gap-4">
+      <div className="flex flex-col gap-1 print:hidden">
         <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
         <p className="text-sm text-muted-foreground">{t('tagline')}</p>
       </div>
+
+      {/* Operational overview */}
+      <div className="grid grid-cols-2 gap-3 print:hidden">
+        <div className="flex items-center justify-between rounded-xl border border-hairline bg-surface p-4">
+          <span className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">{t('stats.total')}</span>
+            <span className="text-lg font-semibold">{tables.length}</span>
+          </span>
+          <span className="grid size-9 place-items-center rounded-full bg-muted">
+            <QrCodeIcon className="size-4" />
+          </span>
+        </div>
+        <div className="flex items-center justify-between rounded-xl border border-hairline bg-surface p-4">
+          <span className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">{t('stats.active')}</span>
+            <span className="flex items-center gap-1.5 text-lg font-semibold">
+              <span className="inline-block size-2 rounded-full bg-foreground" />
+              {activeCount}
+            </span>
+          </span>
+          <span className="grid size-9 place-items-center rounded-full bg-muted">
+            <span className="inline-block size-2 rounded-full bg-foreground" />
+          </span>
+        </div>
+      </div>
+
+      {/* Master QR banner */}
+      <section className="flex flex-col gap-6 rounded-xl border border-hairline bg-surface p-6 lg:flex-row lg:items-center">
+        <div
+          className="grid size-36 shrink-0 place-items-center rounded-lg border border-hairline bg-surface p-2 self-center"
+          dangerouslySetInnerHTML={{__html: masterQr}}
+        />
+        <div className="flex min-w-0 flex-col gap-2">
+          <span className="flex w-fit items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium">
+            <span className="inline-block size-1.5 rounded-full bg-foreground" />
+            {t('masterQr.badge')}
+          </span>
+          <h2 className="text-lg font-semibold">{t('masterQr.title')}</h2>
+          <p className="text-sm text-muted-foreground">{t('masterQr.description')}</p>
+          <span dir="ltr" className="truncate font-mono text-xs text-muted-foreground">
+            {publicUrl}
+          </span>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <a
+              href={svgDataUrl(masterQr)}
+              download={`${membership.restaurant.slug}-qr.svg`}
+              className="flex h-10 items-center gap-2 rounded-full bg-foreground px-4 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] print:hidden"
+            >
+              <DownloadIcon className="size-4" />
+              {t('masterQr.download')}
+            </a>
+            <CopyLinkButton url={publicUrl} />
+          </div>
+        </div>
+      </section>
+
+      {/* Tables & their QRs */}
       <CreateTableForm locale={locale} />
       {cards.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t('empty')}</p>
       ) : (
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 print:grid-cols-2 print:gap-2">
           {cards.map((card) => (
             <li
               key={card.id}
-              className="flex flex-col gap-3 rounded-xl border border-hairline p-4"
+              className="flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-4 print:break-inside-avoid"
             >
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-medium">{card.label}</span>
-                <span
-                  className={`rounded-full border border-hairline px-2.5 py-0.5 text-xs ${
-                    card.isActive ? '' : 'text-muted-foreground'
-                  }`}
-                >
-                  {t(card.isActive ? 'active' : 'archived')}
-                </span>
+              <div className="flex items-center justify-between gap-2 print:hidden">
+                <span className="font-semibold">{card.label}</span>
+                {card.isActive ? (
+                  <span className="rounded-full bg-foreground px-2.5 py-0.5 text-[11px] font-medium text-background">
+                    {t('active')}
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+                    {t('archived')}
+                  </span>
+                )}
               </div>
-              <div className="flex justify-center border border-hairline p-2 [&>svg]:h-auto [&>svg]:w-full">
-                {/* Inline QR SVG from our own `qrSvg` — no untrusted markup. */}
-                <div dangerouslySetInnerHTML={{__html: card.qr}} />
-              </div>
-              <p dir="ltr" className="truncate font-mono text-xs text-muted-foreground">
+              <div
+                className={`grid place-items-center self-center rounded-lg border border-hairline p-3 ${
+                  card.isActive ? '' : 'opacity-40'
+                }`}
+                dangerouslySetInnerHTML={{__html: card.qr}}
+              />
+              <span dir="ltr" className="truncate text-center font-mono text-[11px] text-muted-foreground print:hidden">
                 {card.url}
-              </p>
-              <form action={setTableActiveAction} className="self-start">
-                <input type="hidden" name="locale" value={locale} />
-                <input type="hidden" name="tableId" value={card.id} />
-                <input type="hidden" name="makeActive" value={String(!card.isActive)} />
-                <button
-                  type="submit"
-                  className="rounded-base border border-hairline px-3.5 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              </span>
+              <div className="flex items-center gap-2 print:hidden">
+                <a
+                  href={svgDataUrl(card.qr)}
+                  download={`qr-${card.token.slice(0, 8)}.svg`}
+                  className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-full border border-hairline text-xs font-medium transition-colors hover:border-foreground"
                 >
-                  {t(card.isActive ? 'archive' : 'restore')}
-                </button>
-              </form>
+                  <DownloadIcon className="size-3.5" />
+                  {t('downloadSvg')}
+                </a>
+                <form action={setTableActiveAction} className="flex-1">
+                  <input type="hidden" name="locale" value={locale} />
+                  <input type="hidden" name="tableId" value={card.id} />
+                  <input type="hidden" name="makeActive" value={String(!card.isActive)} />
+                  <button
+                    type="submit"
+                    className="h-9 w-full rounded-full bg-foreground text-xs font-medium text-background transition-[transform] duration-100 active:scale-[0.98]"
+                  >
+                    {card.isActive ? t('archive') : t('restore')}
+                  </button>
+                </form>
+              </div>
+              {/* On paper the card is just label + QR */}
+              <span className="hidden text-center text-sm font-semibold print:block">
+                {card.label}
+              </span>
             </li>
           ))}
         </ul>
       )}
+
+      <div className="flex flex-wrap items-center gap-2 print:hidden">
+        <PrintButton />
+      </div>
     </div>
   );
 }

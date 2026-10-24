@@ -17,6 +17,9 @@
   --hairline: #e6e6e6;
   --hairline-strong: #c7c7cc;
 
+  /* Destructive — the one non-monochrome exception (spec: cancel/error only) */
+  --destructive: #dc2626;
+
   /* Focus & overlays */
   --focus: #000000;
   --backdrop: rgb(0 0 0 / 0.4);
@@ -41,6 +44,8 @@
 
   --hairline: #2c2c2e;
   --hairline-strong: #48484a;
+
+  --destructive: #ef4444;
 
   --focus: #ffffff;
   --backdrop: rgb(0 0 0 / 0.6);

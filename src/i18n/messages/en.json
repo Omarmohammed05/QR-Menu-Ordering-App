@@ -60,11 +60,11 @@
       "overview": "Overview",
       "menu": "Menu",
       "orders": "Orders",
-      "tables": "Tables"
+      "tables": "Tables & QR"
     },
     "orders": {
       "title": "Orders",
-      "tagline": "Newest first — refreshes automatically every 15 seconds",
+      "tagline": "Live order board — refreshes automatically",
       "empty": "No orders yet — the first one appears here the moment it lands",
       "unknownTable": "Unknown table",
       "total": "Total",
@@ -73,14 +73,44 @@
       "note": "Note",
       "status": {
         "pending": "New",
-        "accepted": "Accepted",
+        "accepted": "Preparing",
+        "ready": "Ready",
         "completed": "Completed",
         "cancelled": "Cancelled"
       },
       "action": {
-        "accepted": "Accept",
-        "completed": "Complete",
+        "accepted": "Start preparing",
+        "ready": "Mark ready",
+        "completed": "Served",
         "cancelled": "Cancel"
+      },
+      "emptyColumn": "No orders here",
+      "incoming": "incoming",
+      "outside": "Takeaway",
+      "refresh": "Refresh",
+      "cancel": "Cancel order",
+      "searchPlaceholder": "Search by order, table, customer…",
+      "board": {
+        "pending": "New",
+        "accepted": "Preparing",
+        "ready": "Ready",
+        "completed": "Completed today"
+      },
+      "filter": {
+        "all": "All",
+        "dineIn": "Dine-in",
+        "takeaway": "Takeaway"
+      },
+      "timeAgo": {
+        "minute": "{count}m ago",
+        "hour": "{count}h ago"
+      },
+      "stats": {
+        "todayCount": "Orders today",
+        "activeNow": "Active now",
+        "completedToday": "Completed today",
+        "avgPrep": "Avg. prep time",
+        "minutesUnit": "min"
       }
     },
     "tables": {
@@ -99,7 +129,29 @@
         "label": "Enter the table label",
         "forbidden": "You don't have permission to manage tables",
         "generic": "Something went wrong, try again"
+      },
+      "stats": {
+        "total": "Total tables",
+        "active": "Active tables"
+      },
+      "printAll": "Print codes (A4)",
+      "downloadSvg": "Download QR",
+      "masterQr": {
+        "badge": "Master QR",
+        "title": "Restaurant master QR",
+        "description": "Scan to open the menu directly — works for takeaway and delivery",
+        "download": "Download SVG",
+        "copyLink": "Copy link",
+        "copied": "Copied"
       }
+    },
+    "shell": {
+      "mainMenu": "Main menu",
+      "connected": "Cloud connected",
+      "connectionLabel": "Connection",
+      "systemTagline": "Restaurant console",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
     }
   },
   "publicMenu": {

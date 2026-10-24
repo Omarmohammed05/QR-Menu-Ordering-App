@@ -8,7 +8,7 @@ import {createRestaurantRepos, type OrderStatus} from '@/server/db/repos';
 
 type Locale = (typeof routing.locales)[number];
 
-const statusSchema = z.enum(['pending', 'accepted', 'completed', 'cancelled']);
+const statusSchema = z.enum(['pending', 'accepted', 'ready', 'completed', 'cancelled']);
 
 function localeFrom(formData: FormData): Locale {
   const raw = formData.get('locale');

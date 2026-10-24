@@ -10,6 +10,7 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-hairline: var(--hairline);
   --color-hairline-strong: var(--hairline-strong);
+  --color-destructive: var(--destructive);
   --color-focus: var(--focus);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);

@@ -19,7 +19,7 @@ export function SignOutButton() {
         await authClient.signOut();
         router.push('/login');
       }}
-      className="rounded-base border border-hairline px-4 py-2.5 text-sm font-medium transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
+      className="rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
     >
       {t('signOut')}
     </button>

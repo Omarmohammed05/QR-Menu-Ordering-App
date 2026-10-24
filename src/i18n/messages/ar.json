@@ -60,11 +60,11 @@
       "overview": "الرئيسية",
       "menu": "القائمة",
       "orders": "الطلبات",
-      "tables": "الطاولات"
+      "tables": "الطاولات و QR"
     },
     "orders": {
       "title": "الطلبات",
-      "tagline": "أحدث الطلبات — تُحدَّث تلقائيًا كل ١٥ ثانية",
+      "tagline": "لوحة الطلبات الحية — تُحدَّث تلقائيًا",
       "empty": "لا توجد طلبات بعد — يظهر أول طلب هنا فور وصوله",
       "unknownTable": "طاولة مجهولة",
       "total": "الإجمالي",
@@ -73,14 +73,44 @@
       "note": "ملاحظة",
       "status": {
         "pending": "جديد",
-        "accepted": "مقبول",
+        "accepted": "قيد التحضير",
+        "ready": "جاهز",
         "completed": "مكتمل",
         "cancelled": "ملغي"
       },
       "action": {
-        "accepted": "قبول",
-        "completed": "إكمال",
+        "accepted": "ابدأ التحضير",
+        "ready": "جاهز",
+        "completed": "تم التسليم",
         "cancelled": "إلغاء"
+      },
+      "emptyColumn": "لا توجد طلبات هنا",
+      "incoming": "وارد الآن",
+      "outside": "طلب خارجي",
+      "refresh": "تحديث",
+      "cancel": "إلغاء الطلب",
+      "searchPlaceholder": "بحث برقم الطلب، الطاولة، العميل…",
+      "board": {
+        "pending": "جديد",
+        "accepted": "قيد التحضير",
+        "ready": "جاهز",
+        "completed": "مكتمل اليوم"
+      },
+      "filter": {
+        "all": "الكل",
+        "dineIn": "داخل المطعم",
+        "takeaway": "طلبات خارجية"
+      },
+      "timeAgo": {
+        "minute": "منذ {count} د",
+        "hour": "منذ {count} س"
+      },
+      "stats": {
+        "todayCount": "طلبات اليوم",
+        "activeNow": "نشطة الآن",
+        "completedToday": "مكتملة اليوم",
+        "avgPrep": "متوسط زمن التحضير",
+        "minutesUnit": "دقيقة"
       }
     },
     "tables": {
@@ -99,7 +129,29 @@
         "label": "اكتب اسم الطاولة",
         "forbidden": "ليست لديك صلاحية إدارة الطاولات",
         "generic": "حدث خطأ ما، حاول مرة أخرى"
+      },
+      "stats": {
+        "total": "إجمالي الطاولات",
+        "active": "طاولات نشطة"
+      },
+      "printAll": "طباعة الأكواد (A4)",
+      "downloadSvg": "تنزيل QR",
+      "masterQr": {
+        "badge": "الرمز الرئيسي العام",
+        "title": "رمز QR العام للمطعم",
+        "description": "امسحه لفتح القائمة مباشرة — يصلح للطلب الخارجي والتوصيل",
+        "download": "تنزيل SVG",
+        "copyLink": "نسخ الرابط",
+        "copied": "تم النسخ"
       }
+    },
+    "shell": {
+      "mainMenu": "القائمة الرئيسية",
+      "connected": "متصل سحابيًا",
+      "connectionLabel": "حالة الاتصال",
+      "systemTagline": "نظام إدارة المطعم",
+      "openMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة"
     }
   },
   "publicMenu": {

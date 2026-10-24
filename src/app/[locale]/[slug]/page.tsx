@@ -58,52 +58,72 @@ export default async function PublicMenuPage({params, searchParams}: Props) {
     currentLocale === 'en' ? menu.restaurant.nameAr : menu.restaurant.nameEn;
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-4 pb-32 pt-8 sm:pt-12">
-      <header className="flex flex-col gap-5 pb-7">
-        {menu.restaurant.logoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote images, no loader config for them
-          <img
-            src={menu.restaurant.logoUrl}
-            alt={localizedName(currentLocale, menu.restaurant)}
-            className="size-12 rounded-xl object-cover"
-          />
-        ) : (
-          <span className="grid size-12 place-items-center rounded-xl bg-brand text-white">
-            <StoreIcon className="size-6" />
-          </span>
-        )}
-        <div className="flex flex-col gap-1">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            {localizedName(currentLocale, menu.restaurant)}
-          </h1>
-          {alternateName ? (
-            <p dir={currentLocale === 'en' ? 'rtl' : 'ltr'} className="text-end text-sm text-muted-foreground">
-              {alternateName}
-            </p>
-          ) : null}
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span
-            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium ${
-              menu.isOpen ? 'bg-muted' : 'border border-hairline text-muted-foreground'
-            }`}
-          >
+    <main className="relative min-h-dvh bg-warm-canvas text-warm-ink">
+      {/* Header glow — warm image wash fading into the cream canvas */}
+      <div aria-hidden className="sunrise-glow" />
+      <div className="relative z-10 mx-auto w-full max-w-2xl px-4 pb-32 pt-6 sm:pt-10">
+        <header className="animate-rise pb-8">
+          {/* Sunrise gradient hero — the visual anchor the QR scan lands on */}
+          <div className="sunrise-gradient shadow-warm-strong relative overflow-hidden rounded-[24px] p-6 sm:p-7">
             <span
-              className={`size-1.5 rounded-full ${
-                menu.isOpen ? 'bg-brand' : 'bg-muted-foreground'
-              }`}
+              aria-hidden
+              className="pointer-events-none absolute -end-16 -top-20 size-52 rounded-full bg-white/15 blur-2xl"
             />
-            {tMenu(menu.isOpen ? 'openNow' : 'closedNow')}
-          </span>
-          {menu.table ? (
-            <span className="flex items-center gap-1.5 rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium">
-              <TableIcon className="size-3.5 text-muted-foreground" />
-              {menu.table.label}
-            </span>
-          ) : null}
-        </div>
-      </header>
-      <MenuView menu={menu} tableToken={token ?? null} />
+            <div className="relative flex flex-col gap-5">
+              <div className="flex items-center gap-4">
+                {menu.restaurant.logoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote images, no loader config for them
+                  <img
+                    src={menu.restaurant.logoUrl}
+                    alt={localizedName(currentLocale, menu.restaurant)}
+                    className="size-14 rounded-2xl border-2 border-white/40 object-cover shadow-lg"
+                  />
+                ) : (
+                  <span className="grid size-14 shrink-0 place-items-center rounded-2xl border-2 border-white/40 bg-white/15 text-white backdrop-blur-sm">
+                    <StoreIcon className="size-7" />
+                  </span>
+                )}
+                <div className="flex min-w-0 flex-col gap-0.5">
+                  <h1 className="truncate text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                    {localizedName(currentLocale, menu.restaurant)}
+                  </h1>
+                  {alternateName ? (
+                    <p
+                      dir={currentLocale === 'en' ? 'rtl' : 'ltr'}
+                      className="truncate text-start text-sm font-medium text-white/85"
+                    >
+                      {alternateName}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold backdrop-blur-sm ${
+                    menu.isOpen
+                      ? 'bg-white/90 text-warm-ink'
+                      : 'border border-white/50 bg-white/15 text-white'
+                  }`}
+                >
+                  <span
+                    className={`size-1.5 rounded-full ${
+                      menu.isOpen ? 'animate-soft-pulse bg-brand' : 'bg-white/70'
+                    }`}
+                  />
+                  {tMenu(menu.isOpen ? 'openNow' : 'closedNow')}
+                </span>
+                {menu.table ? (
+                  <span className="flex items-center gap-1.5 rounded-full border border-white/40 bg-white/15 px-3.5 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
+                    <TableIcon className="size-3.5 text-white/80" />
+                    {menu.table.label}
+                  </span>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </header>
+        <MenuView menu={menu} tableToken={token ?? null} />
+      </div>
     </main>
   );
 }

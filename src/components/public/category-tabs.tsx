@@ -58,7 +58,7 @@ export function CategoryTabs({categories}: Props) {
     <div className="sticky top-0 z-20 -mx-4 px-4 py-3">
       <nav
         aria-label={t('sectionsNav')}
-        className="material flex gap-1 overflow-x-auto rounded-full border border-hairline p-1.5 shadow-sm"
+        className="material flex gap-1 overflow-x-auto rounded-full border border-warm-hairline p-1.5 shadow-[0_6px_18px_rgba(255,87,34,0.10)]"
       >
         {categories.map((category) => {
           const isActive = category.id === active;

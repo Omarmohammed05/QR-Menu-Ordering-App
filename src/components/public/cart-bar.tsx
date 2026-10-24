@@ -16,19 +16,19 @@ export function CartBar({count, totalPiastres, currency, onOpen}: Props) {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-20 px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-      <div className="animate-float-up material mx-auto flex w-full max-w-2xl items-center justify-between gap-3 rounded-full border border-hairline py-2 pe-2 ps-2.5 shadow-[0_12px_32px_rgb(0_0_0/0.14)]">
+      <div className="animate-float-up material mx-auto flex w-full max-w-2xl items-center justify-between gap-3 rounded-full border border-warm-hairline py-2 pe-2 ps-2.5 shadow-warm-strong">
         <span className="flex min-w-0 items-center gap-3">
-          <span className="relative grid size-9 shrink-0 place-items-center rounded-full bg-brand text-white">
+          <span className="brand-gradient relative grid size-9 shrink-0 place-items-center rounded-full text-white">
             <BagIcon className="size-4" />
-            <span className="absolute -end-1 -top-1 grid min-w-5 place-items-center rounded-full border border-hairline bg-surface px-1 text-[11px] font-semibold tabular-nums">
+            <span className="absolute -end-1 -top-1 grid min-w-5 place-items-center rounded-full border border-warm-hairline bg-surface px-1 text-[11px] font-semibold tabular-nums">
               {count}
             </span>
           </span>
           <span className="flex min-w-0 flex-col leading-tight">
-            <span className="truncate text-xs text-muted-foreground">
+            <span className="truncate text-xs text-warm-muted">
               {t('cartCount', {count})}
             </span>
-            <span className="text-sm font-semibold tabular-nums">
+            <span className="text-sm font-semibold tabular-nums text-warm-ink">
               {formatPrice(totalPiastres, locale, currency)}
             </span>
           </span>

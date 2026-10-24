@@ -4,7 +4,7 @@ import {useActionState, useEffect, useMemo, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {useRouter} from '@/i18n/navigation';
 import {localizedName} from '@/lib/localize';
-import {MenuBookIcon} from '@/components/icons';
+import {MapPinIcon, MenuBookIcon} from '@/components/icons';
 import {placeOrderAction, type PlaceOrderState} from '@/server/actions/place-order';
 import type {PublicMenu} from '@/server/public-menu';
 import {formatPrice} from '@/lib/format';
@@ -89,30 +89,34 @@ export function MenuView({menu, tableToken}: Props) {
         <>
           <CategoryTabs categories={menu.categories} />
 
-          <div className="flex flex-col gap-10">
-            {menu.categories.map((category) => (
+          <div className="flex flex-col gap-9">
+            {menu.categories.map((category, index) => (
               <section
                 key={category.id}
                 id={sectionId(category.id)}
-                className="flex scroll-mt-24 flex-col gap-3"
+                style={{animationDelay: `${index * 70}ms`}}
+                className="animate-rise flex scroll-mt-24 flex-col gap-3"
               >
-                <header className="flex items-baseline justify-between gap-3">
-                  <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-                    {category.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image
-                      <img
-                        src={category.imageUrl}
-                        alt={localizedName(locale, category)}
-                        className="size-7 rounded-full object-cover"
-                      />
-                    ) : null}
-                    {localizedName(locale, category)}
-                  </h2>
-                  <span className="shrink-0 text-xs text-muted-foreground">
+                <header className="flex items-center justify-between gap-3">
+                  <div className="flex flex-col gap-1">
+                    <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight text-warm-ink">
+                      {category.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image
+                        <img
+                          src={category.imageUrl}
+                          alt={localizedName(locale, category)}
+                          className="size-8 rounded-full border border-warm-hairline object-cover"
+                        />
+                      ) : null}
+                      {localizedName(locale, category)}
+                    </h2>
+                    <span className="tick" aria-hidden />
+                  </div>
+                  <span className="shrink-0 rounded-full bg-warm-chip px-3 py-1 text-xs font-medium text-warm-muted">
                     {t('dishCount', {count: category.items.length})}
                   </span>
                 </header>
-                <ul className="flex flex-col divide-y divide-hairline border-y border-hairline">
+                <ul className="flex flex-col gap-3">
                   {category.items.map((item) => (
                     <DishRow
                       key={item.id}
@@ -129,25 +133,33 @@ export function MenuView({menu, tableToken}: Props) {
           </div>
         </>
       ) : (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-hairline bg-surface shadow-card px-6 py-14 text-center">
-          <span className="grid size-12 place-items-center rounded-full bg-muted text-muted-foreground">
+        <div className="animate-rise flex flex-col items-center gap-3 rounded-[24px] border border-warm-hairline bg-surface px-6 py-14 text-center shadow-warm">
+          <span className="grid size-12 place-items-center rounded-full bg-warm-chip text-brand-strong">
             <MenuBookIcon className="size-6" />
           </span>
-          <p className="text-sm text-muted-foreground">{t('empty')}</p>
+          <p className="text-sm text-warm-muted">{t('empty')}</p>
         </div>
       )}
 
       {menu.addresses.length > 0 ? (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-semibold tracking-tight">{t('branches')}</h2>
-          <ul className="flex flex-col divide-y divide-hairline border-y border-hairline">
+        <section className="animate-rise flex flex-col gap-3" style={{animationDelay: '120ms'}}>
+          <h2 className="flex flex-col gap-1 text-xl font-bold tracking-tight text-warm-ink">
+            {t('branches')}
+            <span className="tick" aria-hidden />
+          </h2>
+          <ul className="flex flex-col gap-3">
             {menu.addresses.map((entry) => (
               <li
                 key={entry.id}
-                className="flex flex-col gap-0.5 py-2.5 text-sm first:pt-0 last:pb-0"
+                className="flex items-start gap-3 rounded-2xl border border-warm-hairline bg-surface p-4 shadow-warm"
               >
-                <span className="font-medium">{entry.label}</span>
-                <span className="text-xs text-muted-foreground">{entry.address}</span>
+                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-warm-chip text-brand-strong">
+                  <MapPinIcon className="size-4" />
+                </span>
+                <span className="flex flex-col gap-0.5">
+                  <span className="text-sm font-semibold text-warm-ink">{entry.label}</span>
+                  <span className="text-xs leading-relaxed text-warm-muted">{entry.address}</span>
+                </span>
               </li>
             ))}
           </ul>

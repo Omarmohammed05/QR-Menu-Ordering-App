@@ -3,7 +3,7 @@
 import {useActionState} from 'react';
 import {useTranslations} from 'next-intl';
 import {updateItemAction, type UpdateItemState} from '@/server/actions/menu';
-import {ImageUpload} from '@/components/dashboard/image-upload';
+import {MultiImageUpload} from '@/components/dashboard/multi-image-upload';
 
 type Props = {
   locale: string;
@@ -13,6 +13,7 @@ type Props = {
     descriptionAr: string | null;
     pricePiastres: number;
     imageUrl: string | null;
+    imageUrls: string[] | null;
   };
 };
 
@@ -29,6 +30,13 @@ export function EditItemForm({locale, item}: Props) {
     {}
   );
   const error = state.error ? t(`errors.${state.error}`) : null;
+  // Rows written before the gallery column exist only as a cover — seed it.
+  const images =
+    item.imageUrls && item.imageUrls.length > 0
+      ? item.imageUrls
+      : item.imageUrl
+        ? [item.imageUrl]
+        : [];
 
   const inputClass =
     'rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand';
@@ -37,7 +45,7 @@ export function EditItemForm({locale, item}: Props) {
     <form action={formAction} className="flex flex-col gap-3" noValidate>
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="itemId" value={item.id} />
-      <ImageUpload name="imageUrl" value={item.imageUrl} />
+      <MultiImageUpload name="imageUrls" values={images} />
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">{t('itemName')}</span>
         <input
@@ -51,12 +59,12 @@ export function EditItemForm({locale, item}: Props) {
       </label>
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">{t('itemDescription')}</span>
-        <input
-          type="text"
+        <textarea
           name="descriptionAr"
+          rows={4}
           defaultValue={item.descriptionAr ?? ''}
           autoComplete="off"
-          className={inputClass}
+          className={`${inputClass} min-h-24 resize-y`}
         />
       </label>
       <label className="flex flex-col gap-1.5">

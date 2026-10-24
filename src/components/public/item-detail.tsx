@@ -29,6 +29,7 @@ export function ItemDetail({item, slug, currency, tableToken}: Props) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
 
   const optionIds = [...selected];
   const unit = unitPiastres(item, optionIds);
@@ -64,13 +65,36 @@ export function ItemDetail({item, slug, currency, tableToken}: Props) {
         </Link>
 
         <article className="animate-rise flex flex-col gap-5 rounded-[24px] border border-warm-hairline bg-surface p-5 shadow-warm sm:p-6">
-          {item.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image
-            <img
-              src={item.imageUrl}
-              alt={localizedName(locale, item)}
-              className="aspect-[16/9] w-full rounded-2xl object-cover"
-            />
+          {item.imageUrls.length > 0 ? (
+            <div className="flex flex-col gap-2.5">
+              {/* eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image */}
+              <img
+                src={item.imageUrls[activeImage] ?? item.imageUrls[0]}
+                alt={localizedName(locale, item)}
+                className="aspect-[16/9] w-full rounded-2xl object-cover"
+              />
+              {item.imageUrls.length > 1 ? (
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {item.imageUrls.map((url, index) => (
+                    <button
+                      key={url}
+                      type="button"
+                      onClick={() => setActiveImage(index)}
+                      aria-label={localizedName(locale, item)}
+                      aria-current={index === activeImage}
+                      className={`shrink-0 overflow-hidden rounded-xl transition-all duration-150 ${
+                        index === activeImage
+                          ? 'ring-2 ring-brand ring-offset-2 ring-offset-surface'
+                          : 'opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image */}
+                      <img src={url} alt="" className="size-16 object-cover sm:size-[72px]" />
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           ) : (
             <span className="sunrise-gradient grid aspect-[16/9] w-full place-items-center rounded-2xl text-white shadow-warm">
               <StoreIcon className="size-14 opacity-80" />

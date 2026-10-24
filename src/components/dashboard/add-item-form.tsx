@@ -3,7 +3,7 @@
 import {useActionState} from 'react';
 import {useTranslations} from 'next-intl';
 import {createItemAction, type CreateItemState} from '@/server/actions/menu';
-import {ImageUpload} from '@/components/dashboard/image-upload';
+import {MultiImageUpload} from '@/components/dashboard/multi-image-upload';
 
 /** New dish in one section. Price is typed in EGP and stored as piastres. */
 export function AddItemForm({locale, categoryId}: {locale: string; categoryId: string}) {
@@ -18,14 +18,19 @@ export function AddItemForm({locale, categoryId}: {locale: string; categoryId: s
     <form action={formAction} className="mt-2 flex flex-col gap-3" noValidate>
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="categoryId" value={categoryId} />
-      <ImageUpload name="imageUrl" value={null} />
+      <MultiImageUpload name="imageUrls" values={[]} />
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">{t('itemName')}</span>
         <input type="text" name="nameAr" required autoComplete="off" className={inputClass} />
       </label>
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">{t('itemDescription')}</span>
-        <input type="text" name="descriptionAr" autoComplete="off" className={inputClass} />
+        <textarea
+          name="descriptionAr"
+          rows={4}
+          autoComplete="off"
+          className={`${inputClass} min-h-24 resize-y`}
+        />
       </label>
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">{t('price')}</span>

@@ -22,6 +22,8 @@ export type PublicMenuItem = {
   descriptionEn: string | null;
   pricePiastres: number;
   imageUrl: string | null;
+  /** Full gallery, `[0]` is the cover (mirrors `imageUrl`). */
+  imageUrls: string[];
   options: PublicMenuOption[];
 };
 
@@ -99,6 +101,8 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
       descriptionEn: item.descriptionEn ?? null,
       pricePiastres: item.pricePiastres,
       imageUrl: item.imageUrl ?? null,
+      imageUrls:
+        item.imageUrls.length > 0 ? item.imageUrls : item.imageUrl ? [item.imageUrl] : [],
       options: optionsByItem.get(item.id) ?? []
     }));
 
@@ -153,6 +157,7 @@ export async function loadPublicItemDetail(
     descriptionEn: item.descriptionEn ?? null,
     pricePiastres: item.pricePiastres,
     imageUrl: item.imageUrl ?? null,
+    imageUrls: item.imageUrls.length > 0 ? item.imageUrls : item.imageUrl ? [item.imageUrl] : [],
     options: options.map((option) => ({
       id: option.id,
       nameAr: option.nameAr,

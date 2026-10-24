@@ -33,6 +33,15 @@ const imageUrlSchema = z
   .max(500, 'generic')
   .or(z.literal(''))
   .transform((value) => value || null);
+/** Gallery: every uploaded imgbb URL, `[0]` is the cover. */
+const imageUrlsSchema = z.array(z.string().trim().url('generic').max(500, 'generic')).max(10, 'generic');
+
+function imageUrlsFrom(formData: FormData): string[] {
+  const parsed = imageUrlsSchema.safeParse(
+    formData.getAll('imageUrls').filter((value): value is string => value !== '')
+  );
+  return parsed.success ? parsed.data : [];
+}
 
 function localeFrom(formData: FormData): Locale {
   const raw = formData.get('locale');
@@ -85,14 +94,12 @@ export async function createItemAction(
     .object({
       nameAr: nameArSchema,
       descriptionAr: descriptionSchema,
-      price: priceSchema,
-      imageUrl: imageUrlSchema
+      price: priceSchema
     })
     .safeParse({
       nameAr: formData.get('nameAr') ?? '',
       descriptionAr: formData.get('descriptionAr') ?? '',
-      price: formData.get('price') ?? '',
-      imageUrl: formData.get('imageUrl') ?? ''
+      price: formData.get('price') ?? ''
     });
   if (!parsed.success) {
     const first = parsed.error.issues[0]?.message;
@@ -108,13 +115,15 @@ export async function createItemAction(
   const category = await repos.categories.findById(categoryId.data);
   if (!category) return {error: 'category'};
 
+  const imageUrls = imageUrlsFrom(formData);
   const pricePiastres = Math.round(parseFloat(parsed.data.price) * 100);
   try {
     await repos.items.create({
       categoryId: category.id,
       nameAr: parsed.data.nameAr,
       descriptionAr: parsed.data.descriptionAr,
-      imageUrl: parsed.data.imageUrl,
+      imageUrl: imageUrls[0] ?? null,
+      imageUrls,
       pricePiastres
     });
   } catch {
@@ -188,14 +197,12 @@ export async function updateItemAction(
     .object({
       nameAr: nameArSchema,
       descriptionAr: descriptionSchema,
-      price: priceSchema,
-      imageUrl: imageUrlSchema
+      price: priceSchema
     })
     .safeParse({
       nameAr: formData.get('nameAr') ?? '',
       descriptionAr: formData.get('descriptionAr') ?? '',
-      price: formData.get('price') ?? '',
-      imageUrl: formData.get('imageUrl') ?? ''
+      price: formData.get('price') ?? ''
     });
   if (!parsed.success) {
     const first = parsed.error.issues[0]?.message;
@@ -203,10 +210,12 @@ export async function updateItemAction(
   }
 
   const repos = createRestaurantRepos(membership.restaurant.id);
+  const imageUrls = imageUrlsFrom(formData);
   const updated = await repos.items.update(itemId.data, {
     nameAr: parsed.data.nameAr,
     descriptionAr: parsed.data.descriptionAr,
-    imageUrl: parsed.data.imageUrl,
+    imageUrl: imageUrls[0] ?? null,
+    imageUrls,
     pricePiastres: Math.round(parseFloat(parsed.data.price) * 100)
   });
   if (!updated) return {error: 'generic'};

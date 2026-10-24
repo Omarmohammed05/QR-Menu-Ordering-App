@@ -52,7 +52,10 @@ export const menuItems = pgTable(
     descriptionEn: text(),
     /** Integer piastres (1 EGP = 100 piastres) — no floats for money. */
     pricePiastres: integer().notNull(),
+    /** Cover image — mirrors `imageUrls[0]` so existing readers stay unchanged. */
     imageUrl: text(),
+    /** Gallery (imgbb URLs), `[0]` is the cover. */
+    imageUrls: text('image_urls').array().notNull().default([]),
     isAvailable: boolean().notNull().default(true),
     sortOrder: integer().notNull().default(0),
     ...timestamps()

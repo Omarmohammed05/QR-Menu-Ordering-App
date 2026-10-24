@@ -165,7 +165,8 @@ export default async function MenuManagementPage({params}: Props) {
                               nameAr: item.nameAr,
                               descriptionAr: item.descriptionAr,
                               pricePiastres: item.pricePiastres,
-                              imageUrl: item.imageUrl ?? null
+                              imageUrl: item.imageUrl ?? null,
+                              imageUrls: item.imageUrls
                             }}
                           />
                           <div className="border-t border-hairline pt-4">

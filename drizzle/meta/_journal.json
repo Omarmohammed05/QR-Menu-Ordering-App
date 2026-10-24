@@ -50,6 +50,13 @@
       "when": 1792842754988,
       "tag": "0006_shallow_nightcrawler",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792851302050,
+      "tag": "0007_crazy_clint_barton",
+      "breakpoints": true
     }
   ]
 }

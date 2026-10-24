@@ -2,6 +2,7 @@
 
 import {useActionState, useEffect, useMemo, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
+import {useRouter} from '@/i18n/navigation';
 import {MenuBookIcon} from '@/components/icons';
 import {placeOrderAction, type PlaceOrderState} from '@/server/actions/place-order';
 import type {PublicMenu} from '@/server/public-menu';
@@ -27,17 +28,33 @@ const INITIAL_STATE: PlaceOrderState = {ok: false, error: null};
 export function MenuView({menu, tableToken}: Props) {
   const t = useTranslations('publicMenu');
   const locale = useLocale();
+  const router = useRouter();
   /** itemId → quantity. */
   const [cart, setCart] = useState<Record<string, number>>({});
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [state, formAction, pending] = useActionState(placeOrderAction, INITIAL_STATE);
+  // Fresh key whenever the cart changes: a retry of the SAME cart is
+  // idempotent, an edited cart is a new order.
+  const [idempotencyKey, setIdempotencyKey] = useState(() => crypto.randomUUID());
 
-  // Order persisted server-side → hand the customer to WhatsApp.
+  // Order persisted server-side → hand the customer to WhatsApp, then land
+  // on the status page (unmounting this view clears the cart with it). The
+  // popup can be blocked (it fires after an async round-trip, not the tap) —
+  // the status page re-offers the same link from sessionStorage, and the
+  // order is already saved either way.
   useEffect(() => {
-    if (state.ok) window.location.href = state.whatsappUrl;
-  }, [state]);
+    if (!state.ok) return;
+    try {
+      sessionStorage.setItem(`order-wa:${state.publicId}`, state.whatsappUrl);
+    } catch {
+      /* storage unavailable — the status page still works, minus the fallback */
+    }
+    window.open(state.whatsappUrl, '_blank');
+    router.push(state.statusUrl);
+  }, [state, router]);
 
-  const change = (id: string, delta: number) =>
+  const change = (id: string, delta: number) => {
+    setIdempotencyKey(crypto.randomUUID()); // the cart is changing → new order
     setCart((prev) => {
       const next = {...prev};
       const quantity = (next[id] ?? 0) + delta;
@@ -45,6 +62,7 @@ export function MenuView({menu, tableToken}: Props) {
       else next[id] = Math.min(quantity, 50);
       return next;
     });
+  };
 
   const itemsById = useMemo(
     () => new Map(menu.categories.flatMap((c) => c.items).map((i) => [i.id, i])),
@@ -148,6 +166,7 @@ export function MenuView({menu, tableToken}: Props) {
           currency={currency}
           slug={menu.restaurant.slug}
           tableToken={tableToken}
+          idempotencyKey={idempotencyKey}
           action={formAction}
           state={state}
           pending={pending}

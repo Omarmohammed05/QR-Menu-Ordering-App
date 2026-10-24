@@ -5,7 +5,8 @@ import {useLocale, useTranslations} from 'next-intl';
 import {useRouter} from '@/i18n/navigation';
 import {setOrderStatusAction} from '@/server/actions/orders';
 import type {OrderStatus, OrderWithItems} from '@/server/db/repos';
-import {formatDateTime, formatPrice} from '@/lib/format';
+import {NEXT_ORDER_STATUS} from '@/lib/order-status';
+import {formatDateTime, formatNumber, formatPrice} from '@/lib/format';
 import {
   BagIcon,
   ClockIcon,
@@ -25,13 +26,6 @@ const POLL_MS = 15_000;
 
 /** Board columns in workflow order; cancelled orders stay off the board. */
 const COLUMNS: OrderStatus[] = ['pending', 'accepted', 'ready', 'completed'];
-
-/** Workflow transition offered as the card's primary action. */
-const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
-  pending: 'accepted',
-  accepted: 'ready',
-  ready: 'completed'
-};
 
 /** Compacts elapsed time into the design's "منذ ٣ د" label. */
 function timeAgo(date: Date, t: ReturnType<typeof useTranslations>, locale: string): string {
@@ -81,7 +75,7 @@ export function OrdersBoard({orders, tableLabels, currency}: Props) {
       if (channel === 'takeaway' && isDineIn) return false;
       if (!q) return true;
       const haystack = [
-        `#${order.id.slice(0, 6)}`,
+        `#${order.number}`,
         order.tableId ? (tableLabels[order.tableId] ?? '') : '',
         order.customerName ?? '',
         order.customerPhone ?? '',
@@ -222,8 +216,9 @@ type CardProps = {
 /** One order ticket: channel, lines, total, and the workflow action. */
 function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
   const t = useTranslations('dashboard.orders');
+  const [cancelling, setCancelling] = useState(false);
   const isDone = order.status === 'completed';
-  const next = NEXT_STATUS[order.status];
+  const next = NEXT_ORDER_STATUS[order.status];
 
   return (
     <article
@@ -236,8 +231,8 @@ function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
       ) : null}
       <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
-          <span dir="ltr" className="font-mono text-sm font-bold tracking-tight">
-            #{order.id.slice(0, 6).toUpperCase()}
+          <span className="text-sm font-bold tracking-tight tabular-nums">
+            #{formatNumber(order.number, locale)}
           </span>
           {tableLabel ? (
             <span className="flex shrink-0 items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold">
@@ -291,24 +286,58 @@ function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
       ) : null}
 
       {next ? (
-        <div className="mt-1 flex items-center gap-2">
-          <form action={setOrderStatusAction} className="flex-1">
-            <input type="hidden" name="locale" value={locale} />
-            <input type="hidden" name="orderId" value={order.id} />
-            <input type="hidden" name="status" value={next} />
+        cancelling ? (
+          // Cancel needs a reason (spec §5) — ask for it inline, no dialogs.
+          <div className="animate-fade-in mt-1 flex flex-col gap-2 rounded-lg border border-destructive/30 bg-muted/50 p-2.5">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-muted-foreground">{t('cancelReasonLabel')}</span>
+              <div className="flex items-center gap-2">
+                <form action={setOrderStatusAction} className="flex min-w-0 flex-1 items-center gap-2">
+                  <input type="hidden" name="locale" value={locale} />
+                  <input type="hidden" name="orderId" value={order.id} />
+                  <input type="hidden" name="status" value="cancelled" />
+                  <input
+                    type="text"
+                    name="reason"
+                    autoFocus
+                    maxLength={200}
+                    required
+                    placeholder={t('cancelReasonPlaceholder')}
+                    className="h-10 min-w-0 flex-1 rounded-full border border-hairline bg-surface px-4 text-sm outline-none placeholder:text-muted-foreground focus:border-foreground"
+                  />
+                  <button
+                    type="submit"
+                    className="h-10 shrink-0 rounded-full border border-destructive px-4 text-xs font-medium text-destructive transition-[transform] duration-100 active:scale-[0.95]"
+                  >
+                    {t('confirmCancel')}
+                  </button>
+                </form>
+                <button
+                  type="button"
+                  onClick={() => setCancelling(false)}
+                  className="h-10 shrink-0 rounded-full px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {t('keepOrder')}
+                </button>
+              </div>
+            </label>
+          </div>
+        ) : (
+          <div className="mt-1 flex items-center gap-2">
+            <form action={setOrderStatusAction} className="flex-1">
+              <input type="hidden" name="locale" value={locale} />
+              <input type="hidden" name="orderId" value={order.id} />
+              <input type="hidden" name="status" value={next} />
+              <button
+                type="submit"
+                className="h-10 w-full rounded-full bg-foreground text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] active:opacity-90"
+              >
+                {t(`action.${next}`)}
+              </button>
+            </form>
             <button
-              type="submit"
-              className="h-10 w-full rounded-full bg-foreground text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] active:opacity-90"
-            >
-              {t(`action.${next}`)}
-            </button>
-          </form>
-          <form action={setOrderStatusAction}>
-            <input type="hidden" name="locale" value={locale} />
-            <input type="hidden" name="orderId" value={order.id} />
-            <input type="hidden" name="status" value="cancelled" />
-            <button
-              type="submit"
+              type="button"
+              onClick={() => setCancelling(true)}
               title={t('cancel')}
               className="grid size-10 shrink-0 place-items-center rounded-full border border-hairline text-muted-foreground transition-colors hover:border-destructive hover:text-destructive"
             >
@@ -317,8 +346,8 @@ function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
               </span>
               <span className="sr-only">{t('cancel')}</span>
             </button>
-          </form>
-        </div>
+          </div>
+        )
       ) : null}
     </article>
   );

@@ -1,4 +1,5 @@
 import {check, foreignKey, index, integer, jsonb, pgTable, text, timestamp, unique, uuid} from 'drizzle-orm/pg-core';
+
 import {sql} from 'drizzle-orm';
 import {restaurants, restaurantTables} from './restaurants';
 import {menuItems} from './menu';
@@ -42,10 +43,24 @@ export const orders = pgTable(
     customerPhone: text(),
     note: text(),
     totalPiastres: integer().notNull(),
+    /** Unguessable id for the public status URL — never the uuid. */
+    publicId: text().notNull().default(''),
+    /** Per-tenant sequential display number, assigned inside the insert tx. */
+    number: integer().notNull().default(0),
+    /** Client-generated; a resubmit with the same key returns the same order. */
+    idempotencyKey: text().notNull().default(''),
+    /** Customer UI locale (status page + WhatsApp message language). */
+    locale: text().notNull().default('ar'),
+    cancelReason: text(),
+    /** When the lifecycle last moved — the status page shows this. */
+    statusUpdatedAt: timestamp({withTimezone: true}).notNull().defaultNow(),
     ...timestamps()
   },
   (t) => [
     unique('orders_tenant_id_unique').on(t.restaurantId, t.id),
+    unique('orders_public_id_unique').on(t.publicId),
+    unique('orders_tenant_number_unique').on(t.restaurantId, t.number),
+    unique('orders_tenant_idempotency_unique').on(t.restaurantId, t.idempotencyKey),
     foreignKey({
       name: 'orders_table_fk',
       columns: [t.restaurantId, t.tableId],
@@ -91,5 +106,31 @@ export const orderItems = pgTable(
     check('order_items_qty_check', sql`${t.quantity} > 0`),
     check('order_items_price_check', sql`${t.unitPricePiastres} >= 0`),
     check('order_items_line_total_check', sql`${t.lineTotalPiastres} >= 0`)
+  ]
+);
+
+/**
+ * Immutable lifecycle audit trail (ADR-002 tenant table): one row per status
+ * move, plus a `null → status` creation row. The status page renders it as
+ * the order timeline; nothing ever updates or deletes these rows.
+ */
+export const orderEvents = pgTable(
+  'order_events',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    restaurantId: tenantId(),
+    orderId: uuid().notNull(),
+    /** `null` on the creation event (nothing preceded it). */
+    fromStatus: orderStatus(),
+    toStatus: orderStatus().notNull(),
+    createdAt: timestamp({withTimezone: true}).notNull().defaultNow()
+  },
+  (t) => [
+    foreignKey({
+      name: 'order_events_order_fk',
+      columns: [t.restaurantId, t.orderId],
+      foreignColumns: [orders.restaurantId, orders.id]
+    }).onDelete('cascade'),
+    index('order_events_order_idx').on(t.restaurantId, t.orderId)
   ]
 );

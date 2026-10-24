@@ -131,4 +131,48 @@ describe('placeOrderAction (integration)', () => {
     // Still exactly the two orders the successful tests wrote.
     expect(await repos.orders.list()).toHaveLength(2);
   });
+
+  it('swallows a filled honeypot without writing anything', async () => {
+    const state = await place({
+      slug,
+      cart: JSON.stringify([{id: item.id, quantity: 1}]),
+      company: 'http://spam.example'
+    });
+    expect(state).toEqual({ok: false, error: 'generic'});
+    expect(await repos.orders.list()).toHaveLength(2);
+  });
+
+  it('returns the SAME order for a resubmit with the same idempotency key', async () => {
+    const idempotencyKey = randomUUID();
+    const fields = {
+      slug,
+      cart: JSON.stringify([{id: item.id, quantity: 1}]),
+      customerName: 'سارة',
+      idempotencyKey
+    };
+    const first = await place(fields);
+    const retry = await place(fields);
+
+    expect(first.ok).toBe(true);
+    expect(retry.ok).toBe(true);
+    if (!first.ok || !retry.ok) return;
+    expect(retry.publicId).toBe(first.publicId);
+    expect(retry.orderNumber).toBe(first.orderNumber);
+    expect(first.statusUrl).toBe(retry.statusUrl);
+    expect(first.statusUrl).toMatch(new RegExp(`^/${slug}/order/${first.publicId}$`));
+    // The WhatsApp message carries the order number and the status link.
+    const message = decodeURIComponent(first.whatsappUrl.split('text=')[1] ?? '');
+    expect(message).toContain(`طلب #${first.orderNumber}`);
+    expect(message).toContain(first.publicId);
+
+    // Exactly ONE new order was written by the two submissions.
+    expect(await repos.orders.list()).toHaveLength(3);
+  });
+
+  it('numbering stays sequential across orders', async () => {
+    const one = await place({slug, cart: JSON.stringify([{id: item.id, quantity: 1}])});
+    const two = await place({slug, cart: JSON.stringify([{id: item.id, quantity: 2}])});
+    if (!one.ok || !two.ok) throw new Error('expected both orders to place');
+    expect(two.orderNumber).toBe(one.orderNumber + 1);
+  });
 });

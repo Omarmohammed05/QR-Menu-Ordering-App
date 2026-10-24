@@ -1,4 +1,4 @@
-import {boolean, check, pgTable, smallint, text, time, timestamp, unique, uuid} from 'drizzle-orm/pg-core';
+import {boolean, check, integer, pgTable, smallint, text, time, timestamp, unique, uuid} from 'drizzle-orm/pg-core';
 import {sql} from 'drizzle-orm';
 import {users} from './auth';
 import {membershipRole} from './enums';
@@ -35,6 +35,8 @@ export const restaurants = pgTable('restaurants', {
   whatsappNumber: text().notNull(),
   currency: text().notNull().default('EGP'),
   isActive: boolean().notNull().default(true),
+  /** Handed out transactionally — the source of per-tenant order numbers. */
+  orderCounter: integer().notNull().default(0),
   ...timestamps()
 });
 

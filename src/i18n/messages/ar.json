@@ -86,6 +86,10 @@
       "outside": "طلب خارجي",
       "refresh": "تحديث",
       "cancel": "إلغاء الطلب",
+      "cancelReasonLabel": "سبب الإلغاء",
+      "cancelReasonPlaceholder": "اكتب السبب…",
+      "confirmCancel": "تأكيد الإلغاء",
+      "keepOrder": "تراجع",
       "searchPlaceholder": "بحث برقم الطلب، الطاولة، العميل…",
       "board": {
         "pending": "جديد",
@@ -246,9 +250,29 @@
     "errors": {
       "cart": "السلة لم تعد صالحة — حدّث الصفحة وحاول مرة أخرى",
       "closed": "المطعم مغلق حاليًا",
+      "rate": "محاولات كثيرة — انتظر قليلًا ثم حاول مرة أخرى",
       "generic": "حدث خطأ ما، حاول مرة أخرى"
     },
-    "branches": "فروعنا"
+    "branches": "فروعنا",
+    "order": {
+      "backToMenu": "العودة إلى القائمة",
+      "orderNumber": "طلب رقم {number}",
+      "steps": {
+        "pending": "قيد المراجعة",
+        "accepted": "قيد التحضير",
+        "ready": "جاهز",
+        "completed": "تم التسليم",
+        "cancelled": "ملغي"
+      },
+      "cancelledNote": "اعتذر المطعم — تم إلغاء هذا الطلب",
+      "whatsappHint": "طلبك محفوظ بالفعل. إن لم يُفتح واتساب تلقائيًا أرسل الرسالة من هنا",
+      "openWhatsApp": "إرسال الرسالة على واتساب",
+      "updating": "تتحدث الحالة تلقائيًا…",
+      "items": "الأطباق",
+      "timeline": "سجل الطلب",
+      "from": "بعد {from}",
+      "cancelReason": "سبب الإلغاء: {reason}"
+    }
   },
   "menuManagement": {
     "title": "إدارة القائمة",

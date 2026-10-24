@@ -16,8 +16,10 @@ function localeFrom(formData: FormData): Locale {
 }
 
 /**
- * Move an order along its lifecycle. Every dashboard seat (owner, manager,
- * staff) may update orders — running the floor is the staff role's job.
+ * Move an order along its lifecycle. Every dashboard seat may advance orders
+ * — running the floor is the staff role's job — but cancelling is a manager+
+ * decision and always carries a reason (spec §5). Illegal transitions are
+ * rejected by the repo's status machine (spec §6).
  */
 export async function setOrderStatusAction(formData: FormData): Promise<void> {
   const locale = localeFrom(formData);
@@ -27,8 +29,24 @@ export async function setOrderStatusAction(formData: FormData): Promise<void> {
   const status = statusSchema.safeParse(formData.get('status') ?? '');
   if (!orderId.success || !status.success) return;
 
+  const reason = z
+    .string()
+    .trim()
+    .min(1)
+    .max(200)
+    .safeParse(formData.get('reason') ?? '');
+
+  if (status.data === 'cancelled') {
+    if (membership.role === 'staff') return; // cancel is manager+ (spec §5)
+    if (!reason.success) return; // a cancel without a reason is never written
+  }
+
   const repos = createRestaurantRepos(membership.restaurant.id);
   // Scoped repo: a foreign-tenant order id is a silent no-op (ADR-002).
-  await repos.orders.setStatus(orderId.data, status.data as OrderStatus);
+  await repos.orders.setStatus(
+    orderId.data,
+    status.data as OrderStatus,
+    status.data === 'cancelled' ? reason.data : undefined
+  );
   revalidatePath(`/${locale}/dashboard/orders`);
 }

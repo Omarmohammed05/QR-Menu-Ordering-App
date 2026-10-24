@@ -86,6 +86,10 @@
       "outside": "Takeaway",
       "refresh": "Refresh",
       "cancel": "Cancel order",
+      "cancelReasonLabel": "Cancellation reason",
+      "cancelReasonPlaceholder": "Type the reason…",
+      "confirmCancel": "Confirm cancel",
+      "keepOrder": "Keep order",
       "searchPlaceholder": "Search by order, table, customer…",
       "board": {
         "pending": "New",
@@ -246,9 +250,29 @@
     "errors": {
       "cart": "Your cart is no longer valid — refresh the page and try again",
       "closed": "The restaurant is closed right now",
+      "rate": "Too many attempts — wait a moment and try again",
       "generic": "Something went wrong, try again"
     },
-    "branches": "Our branches"
+    "branches": "Our branches",
+    "order": {
+      "backToMenu": "Back to the menu",
+      "orderNumber": "Order #{number}",
+      "steps": {
+        "pending": "Under review",
+        "accepted": "Preparing",
+        "ready": "Ready",
+        "completed": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "cancelledNote": "Sorry — the restaurant cancelled this order",
+      "whatsappHint": "Your order is already saved. If WhatsApp didn't open automatically, send the message from here",
+      "openWhatsApp": "Send the message on WhatsApp",
+      "updating": "Status updates automatically…",
+      "items": "Items",
+      "timeline": "Order timeline",
+      "from": "after {from}",
+      "cancelReason": "Cancellation reason: {reason}"
+    }
   },
   "menuManagement": {
     "title": "Menu management",

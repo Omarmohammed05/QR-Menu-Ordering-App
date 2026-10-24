@@ -1,6 +1,8 @@
-import {and, asc, desc, eq, inArray} from 'drizzle-orm';
+import {and, asc, desc, eq, inArray, sql} from 'drizzle-orm';
 import {db} from '@/server/db';
-import {orderItems, orders, type OrderItemOptionSnapshot} from '@/server/db/schema';
+import {orderEvents, orderItems, orders, restaurants, type OrderItemOptionSnapshot} from '@/server/db/schema';
+import {canTransition, type OrderLifecycleStatus} from '@/lib/order-status';
+import {publicOrderId} from '@/lib/ids';
 
 /** Lifecycle statuses the dashboard may move an order to. */
 export type OrderStatus = (typeof orders.$inferSelect)['status'];
@@ -8,7 +10,7 @@ export type OrderStatus = (typeof orders.$inferSelect)['status'];
 export type NewOrderItem = {
   menuItemId: string;
   quantity: number;
-  /** Unit price at order time (piastres), snapshotted from the menu item. */
+  /** Unit price at order time, snapshotted from the menu item. */
   unitPricePiastres: number;
   nameSnapshotAr: string;
   options: OrderItemOptionSnapshot[];
@@ -23,29 +25,87 @@ export type NewOrder = {
   note?: string;
   totalPiastres: number;
   items: NewOrderItem[];
+  /** Client-generated — a resubmit with the same key returns the same order. */
+  idempotencyKey?: string;
+  /** Customer UI locale; drives the status page and WhatsApp message. */
+  locale?: string;
 };
+
+/** A Postgres unique-violation on a named constraint (23505). */
+function isUniqueViolation(error: unknown, constraint: string): boolean {
+  const cause = (error as {cause?: {code?: string; constraint?: string}}).cause;
+  const direct = error as {code?: string; constraint?: string};
+  return (
+    (cause?.code ?? direct.code) === '23505' &&
+    (cause?.constraint ?? direct.constraint) === constraint
+  );
+}
 
 /** Order repo scoped to one restaurant (ADR-002). */
 export function createOrdersRepo(restaurantId: string) {
   return {
     /**
      * Persist the order and its lines atomically — always before the customer
-     * is handed to WhatsApp. Tenant id is injected, never taken from input.
+     * is handed to WhatsApp. The sequential number comes from a locked
+     * counter bump inside the same transaction, so concurrent orders can
+     * never share a number. A resubmit with a known idempotency key returns
+     * the original order instead of writing a duplicate.
      */
     async create(values: NewOrder) {
-      const {items, ...orderValues} = values;
-      return db.transaction(async (tx) => {
-        const [order] = await tx
-          .insert(orders)
-          .values({...orderValues, tableId: values.tableId ?? null, restaurantId})
-          .returning();
-        if (!order) throw new Error('order insert returned no row');
-        const lines = await tx
-          .insert(orderItems)
-          .values(items.map((item) => ({...item, restaurantId, orderId: order.id})))
-          .returning();
-        return {order, items: lines};
-      });
+      const existing = values.idempotencyKey
+        ? await this.findByIdempotencyKey(values.idempotencyKey)
+        : null;
+      if (existing) return existing;
+
+      try {
+        return await db.transaction(async (tx) => {
+          // Bump-and-read serializes concurrent inserts on the tenant row.
+          const [counter] = await tx
+            .update(restaurants)
+            .set({orderCounter: sql`${restaurants.orderCounter} + 1`})
+            .where(eq(restaurants.id, restaurantId))
+            .returning({number: restaurants.orderCounter});
+          const number = counter?.number ?? 1;
+
+          const [order] = await tx
+            .insert(orders)
+            .values({
+              restaurantId,
+              tableId: values.tableId ?? null,
+              status: values.status,
+              customerName: values.customerName,
+              customerPhone: values.customerPhone,
+              note: values.note,
+              totalPiastres: values.totalPiastres,
+              publicId: publicOrderId(),
+              number,
+              idempotencyKey: values.idempotencyKey ?? publicOrderId(),
+              locale: values.locale
+            })
+            .returning();
+          if (!order) throw new Error('order insert returned no row');
+
+          const lines = await tx
+            .insert(orderItems)
+            .values(values.items.map((item) => ({...item, restaurantId, orderId: order.id})))
+            .returning();
+
+          await tx
+            .insert(orderEvents)
+            .values({restaurantId, orderId: order.id, fromStatus: null, toStatus: order.status});
+
+          return {order, items: lines};
+        });
+      } catch (error) {
+        // The pre-check raced a concurrent duplicate: return that order.
+        if (isUniqueViolation(error, 'orders_tenant_idempotency_unique')) {
+          const raced = values.idempotencyKey
+            ? await this.findByIdempotencyKey(values.idempotencyKey)
+            : null;
+          if (raced) return raced;
+        }
+        throw error;
+      }
     },
 
     /** Fetch by id — returns null when the id belongs to another tenant. */
@@ -56,6 +116,55 @@ export function createOrdersRepo(restaurantId: string) {
         .where(and(eq(orders.id, id), eq(orders.restaurantId, restaurantId)))
         .limit(1);
       return row ?? null;
+    },
+
+    /** Idempotency lookup — the order with its snapshotted lines, or null. */
+    async findByIdempotencyKey(key: string): Promise<OrderWithItems | null> {
+      const [order] = await db
+        .select()
+        .from(orders)
+        .where(and(eq(orders.restaurantId, restaurantId), eq(orders.idempotencyKey, key)))
+        .limit(1);
+      if (!order) return null;
+      const items = await db
+        .select()
+        .from(orderItems)
+        .where(and(eq(orderItems.restaurantId, restaurantId), eq(orderItems.orderId, order.id)))
+        .orderBy(asc(orderItems.nameSnapshotAr));
+      return {order, items};
+    },
+
+    /** Bare status lookup for the public poll endpoint — no lines, no events. */
+    async findByPublicIdLite(publicId: string) {
+      const [row] = await db
+        .select({status: orders.status, statusUpdatedAt: orders.statusUpdatedAt})
+        .from(orders)
+        .where(and(eq(orders.restaurantId, restaurantId), eq(orders.publicId, publicId)))
+        .limit(1);
+      return row ?? null;
+    },
+
+    /** Public status-page lookup — the order, its lines and its event trail. */
+    async findWithItemsByPublicId(publicId: string): Promise<OrderWithEvents | null> {
+      const [order] = await db
+        .select()
+        .from(orders)
+        .where(and(eq(orders.restaurantId, restaurantId), eq(orders.publicId, publicId)))
+        .limit(1);
+      if (!order) return null;
+      const [items, events] = await Promise.all([
+        db
+          .select()
+          .from(orderItems)
+          .where(and(eq(orderItems.restaurantId, restaurantId), eq(orderItems.orderId, order.id)))
+          .orderBy(asc(orderItems.nameSnapshotAr)),
+        db
+          .select()
+          .from(orderEvents)
+          .where(and(eq(orderEvents.restaurantId, restaurantId), eq(orderEvents.orderId, order.id)))
+          .orderBy(asc(orderEvents.createdAt))
+      ]);
+      return {order, items, events};
     },
 
     /** Most recent orders of this restaurant, newest first. */
@@ -92,16 +201,36 @@ export function createOrdersRepo(restaurantId: string) {
     },
 
     /**
-     * Move an order along its lifecycle. A foreign-tenant (or unknown) id is
-     * a no-op returning false (ADR-002).
+     * Move an order along its lifecycle. Illegal transitions are rejected
+     * (spec §6); every accepted move writes an `order_events` audit row. A
+     * foreign-tenant (or unknown) id is a no-op returning `missing` (ADR-002).
      */
-    async setStatus(id: string, status: OrderStatus) {
-      const rows = await db
-        .update(orders)
-        .set({status, updatedAt: new Date()})
-        .where(and(eq(orders.id, id), eq(orders.restaurantId, restaurantId)))
-        .returning({id: orders.id});
-      return rows.length > 0;
+    async setStatus(id: string, status: OrderStatus, cancelReason?: string) {
+      const current = await this.findById(id);
+      if (!current) return {ok: false as const, reason: 'missing' as const};
+      if (!canTransition(current.status as OrderLifecycleStatus, status as OrderLifecycleStatus)) {
+        return {ok: false as const, reason: 'illegal' as const};
+      }
+      await db.transaction(async (tx) => {
+        await tx
+          .update(orders)
+          .set({
+            status,
+            cancelReason: status === 'cancelled' ? (cancelReason ?? null) : current.cancelReason,
+            statusUpdatedAt: new Date(),
+            updatedAt: new Date()
+          })
+          .where(and(eq(orders.id, id), eq(orders.restaurantId, restaurantId)));
+        await tx
+          .insert(orderEvents)
+          .values({
+            restaurantId,
+            orderId: id,
+            fromStatus: current.status,
+            toStatus: status
+          });
+      });
+      return {ok: true as const};
     }
   };
 }
@@ -110,6 +239,11 @@ export function createOrdersRepo(restaurantId: string) {
 export type OrderWithItems = {
   order: typeof orders.$inferSelect;
   items: (typeof orderItems.$inferSelect)[];
+};
+
+/** The status page payload: order + lines + the lifecycle audit trail. */
+export type OrderWithEvents = OrderWithItems & {
+  events: (typeof orderEvents.$inferSelect)[];
 };
 
 export type OrdersRepo = ReturnType<typeof createOrdersRepo>;

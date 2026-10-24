@@ -15,6 +15,8 @@ type Props = {
   currency: string;
   slug: string;
   tableToken: string | null;
+  /** One per cart content — a resubmit (double tap, retry) is idempotent. */
+  idempotencyKey: string;
   action: (formData: FormData) => void;
   state: PlaceOrderState;
   pending: boolean;
@@ -35,6 +37,7 @@ export function CheckoutSheet({
   currency,
   slug,
   tableToken,
+  idempotencyKey,
   action,
   state,
   pending,
@@ -102,11 +105,20 @@ export function CheckoutSheet({
         <form action={action} className="mt-4 flex flex-col gap-3" noValidate>
           <input type="hidden" name="slug" value={slug} />
           <input type="hidden" name="tableToken" value={tableToken ?? ''} />
+          <input type="hidden" name="locale" value={locale} />
+          <input type="hidden" name="idempotencyKey" value={idempotencyKey} />
           <input
             type="hidden"
             name="cart"
             value={JSON.stringify(lines.map((line) => ({id: line.item.id, quantity: line.quantity})))}
           />
+          {/* Honeypot: invisible to humans, irresistible to bots (spec §11). */}
+          <div aria-hidden className="hidden">
+            <label>
+              Company
+              <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+            </label>
+          </div>
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-medium">{t('customerName')}</span>
             <input type="text" name="customerName" autoComplete="name" className={inputClass} />

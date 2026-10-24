@@ -39,6 +39,19 @@ describe('buildOrderMessage', () => {
     expect(text).not.toContain('ملاحظة');
     expect(text).not.toContain('طاولة');
   });
+
+  it('appends the status-tracking link when known', () => {
+    const text = buildOrderMessage({
+      restaurantName: 'مطعم',
+      orderLabel: 'طلب #3',
+      items: [{name: 'شوربة', quantity: 1, lineTotalPiastres: 5000}],
+      totalPiastres: 5000,
+      statusUrl: 'https://menu.example/bait/order/Ab3xK9mQ2pZ1wYt4',
+      formatPrice
+    });
+    expect(text).toContain('متابعة الطلب: https://menu.example/bait/order/Ab3xK9mQ2pZ1wYt4');
+    expect(text.endsWith('Ab3xK9mQ2pZ1wYt4')).toBe(true);
+  });
 });
 
 describe('buildWhatsAppUrl', () => {

@@ -19,6 +19,8 @@ export type OrderMessage = {
   customerName?: string | null;
   customerPhone?: string | null;
   note?: string | null;
+  /** Where the customer follows their order — always included when known. */
+  statusUrl?: string | null;
   formatPrice: (piastres: number) => string;
 };
 
@@ -34,6 +36,7 @@ export function buildOrderMessage(message: OrderMessage): string {
   if (message.customerName) lines.push('', `الاسم: ${message.customerName}`);
   if (message.customerPhone) lines.push(`رقم الهاتف: ${message.customerPhone}`);
   if (message.note) lines.push(`ملاحظة: ${message.note}`);
+  if (message.statusUrl) lines.push('', `متابعة الطلب: ${message.statusUrl}`);
   return lines.join('\n');
 }
 

@@ -53,6 +53,65 @@ html[dir='rtl'] body {
   }
 }
 
+/*
+ * Public menu entrances (apple-design §7): a surface enters along the path it
+ * lives on — the sheet rises, the cart bar floats up, the stepper pops in.
+ */
+@keyframes sheet-up {
+  from {
+    transform: translateY(28px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes float-up {
+  from {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-sheet-up {
+  animation: sheet-up 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+.animate-pop-in {
+  animation: pop-in 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.animate-float-up {
+  animation: float-up 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 /* Gentle, non-vestibular fallback for reduced motion (§14). */
 @media (prefers-reduced-motion: reduce) {
   *,

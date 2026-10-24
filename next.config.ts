@@ -17,7 +17,15 @@ const nextConfig: NextConfig = {
       // WebSocket, which can never connect through the preview gateway (502
       // on upgrade). Without this the page never hydrates in the sandbox. On a
       // normal dev machine the socket connects, so keep the default there.
-      experimental: {reactDebugChannel: false}
+      experimental: {
+        reactDebugChannel: false,
+        // The preview gateway forwards Host/x-forwarded-host as the sandbox
+        // host while the browser's Origin is the public preview host; without
+        // this allowlist Next aborts every Server Action as CSRF (500).
+        serverActions: {
+          allowedOrigins: [`3000-${process.env.BASE44_PUBLIC_HOST_SUFFIX}`]
+        }
+      }
       }
     : {})
 };

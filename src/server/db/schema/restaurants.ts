@@ -77,6 +77,42 @@ export const openingHours = pgTable(
  * the orders FK is NO ACTION, and a composite SET NULL would null the tenant
  * column too.
  */
+/**
+ * Physical branches/addresses of the restaurant (ADR-002 tenant table) —
+ * managed in dashboard settings and shown to customers on the public menu.
+ */
+export const restaurantAddresses = pgTable(
+  'restaurant_addresses',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    restaurantId: tenantId(),
+    label: text().notNull(),
+    address: text().notNull(),
+    createdAt: timestamps().createdAt
+  },
+  (t) => [unique('restaurant_addresses_tenant_id_unique').on(t.restaurantId, t.id)]
+);
+
+/**
+ * One-time owner invite. Public sign-up is disabled, so this is the ONLY way
+ * an account is created: the platform owner issues it from the admin page,
+ * sends the claim link to the restaurant owner, and they set their email and
+ * password on the public claim page — which seats them as the tenant's owner.
+ */
+export const restaurantInvites = pgTable(
+  'restaurant_invites',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    restaurantId: tenantId(),
+    /** Unguessable claim code — the claim page resolves the tenant BY it. */
+    code: text().notNull().unique(),
+    claimedByUserId: text().references(() => users.id, {onDelete: 'set null'}),
+    claimedAt: timestamp({withTimezone: true}),
+    createdAt: timestamps().createdAt
+  },
+  (t) => [unique('restaurant_invites_restaurant_unique').on(t.restaurantId)]
+);
+
 export const restaurantTables = pgTable(
   'restaurant_tables',
   {

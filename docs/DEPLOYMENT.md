@@ -4,7 +4,7 @@ ADR-001: the same committed `drizzle/` migrations run locally and in production;
 
 ## 1. Neon (database)
 
-1. Create a project at [console.neon.tech](https://console.neon.tech) (region close to your users, e.g. `aws-mENA-me-central-1` for Egypt).
+1. Create a project at [console.neon.tech](https://console.neon.tech) — pick the region closest to your users from the console's dropdown (Neon has no Egypt region; Frankfurt `aws-eu-central-1` is typically the closest).
 2. Copy the **connection string** — this is the production `DATABASE_URL`.
 3. Apply migrations from any machine that can reach Neon:
 

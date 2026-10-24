@@ -1,13 +1,18 @@
 import {cache} from 'react';
-import {headers} from 'next/headers';
+import {cookies, headers} from 'next/headers';
 import {redirect} from '@/i18n/navigation';
 import {auth} from '@/server/auth';
 import {membersRepo, type Membership} from '@/server/db/repos';
+
+/** Cookie remembering the restaurant picked in the header switcher. */
+export const ACTIVE_RESTAURANT_COOKIE = 'active-restaurant';
 
 /** Session + resolved tenant seat for a dashboard page or action. */
 export type MemberContext = {
   session: NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>;
   membership: Membership;
+  /** Every seat the user holds — the header switcher lists these. */
+  memberships: Membership[];
 };
 
 /**
@@ -23,11 +28,14 @@ export const requireMember = cache(async (locale: string): Promise<MemberContext
     throw new Error('unreachable: redirect() throws');
   }
 
-  const membership = (await membersRepo.listForUser(session.user.id))[0];
+  const memberships = await membersRepo.listForUser(session.user.id);
+  // The switcher's pick wins; otherwise the oldest seat stays the default.
+  const activeId = (await cookies()).get(ACTIVE_RESTAURANT_COOKIE)?.value;
+  const membership = memberships.find((m) => m.restaurant.id === activeId) ?? memberships[0];
   if (!membership) {
     redirect({href: '/onboarding', locale});
     throw new Error('unreachable: redirect() throws');
   }
 
-  return {session, membership};
+  return {session, membership, memberships};
 });

@@ -46,6 +46,7 @@
   },
   "dashboard": {
     "phase": "Restaurant dashboard",
+    "switchRestaurant": "Switch restaurant",
     "signedInAs": "Signed in as",
     "publicSlug": "Public link:",
     "whatsappLabel": "WhatsApp for orders:",

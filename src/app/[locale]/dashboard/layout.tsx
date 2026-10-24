@@ -3,6 +3,7 @@ import {getTranslations} from 'next-intl/server';
 import {Link} from '@/i18n/navigation';
 import {requireMember} from '@/server/dashboard';
 import {SignOutButton} from '@/components/auth/sign-out-button';
+import {RestaurantSwitcher} from '@/components/dashboard/restaurant-switcher';
 
 type Props = {
   children: ReactNode;
@@ -15,7 +16,7 @@ type Props = {
  */
 export default async function DashboardLayout({children, params}: Props) {
   const {locale} = await params;
-  const {membership} = await requireMember(locale);
+  const {membership, memberships} = await requireMember(locale);
   const t = await getTranslations('dashboard');
 
   return (
@@ -23,7 +24,18 @@ export default async function DashboardLayout({children, params}: Props) {
       <header className="border-b border-hairline">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-3">
           <div className="flex min-w-0 flex-col gap-0.5">
-            <span className="truncate text-sm font-semibold">{membership.restaurant.nameAr}</span>
+            {memberships.length > 1 ? (
+              <RestaurantSwitcher
+                locale={locale}
+                activeId={membership.restaurant.id}
+                restaurants={memberships.map((m) => ({
+                  id: m.restaurant.id,
+                  nameAr: m.restaurant.nameAr
+                }))}
+              />
+            ) : (
+              <span className="truncate text-sm font-semibold">{membership.restaurant.nameAr}</span>
+            )}
             <nav className="flex items-center gap-3 text-xs text-muted-foreground">
               <Link href="/dashboard" className="transition-colors hover:text-foreground">
                 {t('nav.overview')}

@@ -46,6 +46,7 @@
   },
   "dashboard": {
     "phase": "لوحة تحكم المطعم",
+    "switchRestaurant": "تغيير المطعم",
     "signedInAs": "مسجّل الدخول بصفتك",
     "publicSlug": "الرابط العام:",
     "whatsappLabel": "واتساب الطلبات:",

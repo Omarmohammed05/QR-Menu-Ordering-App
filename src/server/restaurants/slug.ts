@@ -32,8 +32,8 @@ export const SLUG_MAX_LENGTH = 40;
 const ARABIC_MAP: Record<string, string> = {
   ا: 'a', أ: 'a', إ: 'i', آ: 'a', ب: 'b', ت: 't', ث: 'th', ج: 'j', ح: 'h',
   خ: 'kh', د: 'd', ذ: 'dh', ر: 'r', ز: 'z', س: 's', ش: 'sh', ص: 's', ض: 'd',
-  ط: 't', ظ: 'z', ع: 'a', غ: 'gh', ف: 'f', ق: 'q', ك: 'k', ل: 'l', م: 'm',
-  ن: 'n', ه: 'h', و: 'w', ي: 'y', ى: 'a', ة: 'h', ء: '', ئ: 'y', ؤ: 'w'
+  ط: 't', ظ: 'z', ع: '', غ: 'gh', ف: 'f', ق: 'q', ك: 'k', ل: 'l', م: 'm',
+  ن: 'n', ه: 'h', و: 'w', ي: 'y', ى: 'a', ة: '', ء: '', ئ: 'y', ؤ: 'w'
 };
 
 /** Arabic diacritics (fatha, damma, kasra, shadda, sukun, tanween…) — stripped. */

@@ -178,11 +178,14 @@ describe('tenant isolation (integration)', () => {
   });
 
   it('makes a cross-tenant order status update a no-op', async () => {
-    expect(await reposB.orders.setStatus(orderA.id, 'cancelled')).toBe(false);
+    expect(await reposB.orders.setStatus(orderA.id, 'cancelled')).toEqual({ok: false, reason: 'missing'});
     expect((await reposA.orders.findById(orderA.id))?.status).toBe('pending');
-    expect(await reposA.orders.setStatus(orderA.id, 'accepted')).toBe(true);
+    expect(await reposA.orders.setStatus(orderA.id, 'accepted')).toEqual({ok: true});
     expect((await reposA.orders.findById(orderA.id))?.status).toBe('accepted');
-    await reposA.orders.setStatus(orderA.id, 'pending');
+    // The lifecycle machine has no `accepted → pending` move; reset via the
+    // legal happy-path walk so later assertions still see a live order.
+    expect(await reposA.orders.setStatus(orderA.id, 'ready')).toEqual({ok: true});
+    expect(await reposA.orders.setStatus(orderA.id, 'completed')).toEqual({ok: true});
   });
 
   it('resolves QR tokens to active tables only, and honors the archive switch', async () => {

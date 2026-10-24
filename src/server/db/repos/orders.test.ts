@@ -42,7 +42,7 @@ describe('orders repo (integration)', () => {
   });
 
   beforeAll(async () => {
-    await migrate(db, {migrationsFolder: fileURLToPath(new URL('../../../drizzle', import.meta.url))});
+    await migrate(db, {migrationsFolder: fileURLToPath(new URL('../../../../drizzle', import.meta.url))});
 
     restaurant = await restaurantsRepo.create({
       slug,

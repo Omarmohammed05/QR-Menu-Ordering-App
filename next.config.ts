@@ -8,7 +8,9 @@ const nextConfig: NextConfig = {
   // to the preview origin. No effect outside the sandbox (flag unset).
   ...(process.env.BASE44_PREVIEW_MODE === '1' && process.env.BASE44_PUBLIC_HOST_SUFFIX
     ? {
-        allowedDevOrigins: [`https://3000-${process.env.BASE44_PUBLIC_HOST_SUFFIX}`]
+        // Hostname only — Next matches the bare Origin/Referer host against
+        // these patterns; a protocol prefix would never match.
+        allowedDevOrigins: [`3000-${process.env.BASE44_PUBLIC_HOST_SUFFIX}`]
       }
     : {})
 };

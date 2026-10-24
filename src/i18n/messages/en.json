@@ -322,6 +322,7 @@
   "admin": {
     "title": "Platform admin",
     "tagline": "Restaurants and owner invites — the whole platform from here",
+    "backToDashboard": "Back to dashboard",
     "stats": {
       "total": "Restaurants",
       "active": "Active",
@@ -329,6 +330,7 @@
     },
     "create": {
       "title": "Create a new restaurant",
+      "tagline": "An owner activation code is issued automatically with every new restaurant",
       "nameAr": "Name in Arabic",
       "nameArPlaceholder": "e.g. Bait Elsham",
       "nameEn": "Name in English (optional)",
@@ -344,6 +346,7 @@
       }
     },
     "list": {
+      "title": "Restaurants",
       "empty": "No restaurants yet — create the first one above",
       "publicMenu": "Menu:",
       "whatsapp": "WhatsApp:",

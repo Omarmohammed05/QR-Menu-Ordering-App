@@ -44,11 +44,13 @@ export async function RestaurantCard({
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {restaurant.isActive ? (
-            <span className="rounded-full bg-foreground px-2.5 py-0.5 text-[11px] font-medium text-background">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-2.5 py-0.5 text-[11px] font-medium text-background">
+              <span className="size-1.5 rounded-full bg-current" />
               {t('active')}
             </span>
           ) : (
-            <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+              <span className="size-1.5 rounded-full bg-current" />
               {t('inactive')}
             </span>
           )}
@@ -58,7 +60,7 @@ export async function RestaurantCard({
             <input type="hidden" name="makeActive" value={String(!restaurant.isActive)} />
             <button
               type="submit"
-              className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-colors hover:border-foreground"
+              className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-foreground active:scale-[0.95]"
             >
               {restaurant.isActive ? t('deactivate') : t('activate')}
             </button>
@@ -66,35 +68,34 @@ export async function RestaurantCard({
         </div>
       </div>
 
-      <div className="flex flex-col gap-1 text-sm">
-        <span className="flex items-center gap-2">
-          <span className="text-muted-foreground">{t('publicMenu')}</span>
+      {/* Fact rows: labels and values share one grid so they align in columns */}
+      <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1 text-sm">
+        <dt className="text-muted-foreground">{t('publicMenu')}</dt>
+        <dd className="min-w-0">
           <a
             href={publicUrl}
             target="_blank"
             rel="noreferrer"
             dir="ltr"
-            className="truncate underline underline-offset-2"
+            className="block truncate underline underline-offset-2 hover:text-foreground"
           >
             {publicUrl}
           </a>
-        </span>
-        <span className="flex items-center gap-2">
-          <span className="text-muted-foreground">{t('whatsapp')}</span>
-          <span dir="ltr" className="font-mono text-xs">{restaurant.whatsappNumber}</span>
-        </span>
-        <span className="flex items-center gap-2">
-          <span className="text-muted-foreground">{t('owner')}</span>
+        </dd>
+        <dt className="text-muted-foreground">{t('whatsapp')}</dt>
+        <dd dir="ltr" className="min-w-0 font-mono text-xs">{restaurant.whatsappNumber}</dd>
+        <dt className="text-muted-foreground">{t('owner')}</dt>
+        <dd className="min-w-0">
           {ownerEmails.length > 0 ? (
-            <span dir="ltr" className="truncate text-xs">{ownerEmails.join(', ')}</span>
+            <span dir="ltr" className="block truncate text-xs">{ownerEmails.join(', ')}</span>
           ) : (
             <span className="text-xs font-medium text-muted-foreground">{t('ownerPending')}</span>
           )}
-        </span>
-      </div>
+        </dd>
+      </dl>
 
       {unclaimed && shareUrl ? (
-        <div className="flex flex-col gap-2.5 rounded-lg border border-dashed border-hairline p-3.5">
+        <div className="flex flex-col gap-2.5 rounded-lg border border-dashed border-hairline bg-muted/40 p-3.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-medium text-muted-foreground">{t('inviteLink')}</span>
             <span dir="ltr" className="font-mono text-sm font-semibold tracking-widest">
@@ -120,7 +121,7 @@ export async function RestaurantCard({
               <input type="hidden" name="restaurantId" value={restaurant.id} />
               <button
                 type="submit"
-                className="h-10 w-full rounded-full border border-hairline text-sm font-medium transition-colors hover:border-foreground"
+                className="h-10 w-full rounded-full border border-hairline text-sm font-medium transition-[transform,border-color] duration-100 hover:border-foreground active:scale-[0.98]"
               >
                 {t('regenerate')}
               </button>
@@ -135,7 +136,7 @@ export async function RestaurantCard({
           <input type="hidden" name="restaurantId" value={restaurant.id} />
           <button
             type="submit"
-            className="h-9 rounded-full border border-hairline px-4 text-xs font-medium transition-colors hover:border-foreground"
+            className="h-9 rounded-full border border-hairline px-4 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-foreground active:scale-[0.95]"
           >
             {t('issueInvite')}
           </button>

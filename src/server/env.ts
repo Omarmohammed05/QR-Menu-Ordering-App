@@ -26,9 +26,23 @@ const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>;
 
-/** Pure parser so tests can validate arbitrary inputs. */
-export function parseEnv(source: Record<string, string | undefined>): Env {
-  return envSchema.parse(source);
+/**
+ * Pure parser so tests can validate arbitrary inputs.
+ *
+ * `next build` (Vercel/CI) imports every route module to collect page data —
+ * runtime secrets like DATABASE_URL legitimately may not exist in that build
+ * worker, so an invalid env there yields an empty shell instead of crashing
+ * the build. Nothing queries or serves during build, and the first real access
+ * at runtime (any other NEXT_PHASE) still validates strictly and fails fast.
+ */
+export function parseEnv(
+  source: Record<string, string | undefined>,
+  nextPhase = process.env.NEXT_PHASE
+): Env {
+  const result = envSchema.safeParse(source);
+  if (result.success) return result.data;
+  if (nextPhase === 'phase-production-build') return {} as Env;
+  throw result.error;
 }
 
 /** Fail fast at boot: importing this module with a bad env crashes the process. */

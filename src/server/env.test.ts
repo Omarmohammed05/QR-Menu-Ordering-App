@@ -53,4 +53,13 @@ describe('env schema', () => {
       parseEnv({...validEnv, NODE_ENV: 'staging'})
     ).toThrowError();
   });
+
+  it('falls back to an empty shell during `next build` so page-data collection survives a build worker without runtime secrets', () => {
+    const shell = parseEnv({}, 'phase-production-build');
+    expect(shell.DATABASE_URL).toBeUndefined();
+  });
+
+  it('still fails fast outside the build phase', () => {
+    expect(() => parseEnv({}, 'phase-production-server')).toThrowError(/DATABASE_URL/);
+  });
 });

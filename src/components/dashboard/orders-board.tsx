@@ -20,6 +20,8 @@ type Props = {
   tableLabels: Record<string, string>;
   /** Tenant-root currency — every total on the board renders with it. */
   currency: string;
+  /** Read-only mounts (public demo) hide every mutating control and skip polling. */
+  readOnly?: boolean;
 };
 
 const POLL_MS = 15_000;
@@ -52,7 +54,7 @@ type Channel = 'all' | 'dineIn' | 'takeaway';
  * the server; the client filters by channel/search and polls with
  * `router.refresh()` while the tab is visible.
  */
-export function OrdersBoard({orders, tableLabels, currency}: Props) {
+export function OrdersBoard({orders, tableLabels, currency, readOnly = false}: Props) {
   const t = useTranslations('dashboard.orders');
   const locale = useLocale();
   const router = useRouter();
@@ -60,6 +62,7 @@ export function OrdersBoard({orders, tableLabels, currency}: Props) {
   const [query, setQuery] = useState('');
 
   useEffect(() => {
+    if (readOnly) return;
     const refreshIfVisible = () => {
       if (document.visibilityState === 'visible') router.refresh();
     };
@@ -69,7 +72,7 @@ export function OrdersBoard({orders, tableLabels, currency}: Props) {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', refreshIfVisible);
     };
-  }, [router]);
+  }, [router, readOnly]);
 
   const active = useMemo(
     () => orders.filter(({order}) => order.status !== 'cancelled'),
@@ -199,6 +202,7 @@ export function OrdersBoard({orders, tableLabels, currency}: Props) {
                     tableLabel={order.tableId ? (tableLabels[order.tableId] ?? null) : null}
                     locale={locale}
                     currency={currency}
+                    readOnly={readOnly}
                   />
                 ))}
               {countFor(status) === 0 ? (
@@ -220,10 +224,11 @@ type CardProps = {
   tableLabel: string | null;
   locale: string;
   currency: string;
+  readOnly?: boolean;
 };
 
 /** One order ticket: channel, lines, total, and the workflow action. */
-function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
+function OrderCard({order, items, tableLabel, locale, currency, readOnly = false}: CardProps) {
   const t = useTranslations('dashboard.orders');
   const [cancelling, setCancelling] = useState(false);
   const isDone = order.status === 'completed';
@@ -307,7 +312,7 @@ function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
         </div>
       ) : null}
 
-      {next ? (
+      {next && !readOnly ? (
         cancelling ? (
           // Cancel needs a reason (spec §5) — ask for it inline, no dialogs.
           <div className="animate-fade-in mt-1 flex flex-col gap-2 rounded-lg border border-destructive/30 bg-muted/50 p-2.5">

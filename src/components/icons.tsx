@@ -259,3 +259,13 @@ export function LogoGlyphIcon(props: IconProps) {
     </svg>
   );
 }
+
+/** Filled spark — the Sunrise-warmth title badge (fill, not stroke). */
+export function SparkleIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M12 1.5l2.4 7.1 7.1 2.4-7.1 2.4L12 20.5l-2.4-7.1L2.5 11l7.1-2.4z" />
+      <path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9z" />
+    </svg>
+  );
+}

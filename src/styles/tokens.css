@@ -23,6 +23,16 @@
   --brand-strong: #e64a19;
   --brand-soft: #fff3e0;
 
+  /* Sunrise warmth — cream canvas surfaces (approved restyle direction) */
+  --warm-canvas: #fff6ee;
+  --warm-ink: #3a2218;
+  --warm-muted: #8a6a5a;
+  --warm-hairline: #f5d9c8;
+  --warm-chip: #ffe6d8;
+  --warm-input: #fffbf7;
+  --warm-pill: #f3e6dd;
+  --warm-hover: #fff0e8;
+
   /* Status */
   --success: #28a745;
   --warning: #ffc107;
@@ -32,7 +42,7 @@
   --destructive: #ff4d4f;
 
   /* Focus & overlays */
-  --focus: #ff5722;
+  --focus: #e64a19;
   --backdrop: rgb(0 0 0 / 0.4);
 
   /* Geometry */
@@ -62,6 +72,15 @@
   --brand: #ff6b36;
   --brand-strong: #ff8c5a;
   --brand-soft: rgb(255 107 54 / 0.14);
+
+  --warm-canvas: #141210;
+  --warm-ink: #ffffff;
+  --warm-muted: #a3938a;
+  --warm-hairline: #3a2f29;
+  --warm-chip: rgb(255 112 67 / 0.16);
+  --warm-input: #1c1917;
+  --warm-pill: #2a241f;
+  --warm-hover: #26201b;
 
   --success: #28a745;
   --warning: #ffc107;

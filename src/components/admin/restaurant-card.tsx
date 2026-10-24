@@ -34,23 +34,25 @@ export async function RestaurantCard({
     : null;
 
   return (
-    <li className="flex flex-col gap-4 rounded-2xl border border-hairline bg-surface shadow-card p-5">
-      <div className="flex items-start justify-between gap-3">
+    <li className="flex flex-col gap-5 rounded-[20px] bg-surface p-6 shadow-warm">
+      <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
-          <span className="truncate text-base font-semibold">{restaurant.nameAr}</span>
-          <span dir="ltr" className="truncate font-mono text-xs text-muted-foreground">
+          <span className="truncate text-[19px] font-semibold leading-[1.3] tracking-[-0.01em]">
+            {restaurant.nameAr}
+          </span>
+          <span dir="ltr" className="mt-1 block font-mono text-xs text-warm-muted">
             /{restaurant.slug}
           </span>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2.5">
           {restaurant.isActive ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-medium text-white">
-              <span className="size-1.5 rounded-full bg-current" />
+            <span className="sunrise-gradient inline-flex items-center gap-[7px] rounded-full px-[13px] py-[5px] text-xs font-medium text-white">
+              <span className="size-[7px] animate-soft-pulse rounded-full bg-current" />
               {t('active')}
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
-              <span className="size-1.5 rounded-full bg-current" />
+            <span className="inline-flex items-center gap-[7px] rounded-full bg-warm-pill px-[13px] py-[5px] text-xs font-medium text-warm-muted">
+              <span className="size-[7px] animate-soft-pulse rounded-full bg-current" />
               {t('inactive')}
             </span>
           )}
@@ -60,7 +62,7 @@ export async function RestaurantCard({
             <input type="hidden" name="makeActive" value={String(!restaurant.isActive)} />
             <button
               type="submit"
-              className="h-8 rounded-full border border-hairline px-3 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-brand active:scale-[0.95]"
+              className="h-[34px] rounded-full border border-warm-hairline bg-surface px-4 text-xs font-medium transition-[border-color,box-shadow] duration-150 hover:border-[#ff7043] hover:shadow-[0_4px_12px_rgba(255,87,34,0.16)]"
             >
               {restaurant.isActive ? t('deactivate') : t('activate')}
             </button>
@@ -69,40 +71,40 @@ export async function RestaurantCard({
       </div>
 
       {/* Fact rows: labels and values share one grid so they align in columns */}
-      <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1 text-sm">
-        <dt className="text-muted-foreground">{t('publicMenu')}</dt>
+      <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-[18px] gap-y-2.5 rounded-2xl bg-warm-canvas px-[18px] py-4 text-sm">
+        <dt className="text-warm-muted">{t('publicMenu')}</dt>
         <dd className="min-w-0">
           <a
             href={publicUrl}
             target="_blank"
             rel="noreferrer"
             dir="ltr"
-            className="block truncate underline underline-offset-2 hover:text-foreground"
+            className="block overflow-wrap-anywhere text-[13px] text-brand-strong underline underline-offset-[3px] hover:text-foreground"
           >
             {publicUrl}
           </a>
         </dd>
-        <dt className="text-muted-foreground">{t('whatsapp')}</dt>
-        <dd dir="ltr" className="min-w-0 font-mono text-xs">{restaurant.whatsappNumber}</dd>
-        <dt className="text-muted-foreground">{t('owner')}</dt>
+        <dt className="text-warm-muted">{t('whatsapp')}</dt>
+        <dd dir="ltr" className="min-w-0 font-mono text-[13px]">{restaurant.whatsappNumber}</dd>
+        <dt className="text-warm-muted">{t('owner')}</dt>
         <dd className="min-w-0">
           {ownerEmails.length > 0 ? (
-            <span dir="ltr" className="block truncate text-xs">{ownerEmails.join(', ')}</span>
+            <span dir="ltr" className="block truncate font-mono text-[13px]">{ownerEmails.join(', ')}</span>
           ) : (
-            <span className="text-xs font-medium text-muted-foreground">{t('ownerPending')}</span>
+            <span className="text-xs font-medium text-warm-muted">{t('ownerPending')}</span>
           )}
         </dd>
       </dl>
 
       {unclaimed && shareUrl ? (
-        <div className="flex flex-col gap-2.5 rounded-lg border border-dashed border-hairline bg-muted/40 p-3.5">
+        <div className="flex flex-col gap-2.5 rounded-2xl border border-dashed border-warm-hairline bg-warm-input p-3.5">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-muted-foreground">{t('inviteLink')}</span>
+            <span className="text-xs font-medium text-warm-muted">{t('inviteLink')}</span>
             <span dir="ltr" className="font-mono text-sm font-semibold tracking-widest">
               {unclaimed.code}
             </span>
           </div>
-          <span dir="ltr" className="truncate font-mono text-[11px] text-muted-foreground">
+          <span dir="ltr" className="truncate font-mono text-[11px] text-warm-muted">
             {claimUrl}
           </span>
           <div className="flex flex-wrap items-center gap-2">
@@ -111,7 +113,7 @@ export async function RestaurantCard({
               href={shareUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-brand px-4 text-sm font-medium text-white transition-[transform] duration-100 active:scale-[0.98]"
+              className="sunrise-gradient flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(230,74,25,0.3)] transition-[box-shadow,filter] duration-150 hover:brightness-[1.07] active:brightness-[0.95]"
             >
               <WhatsAppIcon className="size-4" />
               {t('sendInvite')}
@@ -121,7 +123,7 @@ export async function RestaurantCard({
               <input type="hidden" name="restaurantId" value={restaurant.id} />
               <button
                 type="submit"
-                className="h-10 w-full rounded-full border border-hairline text-sm font-medium transition-[transform,border-color] duration-100 hover:border-brand active:scale-[0.98]"
+                className="h-10 w-full rounded-full border border-warm-hairline bg-surface text-sm font-medium transition-[border-color,box-shadow] duration-150 hover:border-[#ff7043] hover:shadow-[0_4px_12px_rgba(255,87,34,0.16)]"
               >
                 {t('regenerate')}
               </button>
@@ -136,7 +138,7 @@ export async function RestaurantCard({
           <input type="hidden" name="restaurantId" value={restaurant.id} />
           <button
             type="submit"
-            className="h-9 rounded-full border border-hairline px-4 text-xs font-medium transition-[transform,border-color] duration-100 hover:border-brand active:scale-[0.95]"
+            className="h-10 self-start rounded-full border-[1.5px] border-[#ff7043] bg-surface px-5 text-[13px] font-semibold text-brand-strong transition-[background,box-shadow] duration-150 hover:bg-warm-hover hover:shadow-[0_4px_12px_rgba(255,87,34,0.18)] active:bg-warm-chip"
           >
             {t('issueInvite')}
           </button>

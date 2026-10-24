@@ -408,16 +408,8 @@
   },
   "dashboardDemo": {
     "badge": "Demo — read only",
-    "title": "Menu management",
-    "tagline": "A read-only walkthrough of the restaurant dashboard's menu view",
-    "stats": {
-      "sections": "Menu sections",
-      "dishes": "Dishes",
-      "unavailable": "Hidden dishes"
-    },
-    "empty": "No sections yet — add the first section to your menu",
-    "emptyItems": "No dishes in this section yet",
-    "hidden": "Hidden",
+    "title": "Dashboard demo",
+    "tagline": "A read-only tour of a fully-stocked restaurant dashboard",
     "readOnlyNote": "This demo is for viewing only — nothing here can be edited"
   },
   "images": {

@@ -19,6 +19,14 @@
   --color-warning: var(--warning);
   --color-info: var(--info);
   --shadow-card: var(--shadow-card);
+  --color-warm-canvas: var(--warm-canvas);
+  --color-warm-ink: var(--warm-ink);
+  --color-warm-muted: var(--warm-muted);
+  --color-warm-hairline: var(--warm-hairline);
+  --color-warm-chip: var(--warm-chip);
+  --color-warm-input: var(--warm-input);
+  --color-warm-pill: var(--warm-pill);
+  --color-warm-hover: var(--warm-hover);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --radius-base: var(--radius);
@@ -28,6 +36,107 @@
  * surfaces (active nav pill, hero banners, primary bars). */
 .brand-gradient {
   background-image: linear-gradient(135deg, #ff6b36, #ff4b26);
+}
+
+/*
+ * Sunrise warmth (approved restyle direction): cream canvas, warm-tinted
+ * card shadows, the signature header glow, and its motion vocabulary.
+ * Surfaces use the warm-* tokens so dark mode keeps working.
+ */
+.sunrise-gradient {
+  background-image: linear-gradient(135deg, #ff7043, #e64a19);
+}
+
+.shadow-warm {
+  box-shadow: 0 10px 30px rgb(255 87 34 / 0.1);
+}
+
+.shadow-warm-strong {
+  box-shadow: 0 14px 34px rgb(230 74 25 / 0.32);
+}
+
+/* Short gradient tick under section headings. */
+.tick {
+  display: block;
+  width: 28px;
+  height: 4px;
+  border-radius: 4px;
+  margin-top: 8px;
+  background: linear-gradient(90deg, #ff7043, #e64a19);
+}
+
+/* Header glow: warm image wash fading into the canvas. */
+.sunrise-glow {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: 520px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.sunrise-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  display: block;
+  background-image: url('https://media.base44.com/images/public/6adba0b190f7a625ff15d575/993f7030b_generated_856dca00.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.55;
+}
+
+.sunrise-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 0%, rgb(255 112 67 / 0.22), rgb(255 246 238 / 0) 70%),
+    linear-gradient(180deg, rgb(255 246 238 / 0) 40%, #fff6ee 100%);
+}
+
+.dark .sunrise-glow::before {
+  opacity: 0.25;
+}
+
+.dark .sunrise-glow::after {
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 0%, rgb(255 112 67 / 0.12), rgb(20 18 16 / 0) 70%),
+    linear-gradient(180deg, rgb(20 18 16 / 0) 40%, #141210 100%);
+}
+
+/* Staggered rise entrance — a gentle settle with a small overshoot. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Soft halo pulse for live status dots (white ring on colored fills). */
+@keyframes soft-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(255 255 255 / 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgb(255 255 255 / 0);
+  }
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 2s ease-in-out infinite;
 }
 
 body {

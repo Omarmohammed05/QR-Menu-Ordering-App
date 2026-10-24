@@ -27,6 +27,12 @@ export default function Page() {
           {t('demo')}
         </Link>
         <Link
+          href="/dashboard-demo"
+          className="rounded-base border border-hairline px-5 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
+        >
+          {t('demoDashboard')}
+        </Link>
+        <Link
           href="/login"
           className="rounded-base bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98]"
         >

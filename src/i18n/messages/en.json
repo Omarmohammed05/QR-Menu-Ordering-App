@@ -45,12 +45,23 @@
     }
   },
   "dashboard": {
-    "phase": "Restaurant dashboard",
     "switchRestaurant": "Switch restaurant",
-    "signedInAs": "Signed in as",
-    "publicSlug": "Public link:",
-    "whatsappLabel": "WhatsApp for orders:",
-    "roleLabel": "Role:",
+    "overview": {
+      "welcome": "Welcome,",
+      "stats": {
+        "todayOrders": "Orders today",
+        "activeNow": "Active now",
+        "revenueToday": "Revenue today",
+        "activeTables": "Active tables"
+      },
+      "quickLinks": "Quick links",
+      "links": {
+        "orders": "Live order board",
+        "menu": "Sections, dishes, and prices",
+        "tables": "QR codes and printing",
+        "settings": "Restaurant profile and WhatsApp"
+      }
+    },
     "role": {
       "owner": "Owner",
       "manager": "Manager",

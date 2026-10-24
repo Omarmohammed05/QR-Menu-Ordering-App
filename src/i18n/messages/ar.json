@@ -45,12 +45,23 @@
     }
   },
   "dashboard": {
-    "phase": "لوحة تحكم المطعم",
     "switchRestaurant": "تغيير المطعم",
-    "signedInAs": "مسجّل الدخول بصفتك",
-    "publicSlug": "الرابط العام:",
-    "whatsappLabel": "واتساب الطلبات:",
-    "roleLabel": "الدور:",
+    "overview": {
+      "welcome": "أهلًا بك،",
+      "stats": {
+        "todayOrders": "طلبات اليوم",
+        "activeNow": "نشطة الآن",
+        "revenueToday": "إيرادات اليوم",
+        "activeTables": "طاولات نشطة"
+      },
+      "quickLinks": "اختصارات",
+      "links": {
+        "orders": "لوحة الطلبات الحية",
+        "menu": "الأقسام والأطباق والأسعار",
+        "tables": "أكواد QR والطباعة",
+        "settings": "بيانات المطعم ورقم الواتساب"
+      }
+    },
     "role": {
       "owner": "مالك",
       "manager": "مدير",

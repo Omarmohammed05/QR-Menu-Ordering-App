@@ -36,7 +36,7 @@ export function RestaurantSwitcher({restaurants, activeId}: Props) {
           value={activeId}
           aria-label={t('switchRestaurant')}
           onChange={() => formRef.current?.requestSubmit()}
-          className="max-w-56 cursor-pointer appearance-none truncate rounded-full border border-hairline bg-surface py-1.5 pe-8 ps-9 text-sm font-medium transition-colors hover:border-hairline-strong"
+          className="max-w-56 cursor-pointer appearance-none truncate rounded-full border border-hairline bg-surface py-1.5 pe-8 ps-9 text-sm font-medium transition-[transform,border-color] duration-100 hover:border-hairline-strong active:scale-[0.98]"
         >
           {restaurants.map((restaurant) => (
             <option key={restaurant.id} value={restaurant.id}>

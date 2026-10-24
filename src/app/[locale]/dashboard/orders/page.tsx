@@ -3,19 +3,9 @@ import {requireMember} from '@/server/dashboard';
 import {createRestaurantRepos} from '@/server/db/repos';
 import {OrdersBoard} from '@/components/dashboard/orders-board';
 import {formatNumber} from '@/lib/format';
+import {isSameLocalDay} from '@/lib/time';
 
 type Props = {params: Promise<{locale: string}>};
-
-/** One day in the restaurant's own IANA timezone (UTC anchor → local day). */
-function isSameLocalDay(date: Date, now: Date, timeZone: string): boolean {
-  const fmt = new Intl.DateTimeFormat('en-CA', {
-    timeZone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  });
-  return fmt.format(date) === fmt.format(now);
-}
 
 /**
  * Live order board (Stitch "orders_board" screen): today's stats above a

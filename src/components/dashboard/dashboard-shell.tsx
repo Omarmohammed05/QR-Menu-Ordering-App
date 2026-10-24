@@ -152,7 +152,7 @@ export function DashboardShell({
 
       {/* Column next to the sidebar */}
       <div className="lg:ps-64">
-        <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-hairline bg-surface px-4 lg:px-6 print:hidden">
+        <header className="material fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-hairline px-4 lg:px-6 print:hidden">
           <div className="flex min-w-0 items-center gap-2">
             <button
               type="button"

@@ -33,3 +33,33 @@ html[dir='rtl'] body {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
+
+/*
+ * Translucent chrome material (apple-design §12): fixed bars float over
+ * scrolling content instead of consuming an opaque strip.
+ */
+.material {
+  background: color-mix(in oklab, var(--surface) 78%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Frost over solid when the user prefers less transparency (§14). */
+@media (prefers-reduced-transparency: reduce) {
+  .material {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Gentle, non-vestibular fallback for reduced motion (§14). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

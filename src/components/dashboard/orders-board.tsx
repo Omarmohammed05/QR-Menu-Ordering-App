@@ -152,7 +152,7 @@ export function OrdersBoard({orders, tableLabels}: Props) {
             type="button"
             onClick={() => router.refresh()}
             title={t('refresh')}
-            className="grid size-9 shrink-0 place-items-center rounded-lg bg-muted text-foreground transition-colors hover:bg-hairline"
+            className="grid size-9 shrink-0 place-items-center rounded-lg bg-muted text-foreground transition-[transform,background-color] duration-100 hover:bg-hairline active:scale-[0.98]"
           >
             <RefreshIcon className="size-4" />
           </button>

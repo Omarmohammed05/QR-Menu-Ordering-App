@@ -58,7 +58,6 @@ describe('placeOrderAction (integration)', () => {
 
   afterAll(async () => {
     await db.delete(restaurants).where(eq(restaurants.slug, slug));
-    await client.end();
   });
 
   it('persists a server-priced order and hands off to WhatsApp', async () => {
@@ -174,5 +173,88 @@ describe('placeOrderAction (integration)', () => {
     const two = await place({slug, cart: JSON.stringify([{id: item.id, quantity: 2}])});
     if (!one.ok || !two.ok) throw new Error('expected both orders to place');
     expect(two.orderNumber).toBe(one.orderNumber + 1);
+  });
+
+});
+
+describe('placeOrderAction payments (integration)', () => {
+  // Its own restaurant: the fixed-window rate limit (10 orders / 10 min per
+  // restaurant+IP) is already exhausted by the suite above.
+  const slug = `e2e-pay-${randomUUID().slice(0, 8)}`;
+  let repos: RestaurantRepos;
+  let item: Awaited<ReturnType<RestaurantRepos['items']['create']>>;
+
+  const place = (fields: Record<string, string>) => {
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(fields)) formData.set(key, value);
+    return placeOrderAction({ok: false, error: null}, formData);
+  };
+
+  beforeAll(async () => {
+    const restaurant = await restaurantsRepo.create({
+      slug,
+      nameAr: 'مطعم الدفع',
+      whatsappNumber: '+20 100 555 0188',
+      instapayHandle: 'fahs@instapay'
+    });
+    repos = createRestaurantRepos(restaurant.id);
+    const category = await repos.categories.create({nameAr: 'المشويات', sortOrder: 0});
+    item = await repos.items.create({categoryId: category.id, nameAr: 'كفتة', pricePiastres: 5000});
+  }, 60_000);
+
+  afterAll(async () => {
+    await db.delete(restaurants).where(eq(restaurants.slug, slug));
+    await client.end();
+  });
+
+  it('defaults to cash and persists the method on the order', async () => {
+    const state = await place({slug, cart: JSON.stringify([{id: item.id, quantity: 1}])});
+    expect(state.ok).toBe(true);
+    if (!state.ok) return;
+    const saved = await repos.orders.findWithItemsByPublicId(state.publicId);
+    expect(saved?.order.paymentMethod).toBe('cash');
+    expect(saved?.order.paymentProofUrl).toBeNull();
+
+    const message = decodeURIComponent(state.whatsappUrl.split('text=')[1] ?? '');
+    expect(message).toContain('طريقة الدفع: كاش');
+  });
+
+  it('accepts instapay with an optional transfer screenshot', async () => {
+    const proof = 'https://i.ibb.co/receipt/transfer.png';
+    const state = await place({
+      slug,
+      cart: JSON.stringify([{id: item.id, quantity: 1}]),
+      paymentMethod: 'instapay',
+      paymentProofUrl: proof
+    });
+    expect(state.ok).toBe(true);
+    if (!state.ok) return;
+
+    const saved = await repos.orders.findWithItemsByPublicId(state.publicId);
+    expect(saved?.order.paymentMethod).toBe('instapay');
+    expect(saved?.order.paymentProofUrl).toBe(proof);
+
+    const message = decodeURIComponent(state.whatsappUrl.split('text=')[1] ?? '');
+    expect(message).toContain('طريقة الدفع: إنستاباي');
+    expect(message).toContain('حوالة إلى: fahs@instapay');
+    expect(message).toContain(`إثبات الدفع: ${proof}`);
+  });
+
+  it('falls back to cash when the restaurant has no instapay handle', async () => {
+    const restaurant = await restaurantsRepo.findBySlug(slug);
+    if (!restaurant) throw new Error('restaurant missing');
+    await restaurantsRepo.update(restaurant.id, {instapayHandle: null});
+
+    const state = await place({
+      slug,
+      cart: JSON.stringify([{id: item.id, quantity: 1}]),
+      paymentMethod: 'instapay'
+    });
+    expect(state.ok).toBe(true);
+    if (!state.ok) return;
+    const saved = await repos.orders.findWithItemsByPublicId(state.publicId);
+    expect(saved?.order.paymentMethod).toBe('cash');
+
+    await restaurantsRepo.update(restaurant.id, {instapayHandle: 'fahs@instapay'});
   });
 });

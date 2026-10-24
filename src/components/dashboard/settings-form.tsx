@@ -16,6 +16,7 @@ type Props = {
     nameAr: string;
     nameEn: string | null;
     whatsappNumber: string;
+    instapayHandle: string | null;
     logoUrl: string | null;
   };
 };
@@ -116,6 +117,20 @@ export function SettingsForm({locale, restaurant}: Props) {
           className={inputClass}
         />
         <span className="text-xs text-muted-foreground">{t('whatsappHint')}</span>
+      </label>
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium">{t('instapay')}</span>
+        <input
+          type="text"
+          name="instapayHandle"
+          dir="ltr"
+          defaultValue={restaurant.instapayHandle ?? ''}
+          autoComplete="off"
+          spellCheck={false}
+          placeholder="name@instapay"
+          className={inputClass}
+        />
+        <span className="text-xs text-muted-foreground">{t('instapayHint')}</span>
       </label>
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">{tSlug('label')}</span>

@@ -165,6 +165,7 @@ export function MenuView({menu, tableToken}: Props) {
           totalPiastres={cartTotal}
           currency={currency}
           slug={menu.restaurant.slug}
+          instapayHandle={menu.restaurant.instapayHandle}
           tableToken={tableToken}
           idempotencyKey={idempotencyKey}
           action={formAction}

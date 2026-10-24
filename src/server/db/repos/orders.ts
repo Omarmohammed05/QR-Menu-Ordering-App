@@ -29,6 +29,10 @@ export type NewOrder = {
   idempotencyKey?: string;
   /** Customer UI locale; drives the status page and WhatsApp message. */
   locale?: string;
+  /** Cash by default; `instapay` is only accepted with a configured handle. */
+  paymentMethod?: 'cash' | 'instapay';
+  /** imgbb screenshot of the InstaPay transfer (when the customer attached one). */
+  paymentProofUrl?: string | null;
 };
 
 /** A Postgres unique-violation on a named constraint (23505). */
@@ -80,7 +84,9 @@ export function createOrdersRepo(restaurantId: string) {
               publicId: publicOrderId(),
               number,
               idempotencyKey: values.idempotencyKey ?? publicOrderId(),
-              locale: values.locale
+              locale: values.locale,
+              paymentMethod: values.paymentMethod ?? 'cash',
+              paymentProofUrl: values.paymentProofUrl ?? null
             })
             .returning();
           if (!order) throw new Error('order insert returned no row');

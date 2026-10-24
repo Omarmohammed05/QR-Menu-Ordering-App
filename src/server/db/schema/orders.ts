@@ -3,7 +3,7 @@ import {check, foreignKey, index, integer, jsonb, pgTable, text, timestamp, uniq
 import {sql} from 'drizzle-orm';
 import {restaurants, restaurantTables} from './restaurants';
 import {menuItems} from './menu';
-import {orderStatus} from './enums';
+import {orderStatus, paymentMethod} from './enums';
 
 const tenantId = () =>
   uuid()
@@ -52,6 +52,10 @@ export const orders = pgTable(
     /** Customer UI locale (status page + WhatsApp message language). */
     locale: text().notNull().default('ar'),
     cancelReason: text(),
+    /** How the customer pays — defaults to cash. */
+    paymentMethod: paymentMethod().notNull().default('cash'),
+    /** imgbb screenshot of the InstaPay transfer, when the customer attached one. */
+    paymentProofUrl: text(),
     /** When the lifecycle last moved — the status page shows this. */
     statusUpdatedAt: timestamp({withTimezone: true}).notNull().defaultNow(),
     ...timestamps()

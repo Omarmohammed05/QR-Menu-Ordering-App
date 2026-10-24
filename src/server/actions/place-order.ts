@@ -120,6 +120,24 @@ export async function placeOrderAction(
     if (resolved && resolved.restaurant.id === restaurant.id) tableId = resolved.table.id;
   }
 
+  // Payment: cash by default. InstaPay is honored only when the restaurant
+  // has a handle configured — otherwise the order lands as cash, because a
+  // removed handle must never block checkout.
+  const rawPayment = formData.get('paymentMethod');
+  const paymentMethod =
+    rawPayment === 'instapay' && restaurant.instapayHandle ? ('instapay' as const) : ('cash' as const);
+
+  // Optional InstaPay transfer screenshot (imgbb URL from the upload action).
+  const rawProof = z
+    .string()
+    .trim()
+    .url()
+    .max(500)
+    .or(z.literal(''))
+    .safeParse(formData.get('paymentProofUrl') ?? '');
+  const paymentProofUrl =
+    paymentMethod === 'instapay' && rawProof.success && rawProof.data ? rawProof.data : null;
+
   const rawLocale = formData.get('locale');
   const orderLocale = routing.locales.includes(rawLocale as (typeof routing.locales)[number])
     ? (rawLocale as (typeof routing.locales)[number])
@@ -146,7 +164,9 @@ export async function placeOrderAction(
       totalPiastres,
       items: lines,
       idempotencyKey: idempotencyKey.success ? idempotencyKey.data : newIdempotencyKey(),
-      locale: orderLocale
+      locale: orderLocale,
+      paymentMethod,
+      paymentProofUrl
     });
 
     const message = buildOrderMessage({
@@ -162,6 +182,9 @@ export async function placeOrderAction(
       customerName: order.customerName,
       customerPhone: order.customerPhone,
       note: order.note,
+      paymentMethod,
+      instapayHandle: restaurant.instapayHandle,
+      paymentProofUrl,
       statusUrl: buildOrderStatusUrl(
         env.NEXT_PUBLIC_APP_URL,
         restaurant.slug,

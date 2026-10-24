@@ -28,6 +28,8 @@ const payloadSchema = z.object({
   nameEn: z.string().trim().max(200, 'nameEn').transform((value) => value || null),
   // E.164 without the double-zero variant — the WhatsApp handoff needs it exact.
   whatsappNumber: z.string().trim().regex(/^\+[1-9]\d{7,14}$/, 'whatsapp'),
+  /** InstaPay address customers pay to — empty disables InstaPay checkout. */
+  instapayHandle: z.string().trim().max(64).transform((value) => value || null),
   /** imgbb URL of the public logo, or empty to drop the current one. */
   logoUrl: logoUrlSchema
 });
@@ -56,6 +58,7 @@ export async function updateRestaurantAction(
     nameAr: formData.get('nameAr') ?? '',
     nameEn: formData.get('nameEn') ?? '',
     whatsappNumber: formData.get('whatsappNumber') ?? '',
+    instapayHandle: formData.get('instapayHandle') ?? '',
     logoUrl: formData.get('logoUrl') ?? ''
   });
   if (!parsed.success) {
@@ -81,6 +84,7 @@ export async function updateRestaurantAction(
     nameAr: parsed.data.nameAr,
     nameEn: parsed.data.nameEn,
     whatsappNumber: parsed.data.whatsappNumber,
+    instapayHandle: parsed.data.instapayHandle,
     logoUrl: parsed.data.logoUrl,
     ...slugUpdate
   });

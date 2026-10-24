@@ -33,6 +33,8 @@ export const restaurants = pgTable('restaurants', {
   timezone: text().notNull().default('Africa/Cairo'),
   /** E.164 WhatsApp number orders are handed off to. */
   whatsappNumber: text().notNull(),
+  /** InstaPay address customers send to — empty means cash-only checkout. */
+  instapayHandle: text(),
   currency: text().notNull().default('EGP'),
   isActive: boolean().notNull().default(true),
   /** Handed out transactionally — the source of per-tenant order numbers. */

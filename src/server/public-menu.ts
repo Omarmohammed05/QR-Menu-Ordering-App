@@ -30,6 +30,8 @@ export type PublicMenu = {
     nameEn: string | null;
     logoUrl: string | null;
     currency: string;
+    /** InstaPay address — null means the checkout only offers cash. */
+    instapayHandle: string | null;
   };
   table: {id: string; label: string} | null;
   isOpen: boolean;
@@ -82,7 +84,8 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
       nameAr: restaurant.nameAr,
       nameEn: restaurant.nameEn,
       logoUrl: restaurant.logoUrl ?? null,
-      currency: restaurant.currency
+      currency: restaurant.currency,
+      instapayHandle: restaurant.instapayHandle ?? null
     },
     table,
     isOpen: isOpenAt(slots, new Date(), restaurant.timezone),

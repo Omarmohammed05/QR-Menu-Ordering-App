@@ -70,7 +70,7 @@ export const restaurantsRepo = {
     id: string,
     values: Pick<
       Partial<typeof restaurants.$inferInsert>,
-      'nameAr' | 'nameEn' | 'whatsappNumber' | 'slug' | 'logoUrl' | 'timezone' | 'currency' | 'isActive'
+      'nameAr' | 'nameEn' | 'whatsappNumber' | 'instapayHandle' | 'slug' | 'logoUrl' | 'timezone' | 'currency' | 'isActive'
     > & {previousSlugs?: string[]}
   ) {
     const {previousSlugs, ...rest} = values;

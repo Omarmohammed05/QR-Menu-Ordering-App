@@ -47,6 +47,7 @@ export default async function SettingsPage({params}: Props) {
               nameAr: restaurant.nameAr,
               nameEn: restaurant.nameEn,
               whatsappNumber: restaurant.whatsappNumber,
+              instapayHandle: restaurant.instapayHandle ?? null,
               logoUrl: restaurant.logoUrl ?? null
             }}
           />

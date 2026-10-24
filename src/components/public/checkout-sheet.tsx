@@ -1,8 +1,9 @@
 'use client';
 
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {CloseIcon} from '@/components/icons';
+import {ImageUpload} from '@/components/dashboard/image-upload';
 import {formatNumber, formatPrice} from '@/lib/format';
 import type {PlaceOrderState} from '@/server/actions/place-order';
 import type {PublicMenuItem} from '@/server/public-menu';
@@ -14,6 +15,8 @@ type Props = {
   totalPiastres: number;
   currency: string;
   slug: string;
+  /** InstaPay address — null means the sheet offers cash only. */
+  instapayHandle: string | null;
   tableToken: string | null;
   /** One per cart content — a resubmit (double tap, retry) is idempotent. */
   idempotencyKey: string;
@@ -36,6 +39,7 @@ export function CheckoutSheet({
   totalPiastres,
   currency,
   slug,
+  instapayHandle,
   tableToken,
   idempotencyKey,
   action,
@@ -45,6 +49,7 @@ export function CheckoutSheet({
 }: Props) {
   const t = useTranslations('publicMenu');
   const locale = useLocale();
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'instapay'>('cash');
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -119,6 +124,57 @@ export function CheckoutSheet({
               <input type="text" name="company" tabIndex={-1} autoComplete="off" />
             </label>
           </div>
+          {/* Payment: cash always; InstaPay only with a configured handle. */}
+          {instapayHandle ? (
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium">{t('paymentLabel')}</span>
+              <div className="grid grid-cols-2 gap-1.5 rounded-full border border-hairline p-1">
+                {(['cash', 'instapay'] as const).map((method) => {
+                  const selected = paymentMethod === method;
+                  return (
+                    <label
+                      key={method}
+                      className={`flex cursor-pointer items-center justify-center rounded-full px-3 py-2 text-sm transition-[transform,background-color] duration-100 active:scale-[0.98] ${
+                        selected ? 'bg-foreground font-medium text-background' : 'text-muted-foreground'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value={method}
+                        checked={selected}
+                        onChange={() => setPaymentMethod(method)}
+                        className="sr-only"
+                      />
+                      {t(`payment.${method}`)}
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+          {paymentMethod === 'instapay' && instapayHandle ? (
+            <div className="flex flex-col gap-3 rounded-xl border border-hairline bg-muted/50 p-3.5">
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                {t('instapayHint', {
+                  amount: formatPrice(totalPiastres, locale, currency),
+                  handle: instapayHandle
+                })}
+              </p>
+              <div
+                dir="ltr"
+                className="rounded-full border border-hairline bg-surface px-3.5 py-2 text-center font-mono text-sm"
+              >
+                {instapayHandle}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium text-muted-foreground">
+                  {t('instapayProof')}
+                </span>
+                <ImageUpload name="paymentProofUrl" value={null} rounded="lg" />
+              </div>
+            </div>
+          ) : null}
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-medium">{t('customerName')}</span>
             <input type="text" name="customerName" autoComplete="name" className={inputClass} />

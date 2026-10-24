@@ -84,6 +84,11 @@
       "emptyColumn": "No orders here",
       "incoming": "incoming",
       "outside": "Takeaway",
+      "payment": {
+        "cash": "Cash",
+        "instapay": "InstaPay",
+        "proof": "Payment proof"
+      },
       "refresh": "Refresh",
       "cancel": "Cancel order",
       "cancelReasonLabel": "Cancellation reason",
@@ -156,6 +161,8 @@
         "nameEn": "English name (optional)",
         "whatsapp": "WhatsApp order number",
         "whatsappHint": "International format starting with +, e.g. +201234567890",
+        "instapay": "InstaPay address (optional)",
+        "instapayHint": "Customers pay by InstaPay to this address — leave empty for cash only",
         "save": "Save changes",
         "working": "Working…",
         "saved": "Saved"
@@ -244,6 +251,13 @@
     "customerName": "Name (optional)",
     "customerPhone": "Phone (optional)",
     "note": "Note (optional)",
+    "paymentLabel": "Payment method",
+    "payment": {
+      "cash": "Cash",
+      "instapay": "InstaPay"
+    },
+    "instapayHint": "Send {amount} via InstaPay to the address below, then attach the transfer screenshot",
+    "instapayProof": "Transfer screenshot (optional)",
     "sendOnWhatsApp": "Send on WhatsApp",
     "working": "One moment…",
     "close": "Close",

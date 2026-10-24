@@ -245,6 +245,9 @@ function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
               {t('outside')}
             </span>
           )}
+          <span className="flex shrink-0 items-center rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold">
+            {t(`payment.${order.paymentMethod}`)}
+          </span>
         </div>
         <span className="flex shrink-0 items-center gap-1 text-[11px] text-muted-foreground">
           <ClockIcon className="size-3.5" />
@@ -277,11 +280,21 @@ function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
         </span>
       </div>
 
-      {order.customerName || order.customerPhone || order.note ? (
+      {order.customerName || order.customerPhone || order.note || order.paymentProofUrl ? (
         <div className="flex flex-col gap-0.5 border-t border-hairline pt-2 text-[11px] text-muted-foreground">
           {order.customerName ? <span>{order.customerName}</span> : null}
           {order.customerPhone ? <span dir="ltr">{order.customerPhone}</span> : null}
           {order.note ? <span>{order.note}</span> : null}
+          {order.paymentProofUrl ? (
+            <a
+              href={order.paymentProofUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-foreground underline underline-offset-2"
+            >
+              {t('payment.proof')}
+            </a>
+          ) : null}
         </div>
       ) : null}
 

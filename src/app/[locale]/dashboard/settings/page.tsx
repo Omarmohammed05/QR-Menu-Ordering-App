@@ -17,7 +17,7 @@ export default async function SettingsPage({params}: Props) {
   const tRole = await getTranslations('dashboard');
 
   const facts: {label: string; value: string; ltr?: boolean}[] = [
-    {label: t('info.slug'), value: `/r/${restaurant.slug}`, ltr: true},
+    {label: t('info.slug'), value: `/${restaurant.slug}`, ltr: true},
     {label: t('info.timezone'), value: restaurant.timezone, ltr: true},
     {label: t('info.currency'), value: restaurant.currency, ltr: true},
     {label: t('info.role'), value: tRole(`role.${role}`)}
@@ -40,9 +40,11 @@ export default async function SettingsPage({params}: Props) {
           <SettingsForm
             locale={locale}
             restaurant={{
+              slug: restaurant.slug,
               nameAr: restaurant.nameAr,
               nameEn: restaurant.nameEn,
-              whatsappNumber: restaurant.whatsappNumber
+              whatsappNumber: restaurant.whatsappNumber,
+              logoUrl: restaurant.logoUrl ?? null
             }}
           />
         </div>

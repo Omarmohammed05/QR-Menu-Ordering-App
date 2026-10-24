@@ -7,13 +7,14 @@ import {z} from 'zod';
 import {auth} from '@/server/auth';
 import {db} from '@/server/db';
 import {restaurantMembers, restaurants} from '@/server/db/schema';
-import {slugCandidate} from '@/server/restaurants/slug';
+import {restaurantsRepo} from '@/server/db/repos';
+import {slugSuggestions} from '@/server/restaurants/slug';
 
 type Restaurant = typeof restaurants.$inferSelect;
 type Locale = (typeof routing.locales)[number];
 
 /** Machine-readable failure codes; the form maps them to locale strings. */
-export type CreateRestaurantState = {error?: 'nameAr' | 'whatsapp' | 'generic'};
+export type CreateRestaurantState = {error?: 'nameAr' | 'whatsapp' | 'slugTaken' | 'generic'};
 
 const payloadSchema = z.object({
   nameAr: z.string().trim().min(1, 'nameAr').max(200, 'nameAr'),
@@ -96,10 +97,15 @@ export async function createRestaurantAction(
     return {error: parsed.error.issues[0]?.message === 'whatsapp' ? 'whatsapp' : 'nameAr'};
   }
 
-  // Latin name first; Arabic-only names fall back to the generic base inside.
+  // Latin name first; Arabic-only names are transliterated inside slugify.
+  // Clean, hashless slugs: `name`, `name-2`, `name-3`… — the suggestion walk
+  // skips DB-taken handles, and a unique-violation race retries with the next
+  // free candidate. No random hashes, ever.
   const base = parsed.data.nameEn ?? parsed.data.nameAr;
   for (let attempt = 0; attempt < SLUG_ATTEMPTS; attempt++) {
-    const restaurant = await tryCreateRestaurant(slugCandidate(base), parsed.data, session.user.id);
+    const slug = await slugSuggestions(base, (candidate) => restaurantsRepo.slugTaken(candidate));
+    if (!slug) return {error: 'slugTaken'};
+    const restaurant = await tryCreateRestaurant(slug, parsed.data, session.user.id);
     if (restaurant) redirect({href: '/dashboard', locale});
   }
   return {error: 'generic'};

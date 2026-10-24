@@ -105,7 +105,11 @@ export default async function MenuManagementPage({params}: Props) {
                 <div className="mt-4 flex flex-col gap-4 rounded-base border border-hairline p-4">
                   <EditCategoryForm
                     locale={locale}
-                    category={{id: category.id, nameAr: category.nameAr}}
+                    category={{
+                      id: category.id,
+                      nameAr: category.nameAr,
+                      imageUrl: category.imageUrl ?? null
+                    }}
                   />
                   <div className="border-t border-hairline pt-4">
                     <DeleteCategoryButton locale={locale} categoryId={category.id} />
@@ -148,7 +152,8 @@ export default async function MenuManagementPage({params}: Props) {
                               id: item.id,
                               nameAr: item.nameAr,
                               descriptionAr: item.descriptionAr,
-                              pricePiastres: item.pricePiastres
+                              pricePiastres: item.pricePiastres,
+                              imageUrl: item.imageUrl ?? null
                             }}
                           />
                           <div className="border-t border-hairline pt-4">

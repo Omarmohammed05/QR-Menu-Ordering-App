@@ -1,7 +1,8 @@
-import {headers} from 'next/headers';
 import {getTranslations} from 'next-intl/server';
 import {requireMember} from '@/server/dashboard';
 import {createRestaurantRepos} from '@/server/db/repos';
+import {env} from '@/server/env';
+import {buildPublicMenuUrl} from '@/lib/public-url';
 import {qrSvg} from '@/lib/qr';
 import {setTableActiveAction} from '@/server/actions/tables';
 import {CreateTableForm} from '@/components/dashboard/create-table-form';
@@ -11,12 +12,13 @@ import {DownloadIcon, QrCodeIcon} from '@/components/icons';
 
 type Props = {params: Promise<{locale: string}>};
 
-/** Request origin → the URL encoded into the master and per-table QRs. */
-async function requestOrigin(): Promise<string> {
-  const h = await headers();
-  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
-  const proto = h.get('x-forwarded-proto') ?? (host.startsWith('localhost') ? 'http' : 'https');
-  return `${proto}://${host}`;
+/**
+ * The QR content is the CANONICAL public URL — `{APP_URL}/{slug}?t={token}` —
+ * never the request host, so a preview/proxy host can't leak onto printed
+ * cards. Arabic is the default locale: no locale prefix.
+ */
+function tableUrl(slug: string, token?: string): string {
+  return buildPublicMenuUrl(env.NEXT_PUBLIC_APP_URL, slug, 'ar', token ?? null);
 }
 
 /** SVG → data URL for the "download QR" anchors (server-side base64). */
@@ -34,14 +36,14 @@ export default async function TablesPage({params}: Props) {
   const repos = createRestaurantRepos(membership.restaurant.id);
   const t = await getTranslations('dashboard.tables');
 
-  const [tables, origin] = await Promise.all([repos.tables.list(), requestOrigin()]);
-  const publicUrl = `${origin}/${locale}/r/${membership.restaurant.slug}`;
+  const [tables] = await Promise.all([repos.tables.list()]);
+  const publicUrl = buildPublicMenuUrl(env.NEXT_PUBLIC_APP_URL, membership.restaurant.slug, 'ar');
   const masterQr = await qrSvg(publicUrl);
   const cards = await Promise.all(
     tables.map(async (table) => ({
       ...table,
-      url: `${publicUrl}?t=${table.token}`,
-      qr: await qrSvg(`${publicUrl}?t=${table.token}`)
+      url: tableUrl(membership.restaurant.slug, table.token),
+      qr: await qrSvg(tableUrl(membership.restaurant.slug, table.token))
     }))
   );
   const activeCount = cards.filter((card) => card.isActive).length;

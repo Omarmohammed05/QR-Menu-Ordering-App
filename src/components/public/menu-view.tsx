@@ -74,7 +74,17 @@ export function MenuView({menu, tableToken}: Props) {
                 className="flex scroll-mt-24 flex-col gap-3"
               >
                 <header className="flex items-baseline justify-between gap-3">
-                  <h2 className="text-lg font-semibold tracking-tight">{category.nameAr}</h2>
+                  <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+                    {category.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image
+                      <img
+                        src={category.imageUrl}
+                        alt={category.nameAr}
+                        className="size-7 rounded-full object-cover"
+                      />
+                    ) : null}
+                    {category.nameAr}
+                  </h2>
                   <span className="shrink-0 text-xs text-muted-foreground">
                     {t('dishCount', {count: category.items.length})}
                   </span>

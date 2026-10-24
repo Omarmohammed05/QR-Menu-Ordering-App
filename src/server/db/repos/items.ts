@@ -56,7 +56,10 @@ export function createItemsRepo(restaurantId: string) {
     },
 
     /** Edit a dish — null when the id belongs to another tenant. */
-    async update(id: string, values: Partial<Pick<NewMenuItem, 'nameAr' | 'descriptionAr' | 'pricePiastres'>>) {
+    async update(
+      id: string,
+      values: Partial<Pick<NewMenuItem, 'nameAr' | 'descriptionAr' | 'imageUrl' | 'pricePiastres'>>
+    ) {
       const [row] = await db
         .update(menuItems)
         .set({...values, updatedAt: new Date()})

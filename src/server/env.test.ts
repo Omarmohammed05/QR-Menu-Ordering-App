@@ -3,7 +3,8 @@ import {parseEnv} from './env';
 
 const validEnv = {
   DATABASE_URL: 'postgresql://menu:secret@localhost:5432/menu',
-  BETTER_AUTH_SECRET: 'a'.repeat(44)
+  BETTER_AUTH_SECRET: 'a'.repeat(44),
+  NEXT_PUBLIC_APP_URL: 'https://menu.example.com/'
 };
 
 describe('env schema', () => {
@@ -14,15 +15,36 @@ describe('env schema', () => {
     expect(parsed.AUTH_URL).toBeUndefined();
   });
 
+  it('normalizes a trailing slash off NEXT_PUBLIC_APP_URL', () => {
+    expect(parseEnv(validEnv).NEXT_PUBLIC_APP_URL).toBe('https://menu.example.com');
+  });
+
+  it('rejects a missing NEXT_PUBLIC_APP_URL', () => {
+    const {NEXT_PUBLIC_APP_URL, ...withoutUrl} = validEnv;
+    expect(NEXT_PUBLIC_APP_URL).toBeDefined();
+    expect(() => parseEnv(withoutUrl)).toThrowError(/NEXT_PUBLIC_APP_URL/);
+  });
+
+  it('rejects a non-absolute NEXT_PUBLIC_APP_URL', () => {
+    expect(() => parseEnv({...validEnv, NEXT_PUBLIC_APP_URL: 'menu.example.com'})).toThrowError(
+      /NEXT_PUBLIC_APP_URL/
+    );
+  });
+
+  it('keeps IMGBB_API_KEY optional', () => {
+    expect(parseEnv(validEnv).IMGBB_API_KEY).toBeUndefined();
+    expect(parseEnv({...validEnv, IMGBB_API_KEY: 'abc123'}).IMGBB_API_KEY).toBe('abc123');
+  });
+
   it('rejects a missing DATABASE_URL', () => {
     expect(() =>
-      parseEnv({BETTER_AUTH_SECRET: 'a'.repeat(44)})
+      parseEnv({BETTER_AUTH_SECRET: 'a'.repeat(44), NEXT_PUBLIC_APP_URL: 'https://x.example'})
     ).toThrowError(/DATABASE_URL/);
   });
 
   it('rejects a short BETTER_AUTH_SECRET', () => {
     expect(() =>
-      parseEnv({DATABASE_URL: validEnv.DATABASE_URL, BETTER_AUTH_SECRET: 'short'})
+      parseEnv({...validEnv, BETTER_AUTH_SECRET: 'short'})
     ).toThrowError(/BETTER_AUTH_SECRET/);
   });
 

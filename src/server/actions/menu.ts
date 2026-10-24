@@ -23,6 +23,14 @@ const priceSchema = z
   .string()
   .trim()
   .regex(/^\d{1,6}(\.\d{1,2})?$/, 'price');
+/** imgbb URL of the public photo — empty string drops the current one. */
+const imageUrlSchema = z
+  .string()
+  .trim()
+  .url('generic')
+  .max(500, 'generic')
+  .or(z.literal(''))
+  .transform((value) => value || null);
 
 function localeFrom(formData: FormData): Locale {
   const raw = formData.get('locale');
@@ -42,14 +50,20 @@ export async function createCategoryAction(
   const {membership} = await requireMember(locale);
   if (!canManage(membership.role)) return {error: 'forbidden'};
 
-  const parsed = nameArSchema.safeParse(formData.get('nameAr') ?? '');
+  const parsed = z
+    .object({nameAr: nameArSchema, imageUrl: imageUrlSchema})
+    .safeParse({nameAr: formData.get('nameAr') ?? '', imageUrl: formData.get('imageUrl') ?? ''});
   if (!parsed.success) return {error: 'nameAr'};
 
   const repos = createRestaurantRepos(membership.restaurant.id);
   try {
     // New sections sort after existing ones; ties break alphabetically.
     const sortOrder = (await repos.categories.list()).length;
-    await repos.categories.create({nameAr: parsed.data, sortOrder});
+    await repos.categories.create({
+      nameAr: parsed.data.nameAr,
+      imageUrl: parsed.data.imageUrl,
+      sortOrder
+    });
   } catch {
     return {error: 'generic'};
   }
@@ -69,12 +83,14 @@ export async function createItemAction(
     .object({
       nameAr: nameArSchema,
       descriptionAr: descriptionSchema,
-      price: priceSchema
+      price: priceSchema,
+      imageUrl: imageUrlSchema
     })
     .safeParse({
       nameAr: formData.get('nameAr') ?? '',
       descriptionAr: formData.get('descriptionAr') ?? '',
-      price: formData.get('price') ?? ''
+      price: formData.get('price') ?? '',
+      imageUrl: formData.get('imageUrl') ?? ''
     });
   if (!parsed.success) {
     const first = parsed.error.issues[0]?.message;
@@ -96,6 +112,7 @@ export async function createItemAction(
       categoryId: category.id,
       nameAr: parsed.data.nameAr,
       descriptionAr: parsed.data.descriptionAr,
+      imageUrl: parsed.data.imageUrl,
       pricePiastres
     });
   } catch {
@@ -113,14 +130,19 @@ export async function updateCategoryAction(
   const {membership} = await requireMember(locale);
   if (!canManage(membership.role)) return {error: 'forbidden'};
 
-  const parsed = nameArSchema.safeParse(formData.get('nameAr') ?? '');
+  const parsed = z
+    .object({nameAr: nameArSchema, imageUrl: imageUrlSchema})
+    .safeParse({nameAr: formData.get('nameAr') ?? '', imageUrl: formData.get('imageUrl') ?? ''});
   if (!parsed.success) return {error: 'nameAr'};
 
   const categoryId = z.string().uuid().safeParse(formData.get('categoryId'));
   if (!categoryId.success) return {error: 'generic'};
 
   const repos = createRestaurantRepos(membership.restaurant.id);
-  const updated = await repos.categories.update(categoryId.data, {nameAr: parsed.data});
+  const updated = await repos.categories.update(categoryId.data, {
+    nameAr: parsed.data.nameAr,
+    imageUrl: parsed.data.imageUrl
+  });
   if (!updated) return {error: 'generic'};
 
   revalidatePath(`/${locale}/dashboard/menu`);
@@ -164,12 +186,14 @@ export async function updateItemAction(
     .object({
       nameAr: nameArSchema,
       descriptionAr: descriptionSchema,
-      price: priceSchema
+      price: priceSchema,
+      imageUrl: imageUrlSchema
     })
     .safeParse({
       nameAr: formData.get('nameAr') ?? '',
       descriptionAr: formData.get('descriptionAr') ?? '',
-      price: formData.get('price') ?? ''
+      price: formData.get('price') ?? '',
+      imageUrl: formData.get('imageUrl') ?? ''
     });
   if (!parsed.success) {
     const first = parsed.error.issues[0]?.message;
@@ -180,6 +204,7 @@ export async function updateItemAction(
   const updated = await repos.items.update(itemId.data, {
     nameAr: parsed.data.nameAr,
     descriptionAr: parsed.data.descriptionAr,
+    imageUrl: parsed.data.imageUrl,
     pricePiastres: Math.round(parseFloat(parsed.data.price) * 100)
   });
   if (!updated) return {error: 'generic'};

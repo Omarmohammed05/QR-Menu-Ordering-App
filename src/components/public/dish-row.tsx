@@ -22,7 +22,17 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
   return (
     <li className="flex items-start justify-between gap-4 py-4">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <span className="font-medium">{item.nameAr}</span>
+        <span className="flex items-center gap-2">
+          {item.imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image
+            <img
+              src={item.imageUrl}
+              alt={item.nameAr}
+              className="size-10 shrink-0 rounded-lg object-cover"
+            />
+          ) : null}
+          <span className="truncate font-medium">{item.nameAr}</span>
+        </span>
         {item.descriptionAr ? (
           <span className="text-sm leading-relaxed text-muted-foreground">
             {item.descriptionAr}

@@ -3,13 +3,14 @@
 import {useActionState} from 'react';
 import {useTranslations} from 'next-intl';
 import {updateCategoryAction, type UpdateCategoryState} from '@/server/actions/menu';
+import {ImageUpload} from '@/components/dashboard/image-upload';
 
 type Props = {
   locale: string;
-  category: {id: string; nameAr: string};
+  category: {id: string; nameAr: string; imageUrl: string | null};
 };
 
-/** Rename an existing menu section. Uncontrolled input seeded with the current name. */
+/** Rename an existing menu section / change its photo. Uncontrolled inputs seeded with current values. */
 export function EditCategoryForm({locale, category}: Props) {
   const t = useTranslations('menuManagement');
   const [state, formAction, pending] = useActionState<UpdateCategoryState, FormData>(
@@ -22,6 +23,7 @@ export function EditCategoryForm({locale, category}: Props) {
     <form action={formAction} className="flex flex-col gap-3" noValidate>
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="categoryId" value={category.id} />
+      <ImageUpload name="imageUrl" value={category.imageUrl} />
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">{t('categoryName')}</span>
         <input

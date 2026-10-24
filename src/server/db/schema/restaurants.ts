@@ -20,8 +20,15 @@ const timestamps = () => ({
 export const restaurants = pgTable('restaurants', {
   id: uuid().primaryKey().defaultRandom(),
   slug: text().notNull().unique(),
+  /**
+   * Slugs this restaurant used before the current one. Old printed QR
+   * codes keep resolving (301 to the current slug) forever.
+   */
+  previousSlugs: text().array().notNull().default(sql`'{}'::text[]`),
   nameAr: text().notNull(),
   nameEn: text(),
+  /** Public logo (imgbb URL) shown on the customer menu. */
+  logoUrl: text(),
   /** IANA timezone — drives opening-hours evaluation. */
   timezone: text().notNull().default('Africa/Cairo'),
   /** E.164 WhatsApp number orders are handed off to. */

@@ -42,8 +42,8 @@ export function createCategoriesRepo(restaurantId: string) {
       return row;
     },
 
-    /** Rename a section — null when the id belongs to another tenant. */
-    async update(id: string, values: Partial<Pick<NewCategory, 'nameAr'>>) {
+    /** Rename a section / set its photo — null when the id belongs to another tenant. */
+    async update(id: string, values: Partial<Pick<NewCategory, 'nameAr' | 'imageUrl'>>) {
       const [row] = await db
         .update(menuCategories)
         .set({...values, updatedAt: new Date()})

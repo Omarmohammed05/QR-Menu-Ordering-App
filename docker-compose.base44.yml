@@ -33,6 +33,9 @@ services:
       # `next build` forces production themselves — a leaked NODE_ENV=development
       # crashes `pnpm build` inside this container (/_global-error prerender error).
       - DATABASE_URL=postgresql://menu:menu_dev_password@db:5432/menu
+      # The public origin public URLs (QR, sitemap, OG) are built from —
+      # the sandbox preview host, resolved from the platform variable (never hardcoded).
+      - NEXT_PUBLIC_APP_URL=https://3000-${BASE44_PUBLIC_HOST_SUFFIX}
       # Skip git hook installation inside the sandbox/CI (husky is for local dev machines)
       - HUSKY=0
       # Base44 preview plumbing (empty outside the sandbox)

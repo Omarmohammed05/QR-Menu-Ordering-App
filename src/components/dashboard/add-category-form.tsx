@@ -3,6 +3,7 @@
 import {useActionState} from 'react';
 import {useTranslations} from 'next-intl';
 import {createCategoryAction, type CreateCategoryState} from '@/server/actions/menu';
+import {ImageUpload} from '@/components/dashboard/image-upload';
 
 /** New menu section (category). Uncontrolled inputs — React resets them on success. */
 export function AddCategoryForm({locale}: {locale: string}) {
@@ -13,6 +14,7 @@ export function AddCategoryForm({locale}: {locale: string}) {
   return (
     <form action={formAction} className="flex flex-col gap-3" noValidate>
       <input type="hidden" name="locale" value={locale} />
+      <ImageUpload name="imageUrl" value={null} />
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">{t('categoryName')}</span>
         <input

@@ -1,4 +1,4 @@
-import {eq} from 'drizzle-orm';
+import {and, eq, ne, or, sql} from 'drizzle-orm';
 import {db} from '@/server/db';
 import {restaurants} from '@/server/db/schema';
 
@@ -12,13 +12,41 @@ export type NewRestaurant = Omit<
  * resolves the tenant (by slug or id) that the scoped repos are then built for.
  */
 export const restaurantsRepo = {
+  /**
+   * Current slug, or any of its predecessors (printed QR codes never break:
+   * the page 301-redirects a previous slug to the current one).
+   */
   async findBySlug(slug: string) {
     const [row] = await db
       .select()
       .from(restaurants)
-      .where(eq(restaurants.slug, slug))
+      .where(
+        or(
+          eq(restaurants.slug, slug),
+          sql`${slug} = any(${restaurants.previousSlugs})`
+        )
+      )
       .limit(1);
     return row ?? null;
+  },
+
+  /** True when the slug is (or was) some restaurant's public handle. */
+  async slugTaken(slug: string, excludeRestaurantId?: string) {
+    const conditions = [
+      or(
+        eq(restaurants.slug, slug),
+        sql`${slug} = any(${restaurants.previousSlugs})`
+      )
+    ];
+    if (excludeRestaurantId) {
+      conditions.push(ne(restaurants.id, excludeRestaurantId));
+    }
+    const [row] = await db
+      .select({id: restaurants.id})
+      .from(restaurants)
+      .where(and(...conditions))
+      .limit(1);
+    return row !== undefined;
   },
 
   async findById(id: string) {
@@ -35,14 +63,24 @@ export const restaurantsRepo = {
   /**
    * Settings-screen update. The id always comes from the session's own
    * membership (never caller input), so no tenant scope can be forged.
+   * A slug change pushes the old handle into `previous_slugs` so printed
+   * QR codes keep resolving (the public page 301s to the new slug).
    */
   async update(
     id: string,
-    values: Pick<Partial<NewRestaurant>, 'nameAr' | 'nameEn' | 'whatsappNumber'>
+    values: Pick<
+      Partial<NewRestaurant>,
+      'nameAr' | 'nameEn' | 'whatsappNumber' | 'slug' | 'logoUrl'
+    > & {previousSlugs?: string[]}
   ) {
+    const {previousSlugs, ...rest} = values;
+    const merged =
+      previousSlugs === undefined
+        ? rest
+        : {...rest, previousSlugs: sql`${restaurants.previousSlugs} || ${previousSlugs}::text[]`};
     const [row] = await db
       .update(restaurants)
-      .set({...values, updatedAt: new Date()})
+      .set({...merged, updatedAt: new Date()})
       .where(eq(restaurants.id, id))
       .returning();
     return row ?? null;

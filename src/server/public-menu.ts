@@ -12,12 +12,14 @@ export type PublicMenuItem = {
   nameEn: string | null;
   descriptionAr: string | null;
   pricePiastres: number;
+  imageUrl: string | null;
 };
 
 export type PublicMenuCategory = {
   id: string;
   nameAr: string;
   nameEn: string | null;
+  imageUrl: string | null;
   items: PublicMenuItem[];
 };
 
@@ -26,6 +28,7 @@ export type PublicMenu = {
     slug: string;
     nameAr: string;
     nameEn: string | null;
+    logoUrl: string | null;
   };
   table: {id: string; label: string} | null;
   isOpen: boolean;
@@ -65,14 +68,16 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
       nameAr: item.nameAr,
       nameEn: item.nameEn,
       descriptionAr: item.descriptionAr,
-      pricePiastres: item.pricePiastres
+      pricePiastres: item.pricePiastres,
+      imageUrl: item.imageUrl ?? null
     }));
 
   return {
     restaurant: {
       slug: restaurant.slug,
       nameAr: restaurant.nameAr,
-      nameEn: restaurant.nameEn
+      nameEn: restaurant.nameEn,
+      logoUrl: restaurant.logoUrl ?? null
     },
     table,
     isOpen: isOpenAt(slots, new Date(), restaurant.timezone),
@@ -82,6 +87,7 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
         id: category.id,
         nameAr: category.nameAr,
         nameEn: category.nameEn,
+        imageUrl: category.imageUrl ?? null,
         items: publicItems.filter((item) => item.categoryId === category.id)
       }))
       .filter((category) => category.items.length > 0)

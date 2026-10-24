@@ -24,6 +24,8 @@ export const menuCategories = pgTable(
     restaurantId: tenantId(),
     nameAr: text().notNull(),
     nameEn: text(),
+    /** Public section photo (imgbb URL) shown on the customer menu. */
+    imageUrl: text(),
     sortOrder: integer().notNull().default(0),
     isActive: boolean().notNull().default(true),
     ...timestamps()

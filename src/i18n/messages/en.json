@@ -41,7 +41,8 @@
     "errors": {
       "nameAr": "Enter the restaurant name in Arabic",
       "whatsapp": "Invalid WhatsApp number — international format like +201234567890",
-      "generic": "Something went wrong, try again"
+      "generic": "Something went wrong, try again",
+      "slugTaken": "Could not generate a unique link — try another name"
     }
   },
   "dashboard": {
@@ -171,6 +172,14 @@
         "working": "Working…",
         "saved": "Saved"
       },
+      "slug": {
+        "label": "Public link (slug)",
+        "hint": "Lowercase letters, digits and dashes only — it appears in the menu URL",
+        "checking": "Checking…",
+        "available": "Link is available",
+        "taken": "This link is reserved or already used",
+        "takenWithSuggestion": "This link is taken — try: {suggestion}"
+      },
       "info": {
         "title": "Branch info",
         "slug": "Public link",
@@ -182,7 +191,10 @@
         "nameAr": "Enter the name in Arabic",
         "whatsapp": "Invalid number — must start with + and a country code",
         "forbidden": "You don't have permission to edit settings",
-        "generic": "Something went wrong, try again"
+        "generic": "Something went wrong, try again",
+        "slugTaken": "This link is already used — pick another one",
+        "slugReserved": "This link is reserved — choose another one",
+        "slugInvalid": "Invalid link — use lowercase letters, digits and dashes only"
       }
     },
     "shell": {
@@ -254,5 +266,18 @@
     "save": "Save",
     "deleteItem": "Delete dish",
     "deleteCategory": "Delete section"
+  },
+  "images": {
+    "upload": "Add image",
+    "change": "Change image",
+    "remove": "Remove",
+    "uploading": "Uploading…",
+    "empty": "IMG",
+    "errors": {
+      "file": "Pick a valid image file",
+      "size": "Image is too large — max 5MB",
+      "forbidden": "You are not allowed to upload images",
+      "imgbb": "Upload failed — check the imgbb key and try again"
+    }
   }
 }

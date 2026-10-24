@@ -16,7 +16,13 @@ const envSchema = z.object({
     .url('NEXT_PUBLIC_APP_URL must be an absolute URL')
     .transform((value) => value.replace(/\/+$/, '')),
   /** imgbb API key — public menu/dish images are uploaded through it. */
-  IMGBB_API_KEY: z.string().min(1).optional()
+  IMGBB_API_KEY: z.string().min(1).optional(),
+  /**
+   * The account email that owns the whole platform — the admin page and
+   * restaurant creation are gated on it. Unset: platform-owner features stay
+   * hidden and no one can create accounts.
+   */
+  PLATFORM_OWNER_EMAIL: z.string().trim().toLowerCase().min(3).optional()
 });
 
 export type Env = z.infer<typeof envSchema>;

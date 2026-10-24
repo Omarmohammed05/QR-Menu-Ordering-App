@@ -3,6 +3,7 @@
 import {revalidatePath} from 'next/cache';
 import {z} from 'zod';
 import {routing} from '@/i18n/routing';
+import {isBranchCurrency, isBranchTimezone} from '@/lib/branch-options';
 import {requireMember} from '@/server/dashboard';
 import {restaurantsRepo} from '@/server/db/repos';
 import {isReservedSlug, slugify} from '@/server/restaurants/slug';
@@ -88,6 +89,41 @@ export async function updateRestaurantAction(
   // The shell's restaurant name and every dashboard route read the tenant
   // root, so revalidate the whole dashboard subtree.
   revalidatePath(`/${locale}/dashboard`, 'layout');
+  return {saved: true};
+}
+
+/** Machine-readable failure codes for the branch-info form. */
+export type UpdateBranchInfoState = {
+  error?: 'timezone' | 'currency' | 'forbidden' | 'generic';
+  saved?: boolean;
+};
+
+/**
+ * Settings action: persists the branch's timezone and currency — the two
+ * tenant-root values every price and opening-hours check renders from. Staff
+ * members can view settings but never mutate them.
+ */
+export async function updateBranchInfoAction(
+  _prev: UpdateBranchInfoState,
+  formData: FormData
+): Promise<UpdateBranchInfoState> {
+  const locale = localeFrom(formData);
+  const {membership} = await requireMember(locale);
+  if (membership.role === 'staff') return {error: 'forbidden'};
+
+  const timezone = z.string().trim().max(64).safeParse(formData.get('timezone') ?? '');
+  const currency = z.string().trim().max(8).safeParse(formData.get('currency') ?? '');
+  if (!timezone.success || !isBranchTimezone(timezone.data)) return {error: 'timezone'};
+  if (!currency.success || !isBranchCurrency(currency.data)) return {error: 'currency'};
+
+  const updated = await restaurantsRepo.update(membership.restaurant.id, {
+    timezone: timezone.data,
+    currency: currency.data
+  });
+  if (!updated) return {error: 'generic'};
+
+  // Prices and the open/closed sign render from both — refresh everything.
+  revalidatePath('/', 'layout');
   return {saved: true};
 }
 

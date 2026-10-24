@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import {requireMember} from '@/server/dashboard';
+import {isPlatformOwner} from '@/server/platform';
 import {DashboardShell} from '@/components/dashboard/dashboard-shell';
 
 type Props = {
@@ -25,6 +26,7 @@ export default async function DashboardLayout({children, params}: Props) {
       }))}
       activeRestaurantId={membership.restaurant.id}
       userEmail={session.user.email}
+      showAdmin={isPlatformOwner(session.user.email)}
     >
       {children}
     </DashboardShell>

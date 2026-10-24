@@ -34,6 +34,9 @@ export const auth = betterAuth({
   // Set in production (e.g. the deployment origin).
   baseURL: env.AUTH_URL,
   trustedOrigins: previewTrustedOrigins,
+  // Public sign-up is closed: accounts are ONLY created through the platform
+  // owner's invite flow (admin page → claim code), so the endpoint is dead.
+  disabledPaths: ['/sign-up/email'],
   emailAndPassword: {
     enabled: true
   }

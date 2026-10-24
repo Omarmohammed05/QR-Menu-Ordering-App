@@ -1,6 +1,6 @@
-import {and, eq, ne, or, sql} from 'drizzle-orm';
+import {and, desc, eq, ne, or, sql} from 'drizzle-orm';
 import {db} from '@/server/db';
-import {restaurants} from '@/server/db/schema';
+import {restaurantMembers, restaurants, users} from '@/server/db/schema';
 
 export type NewRestaurant = Omit<
   typeof restaurants.$inferInsert,
@@ -69,8 +69,8 @@ export const restaurantsRepo = {
   async update(
     id: string,
     values: Pick<
-      Partial<NewRestaurant>,
-      'nameAr' | 'nameEn' | 'whatsappNumber' | 'slug' | 'logoUrl'
+      Partial<typeof restaurants.$inferInsert>,
+      'nameAr' | 'nameEn' | 'whatsappNumber' | 'slug' | 'logoUrl' | 'timezone' | 'currency' | 'isActive'
     > & {previousSlugs?: string[]}
   ) {
     const {previousSlugs, ...rest} = values;
@@ -84,5 +84,32 @@ export const restaurantsRepo = {
       .where(eq(restaurants.id, id))
       .returning();
     return row ?? null;
+  },
+
+  /**
+   * Admin screen: every restaurant with its owner emails — platform-owner
+   * page only. Unclaimed restaurants surface with an empty list.
+   */
+  async listAllWithOwners() {
+    const rows = await db
+      .select({restaurant: restaurants, ownerEmail: users.email})
+      .from(restaurants)
+      .leftJoin(
+        restaurantMembers,
+        and(
+          eq(restaurantMembers.restaurantId, restaurants.id),
+          eq(restaurantMembers.role, 'owner')
+        )
+      )
+      .leftJoin(users, eq(users.id, restaurantMembers.userId))
+      .orderBy(desc(restaurants.createdAt));
+
+    const byId = new Map<string, {restaurant: typeof restaurants.$inferSelect; ownerEmails: string[]}>();
+    for (const row of rows) {
+      const entry = byId.get(row.restaurant.id) ?? {restaurant: row.restaurant, ownerEmails: []};
+      if (row.ownerEmail) entry.ownerEmails.push(row.ownerEmail);
+      byId.set(row.restaurant.id, entry);
+    }
+    return [...byId.values()];
   }
 };

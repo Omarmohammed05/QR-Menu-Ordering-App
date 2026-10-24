@@ -2,6 +2,7 @@ import {cache} from 'react';
 import {cookies, headers} from 'next/headers';
 import {redirect} from '@/i18n/navigation';
 import {auth} from '@/server/auth';
+import {isPlatformOwner} from '@/server/platform';
 import {membersRepo, type Membership} from '@/server/db/repos';
 
 /** Cookie remembering the restaurant picked in the header switcher. */
@@ -33,7 +34,9 @@ export const requireMember = cache(async (locale: string): Promise<MemberContext
   const activeId = (await cookies()).get(ACTIVE_RESTAURANT_COOKIE)?.value;
   const membership = memberships.find((m) => m.restaurant.id === activeId) ?? memberships[0];
   if (!membership) {
-    redirect({href: '/onboarding', locale});
+    // Sign-up is closed: the platform owner manages the platform from /admin;
+    // everyone else is sent to the contact-the-admin card.
+    redirect({href: isPlatformOwner(session.user.email) ? '/admin' : '/signup', locale});
     throw new Error('unreachable: redirect() throws');
   }
 

@@ -9,40 +9,23 @@
   "auth": {
     "loginTitle": "Log in",
     "loginTagline": "Enter your credentials to reach your restaurant dashboard",
-    "signupTitle": "Create an account",
-    "signupTagline": "Create your account and start with the menu platform",
-    "name": "Name",
     "email": "Email",
     "password": "Password",
     "login": "Log in",
-    "signup": "Create account",
     "working": "One moment…",
-    "noAccount": "No account yet?",
-    "createOne": "Create one",
-    "haveAccount": "Already have an account?",
-    "signIn": "Log in",
+    "noAccount": "Want an account for your restaurant?",
     "signOut": "Sign out",
     "errors": {
       "invalidCredentials": "Incorrect email or password",
-      "emailTaken": "This email is already in use",
-      "weakPassword": "Password is too short — at least 8 characters",
       "generic": "Something went wrong, try again"
-    }
-  },
-  "onboarding": {
-    "title": "Create your restaurant",
-    "tagline": "One short step before your restaurant dashboard",
-    "nameAr": "Restaurant name in Arabic",
-    "nameEn": "Name in English (optional)",
-    "whatsapp": "WhatsApp number to receive orders",
-    "whatsappPlaceholder": "+201234567890",
-    "submit": "Create restaurant",
-    "working": "One moment…",
-    "errors": {
-      "nameAr": "Enter the restaurant name in Arabic",
-      "whatsapp": "Invalid WhatsApp number — international format like +201234567890",
-      "generic": "Something went wrong, try again",
-      "slugTaken": "Could not generate a unique link — try another name"
+    },
+    "claimedNote": "Your account is ready — sign in now.",
+    "contact": {
+      "title": "Sign-up is invite-only",
+      "body": "Restaurant owners are added through an invite code from the platform owner. Message us on WhatsApp to get your restaurant set up.",
+      "button": "Contact the admin",
+      "prefilled": "Hi! I'd like to add my restaurant to your digital menus platform.",
+      "backToLogin": "Back to sign in"
     }
   },
   "dashboard": {
@@ -73,7 +56,8 @@
       "menu": "Menu",
       "orders": "Orders",
       "tables": "Tables & QR",
-      "settings": "Settings"
+      "settings": "Settings",
+      "admin": "Platform admin"
     },
     "orders": {
       "title": "Orders",
@@ -183,8 +167,6 @@
       "info": {
         "title": "Branch info",
         "slug": "Public link",
-        "timezone": "Timezone",
-        "currency": "Currency",
         "role": "Your role"
       },
       "errors": {
@@ -195,6 +177,41 @@
         "slugTaken": "This link is already used — pick another one",
         "slugReserved": "This link is reserved — choose another one",
         "slugInvalid": "Invalid link — use lowercase letters, digits and dashes only"
+      },
+      "branch": {
+        "title": "Branch preferences",
+        "tagline": "The timezone drives opening hours; the currency is what prices render with",
+        "timezone": "Timezone",
+        "currency": "Currency",
+        "save": "Save",
+        "working": "One moment…",
+        "saved": "Saved",
+        "errors": {
+          "timezone": "Pick a valid timezone",
+          "currency": "Pick a valid currency",
+          "forbidden": "You don't have permission to edit this",
+          "generic": "Something went wrong — try again"
+        }
+      },
+      "addresses": {
+        "title": "Branches & addresses",
+        "tagline": "Your branch addresses are shown to customers below the menu",
+        "labelPlaceholder": "Branch name — e.g. Maadi branch",
+        "addressPlaceholder": "Full address",
+        "add": "Add",
+        "working": "One moment…",
+        "edit": "Edit",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "save": "Save",
+        "empty": "No branches added yet",
+        "errors": {
+          "label": "Enter the branch name",
+          "address": "Enter the address",
+          "notFound": "Branch not found",
+          "forbidden": "You don't have permission to edit this",
+          "generic": "Something went wrong — try again"
+        }
       }
     },
     "shell": {
@@ -230,7 +247,8 @@
       "cart": "Your cart is no longer valid — refresh the page and try again",
       "closed": "The restaurant is closed right now",
       "generic": "Something went wrong, try again"
-    }
+    },
+    "branches": "Our branches"
   },
   "menuManagement": {
     "title": "Menu management",
@@ -279,6 +297,67 @@
       "forbidden": "You are not allowed to upload images",
       "imgbb": "Upload failed — check the imgbb key and try again",
       "save": "Could not save the image — try again"
+    }
+  },
+  "claim": {
+    "title": "Activate your account",
+    "tagline": "Enter the invite code you received, then your details to become the restaurant owner",
+    "code": "Invite code",
+    "codePlaceholder": "e.g. A1B2C3D4",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters",
+    "submit": "Activate account",
+    "working": "One moment…",
+    "errors": {
+      "code": "The code is invalid or was already used",
+      "name": "Enter a valid name",
+      "email": "Enter a valid email",
+      "emailTaken": "This email is already registered — try signing in",
+      "weakPassword": "Password must be at least 8 characters",
+      "generic": "Something went wrong — try again"
+    }
+  },
+  "admin": {
+    "title": "Platform admin",
+    "tagline": "Restaurants and owner invites — the whole platform from here",
+    "stats": {
+      "total": "Restaurants",
+      "active": "Active",
+      "pending": "Pending invites"
+    },
+    "create": {
+      "title": "Create a new restaurant",
+      "nameAr": "Name in Arabic",
+      "nameArPlaceholder": "e.g. Bait Elsham",
+      "nameEn": "Name in English (optional)",
+      "nameEnPlaceholder": "Bait Elsham",
+      "whatsapp": "Restaurant's WhatsApp number",
+      "submit": "Create",
+      "working": "One moment…",
+      "errors": {
+        "nameAr": "Enter the Arabic name",
+        "whatsapp": "Enter an international-format number like +2010…",
+        "slugTaken": "Couldn't generate a unique link — try another name",
+        "generic": "Something went wrong — try again"
+      }
+    },
+    "list": {
+      "empty": "No restaurants yet — create the first one above",
+      "publicMenu": "Menu:",
+      "whatsapp": "WhatsApp:",
+      "owner": "Owner:",
+      "ownerPending": "Owner hasn't activated their account yet",
+      "active": "Active",
+      "inactive": "Paused",
+      "activate": "Activate",
+      "deactivate": "Pause",
+      "inviteLink": "Owner activation link",
+      "sendInvite": "Send on WhatsApp",
+      "regenerate": "New code",
+      "issueInvite": "Issue invite code",
+      "shareText": "Hi {name}! Activate your restaurant account on the digital menus platform from this link:\n{url}\nActivation code: {code}"
     }
   }
 }

@@ -47,7 +47,7 @@ export default async function DashboardPage({params}: Props) {
   const stats = [
     {label: t('stats.todayOrders'), value: formatNumber(todayOrders.length, locale), icon: <OrdersIcon className="size-4" />},
     {label: t('stats.activeNow'), value: formatNumber(activeNow, locale), icon: <ClockIcon className="size-4" />},
-    {label: t('stats.revenueToday'), value: formatPrice(revenueToday, locale), icon: <BagIcon className="size-4" />},
+    {label: t('stats.revenueToday'), value: formatPrice(revenueToday, locale, restaurant.currency), icon: <BagIcon className="size-4" />},
     {label: t('stats.activeTables'), value: formatNumber(activeTables, locale), icon: <TableIcon className="size-4" />}
   ];
 

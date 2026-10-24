@@ -17,6 +17,8 @@ import {
 type Props = {
   orders: OrderWithItems[];
   tableLabels: Record<string, string>;
+  /** Tenant-root currency — every total on the board renders with it. */
+  currency: string;
 };
 
 const POLL_MS = 15_000;
@@ -47,7 +49,7 @@ type Channel = 'all' | 'dineIn' | 'takeaway';
  * the server; the client filters by channel/search and polls with
  * `router.refresh()` while the tab is visible.
  */
-export function OrdersBoard({orders, tableLabels}: Props) {
+export function OrdersBoard({orders, tableLabels, currency}: Props) {
   const t = useTranslations('dashboard.orders');
   const locale = useLocale();
   const router = useRouter();
@@ -193,6 +195,7 @@ export function OrdersBoard({orders, tableLabels}: Props) {
                     items={items}
                     tableLabel={order.tableId ? (tableLabels[order.tableId] ?? null) : null}
                     locale={locale}
+                    currency={currency}
                   />
                 ))}
               {countFor(status) === 0 ? (
@@ -213,10 +216,11 @@ type CardProps = {
   items: OrderWithItems['items'];
   tableLabel: string | null;
   locale: string;
+  currency: string;
 };
 
 /** One order ticket: channel, lines, total, and the workflow action. */
-function OrderCard({order, items, tableLabel, locale}: CardProps) {
+function OrderCard({order, items, tableLabel, locale, currency}: CardProps) {
   const t = useTranslations('dashboard.orders');
   const isDone = order.status === 'completed';
   const next = NEXT_STATUS[order.status];
@@ -274,7 +278,7 @@ function OrderCard({order, items, tableLabel, locale}: CardProps) {
       <div className="flex items-center justify-between gap-2 pt-0.5">
         <span className="text-[11px] text-muted-foreground">{t('total')}</span>
         <span className="text-base font-bold tabular-nums">
-          {formatPrice(order.totalPiastres, locale)}
+          {formatPrice(order.totalPiastres, locale, currency)}
         </span>
       </div>
 

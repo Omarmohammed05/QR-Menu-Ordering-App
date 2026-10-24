@@ -163,7 +163,7 @@ export default async function MenuManagementPage({params}: Props) {
                       </details>
                       <div className="flex shrink-0 flex-col items-end gap-1.5">
                         <span className="text-sm font-medium tabular-nums">
-                          {formatPrice(item.pricePiastres, locale)}
+                          {formatPrice(item.pricePiastres, locale, membership.restaurant.currency)}
                         </span>
                         <form action={toggleItemAvailabilityAction}>
                           <input type="hidden" name="locale" value={locale} />

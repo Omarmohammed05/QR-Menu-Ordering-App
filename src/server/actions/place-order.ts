@@ -110,7 +110,7 @@ export async function placeOrderAction(
       customerName: order.customerName,
       customerPhone: order.customerPhone,
       note: order.note,
-      formatPrice: (piastres) => formatPrice(piastres, 'ar')
+      formatPrice: (piastres) => formatPrice(piastres, 'ar', restaurant.currency)
     });
 
     return {ok: true, whatsappUrl: buildWhatsAppUrl(restaurant.whatsappNumber, message)};

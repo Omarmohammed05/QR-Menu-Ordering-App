@@ -29,10 +29,13 @@ export type PublicMenu = {
     nameAr: string;
     nameEn: string | null;
     logoUrl: string | null;
+    currency: string;
   };
   table: {id: string; label: string} | null;
   isOpen: boolean;
   categories: PublicMenuCategory[];
+  /** Physical branches, rendered to the customer below the dishes. */
+  addresses: {id: string; label: string; address: string}[];
 };
 
 /**
@@ -45,10 +48,11 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
   if (!restaurant || !restaurant.isActive) return null;
 
   const repos = createRestaurantRepos(restaurant.id);
-  const [categories, items, slots] = await Promise.all([
+  const [categories, items, slots, addresses] = await Promise.all([
     repos.categories.list(),
     repos.items.list(),
-    repos.hours.list() as Promise<OpeningHoursRow[]>
+    repos.hours.list() as Promise<OpeningHoursRow[]>,
+    repos.addresses.list()
   ]);
 
   let table: PublicMenu['table'] = null;
@@ -77,10 +81,12 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
       slug: restaurant.slug,
       nameAr: restaurant.nameAr,
       nameEn: restaurant.nameEn,
-      logoUrl: restaurant.logoUrl ?? null
+      logoUrl: restaurant.logoUrl ?? null,
+      currency: restaurant.currency
     },
     table,
     isOpen: isOpenAt(slots, new Date(), restaurant.timezone),
+    addresses: addresses.map(({id, label, address}) => ({id, label, address})),
     categories: categories
       .filter((category) => category.isActive)
       .map((category) => ({

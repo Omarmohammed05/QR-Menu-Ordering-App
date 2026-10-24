@@ -197,6 +197,24 @@ export function SettingsIcon(props: IconProps) {
   );
 }
 
+export function WhatsAppIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5Z" />
+      <path d="M9.3 8.7c.2-.5.4-.5.7-.5h.5c.2 0 .4 0 .6.5l.7 1.6c.1.3.1.5-.1.7l-.5.6c-.1.2-.2.4 0 .7.3.5.9 1.4 1.8 1.9.4.2.7.3.9.1l.6-.6c.2-.2.4-.2.6-.1l1.5.8c.4.2.5.4.5.6-.1.9-1 1.8-2 1.8-2.2 0-4.9-2.3-5.9-4.4-.4-.9-.6-2.1-.4-2.9 0-.2.1-.4.3-.6l.2-.2Z" />
+    </svg>
+  );
+}
+
+export function MapPinIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 21s-6.5-5.3-6.5-10a6.5 6.5 0 0 1 13 0c0 4.7-6.5 10-6.5 10Z" />
+      <circle cx="12" cy="11" r="2.5" />
+    </svg>
+  );
+}
+
 export function ChevronDownIcon(props: IconProps) {
   return (
     <svg {...base(props)}>

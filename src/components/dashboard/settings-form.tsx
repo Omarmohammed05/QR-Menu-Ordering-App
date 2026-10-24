@@ -46,11 +46,12 @@ export function SettingsForm({locale, restaurant}: Props) {
 
   // Debounced live availability check while the owner types a new handle.
   useEffect(() => {
-    if (slug === restaurant.slug) {
-      setAvailability(null);
-      return;
-    }
+    const unchanged = slug === restaurant.slug;
     const timer = setTimeout(async () => {
+      if (unchanged) {
+        setAvailability(null);
+        return;
+      }
       abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
@@ -66,7 +67,7 @@ export function SettingsForm({locale, restaurant}: Props) {
       } finally {
         setChecking(false);
       }
-    }, 350);
+    }, unchanged ? 0 : 350);
     return () => clearTimeout(timer);
   }, [slug, restaurant.slug, activeLocale]);
 

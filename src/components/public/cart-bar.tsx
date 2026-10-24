@@ -4,13 +4,13 @@ import {useLocale, useTranslations} from 'next-intl';
 import {BagIcon} from '@/components/icons';
 import {formatPrice} from '@/lib/format';
 
-type Props = {count: number; totalPiastres: number; onOpen: () => void};
+type Props = {count: number; totalPiastres: number; currency: string; onOpen: () => void};
 
 /**
  * The floating cart bar (Stitch action-bar pattern): a translucent material
  * pill that floats over the menu as soon as the cart holds something.
  */
-export function CartBar({count, totalPiastres, onOpen}: Props) {
+export function CartBar({count, totalPiastres, currency, onOpen}: Props) {
   const t = useTranslations('publicMenu');
   const locale = useLocale();
 
@@ -29,7 +29,7 @@ export function CartBar({count, totalPiastres, onOpen}: Props) {
               {t('cartCount', {count})}
             </span>
             <span className="text-sm font-semibold tabular-nums">
-              {formatPrice(totalPiastres, locale)}
+              {formatPrice(totalPiastres, locale, currency)}
             </span>
           </span>
         </span>

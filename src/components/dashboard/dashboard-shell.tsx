@@ -23,6 +23,8 @@ type Props = {
   restaurants: {id: string; nameAr: string}[];
   activeRestaurantId: string;
   userEmail: string;
+  /** Platform owner sees the admin link — sign-up is closed, only they creates restaurants. */
+  showAdmin?: boolean;
   children: ReactNode;
 };
 
@@ -38,6 +40,7 @@ export function DashboardShell({
   restaurants,
   activeRestaurantId,
   userEmail,
+  showAdmin = false,
   children
 }: Props) {
   const t = useTranslations('dashboard');
@@ -52,6 +55,9 @@ export function DashboardShell({
     {href: '/dashboard/tables', label: t('nav.tables'), icon: <QrCodeIcon className="size-[18px]" />},
     {href: '/dashboard/settings', label: t('nav.settings'), icon: <SettingsIcon className="size-[18px]" />}
   ];
+  if (showAdmin) {
+    nav.push({href: '/admin', label: t('nav.admin'), icon: <StoreIcon className="size-[18px]" />});
+  }
 
   const isActive = (href: string) =>
     href === '/dashboard' ? pathname === href : pathname.startsWith(href);

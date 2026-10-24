@@ -12,6 +12,7 @@ export type CheckoutLine = {item: PublicMenuItem; quantity: number};
 type Props = {
   lines: CheckoutLine[];
   totalPiastres: number;
+  currency: string;
   slug: string;
   tableToken: string | null;
   action: (formData: FormData) => void;
@@ -31,6 +32,7 @@ const inputClass =
 export function CheckoutSheet({
   lines,
   totalPiastres,
+  currency,
   slug,
   tableToken,
   action,
@@ -87,13 +89,13 @@ export function CheckoutSheet({
                 <span className="truncate">{item.nameAr}</span>
               </span>
               <span className="shrink-0 tabular-nums">
-                {formatPrice(item.pricePiastres * quantity, locale)}
+                {formatPrice(item.pricePiastres * quantity, locale, currency)}
               </span>
             </li>
           ))}
           <li className="flex items-center justify-between gap-3 py-2.5 font-semibold">
             <span>{t('total')}</span>
-            <span className="tabular-nums">{formatPrice(totalPiastres, locale)}</span>
+            <span className="tabular-nums">{formatPrice(totalPiastres, locale, currency)}</span>
           </li>
         </ul>
 

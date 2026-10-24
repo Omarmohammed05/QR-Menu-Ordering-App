@@ -59,6 +59,7 @@ export function MenuView({menu, tableToken}: Props) {
     (sum, line) => sum + line.item.pricePiastres * line.quantity,
     0
   );
+  const currency = menu.restaurant.currency;
 
   return (
     <>
@@ -95,7 +96,7 @@ export function MenuView({menu, tableToken}: Props) {
                       key={item.id}
                       item={item}
                       quantity={cart[item.id] ?? 0}
-                      priceLabel={formatPrice(item.pricePiastres, locale)}
+                      priceLabel={formatPrice(item.pricePiastres, locale, currency)}
                       onIncrement={() => change(item.id, 1)}
                       onDecrement={() => change(item.id, -1)}
                     />
@@ -114,10 +115,28 @@ export function MenuView({menu, tableToken}: Props) {
         </div>
       )}
 
+      {menu.addresses.length > 0 ? (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-lg font-semibold tracking-tight">{t('branches')}</h2>
+          <ul className="flex flex-col divide-y divide-hairline border-y border-hairline">
+            {menu.addresses.map((entry) => (
+              <li
+                key={entry.id}
+                className="flex flex-col gap-0.5 py-2.5 text-sm first:pt-0 last:pb-0"
+              >
+                <span className="font-medium">{entry.label}</span>
+                <span className="text-xs text-muted-foreground">{entry.address}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       {cartCount > 0 && !checkoutOpen ? (
         <CartBar
           count={cartCount}
           totalPiastres={cartTotal}
+          currency={currency}
           onOpen={() => setCheckoutOpen(true)}
         />
       ) : null}
@@ -126,6 +145,7 @@ export function MenuView({menu, tableToken}: Props) {
         <CheckoutSheet
           lines={cartLines}
           totalPiastres={cartTotal}
+          currency={currency}
           slug={menu.restaurant.slug}
           tableToken={tableToken}
           action={formAction}

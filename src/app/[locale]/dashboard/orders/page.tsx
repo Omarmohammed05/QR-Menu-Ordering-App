@@ -84,7 +84,7 @@ export default async function OrdersPage({params}: Props) {
         ))}
       </div>
 
-      <OrdersBoard orders={orders} tableLabels={tableLabels} />
+      <OrdersBoard orders={orders} tableLabels={tableLabels} currency={membership.restaurant.currency} />
     </div>
   );
 }

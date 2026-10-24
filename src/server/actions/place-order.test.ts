@@ -177,6 +177,94 @@ describe('placeOrderAction (integration)', () => {
 
 });
 
+describe('placeOrderAction options (integration)', () => {
+  // Its own restaurant: the rate limit above is exhausted, and option pricing
+  // needs its own fixtures anyway.
+  const slug = `e2e-opt-${randomUUID().slice(0, 8)}`;
+  let repos: RestaurantRepos;
+  let item: Awaited<ReturnType<RestaurantRepos['items']['create']>>;
+  let tahini: Awaited<ReturnType<RestaurantRepos['options']['create']>>;
+  let bread: Awaited<ReturnType<RestaurantRepos['options']['create']>>;
+  let inactive: Awaited<ReturnType<RestaurantRepos['options']['create']>>;
+
+  const place = (fields: Record<string, string>) => {
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(fields)) formData.set(key, value);
+    return placeOrderAction({ok: false, error: null}, formData);
+  };
+
+  beforeAll(async () => {
+    const restaurant = await restaurantsRepo.create({
+      slug,
+      nameAr: 'مطعم الخيارات',
+      whatsappNumber: '+20 100 555 0177'
+    });
+    repos = createRestaurantRepos(restaurant.id);
+    const category = await repos.categories.create({nameAr: 'المشويات', sortOrder: 0});
+    item = await repos.items.create({categoryId: category.id, nameAr: 'كفتة', pricePiastres: 8500});
+    tahini = await repos.options.create({
+      menuItemId: item.id,
+      nameAr: 'طحينة إضافية',
+      priceDeltaPiastres: 500
+    });
+    bread = await repos.options.create({
+      menuItemId: item.id,
+      nameAr: 'خبز إضافي',
+      priceDeltaPiastres: 300
+    });
+    inactive = await repos.options.create({
+      menuItemId: item.id,
+      nameAr: 'خيار موقوف',
+      priceDeltaPiastres: 700,
+      isActive: false
+    });
+  }, 60_000);
+
+  afterAll(async () => {
+    await db.delete(restaurants).where(eq(restaurants.slug, slug));
+  });
+
+  it('prices selected options from the DB and snapshots them on the line', async () => {
+    const state = await place({
+      slug,
+      cart: JSON.stringify([{id: item.id, quantity: 2, optionIds: [tahini.id, bread.id]}])
+    });
+    expect(state.ok).toBe(true);
+    if (!state.ok) return;
+
+    const board = await repos.orders.listWithItems();
+    expect(board[0]?.order.totalPiastres).toBe(18_600); // 2 × (85 + 5 + 3), server-priced
+    const line = board[0]?.items[0];
+    expect(line?.unitPricePiastres).toBe(9_300);
+    expect(line?.lineTotalPiastres).toBe(18_600);
+    expect(line?.options.map((option) => option.nameAr)).toEqual(['طحينة إضافية', 'خبز إضافي']);
+
+    // The kitchen reads the chosen options inline in the WhatsApp message.
+    const message = decodeURIComponent(state.whatsappUrl.split('text=')[1] ?? '');
+    expect(message).toContain('كفتة (طحينة إضافية، خبز إضافي) × 2');
+  });
+
+  it('counts a repeated option id once', async () => {
+    const state = await place({
+      slug,
+      cart: JSON.stringify([{id: item.id, quantity: 1, optionIds: [tahini.id, tahini.id]}])
+    });
+    expect(state.ok).toBe(true);
+    if (!state.ok) return;
+    const board = await repos.orders.listWithItems();
+    expect(board[0]?.items[0]?.unitPricePiastres).toBe(9_000); // 85 + 5, once
+  });
+
+  it('rejects an unknown or inactive option id as a stale cart', async () => {
+    expect(
+      await place({slug, cart: JSON.stringify([{id: item.id, quantity: 1, optionIds: [randomUUID()]}])})
+    ).toEqual({ok: false, error: 'cart'});
+    expect(
+      await place({slug, cart: JSON.stringify([{id: item.id, quantity: 1, optionIds: [inactive.id]}])})
+    ).toEqual({ok: false, error: 'cart'});
+  });
+});
+
 describe('placeOrderAction payments (integration)', () => {
   // Its own restaurant: the fixed-window rate limit (10 orders / 10 min per
   // restaurant+IP) is already exhausted by the suite above.

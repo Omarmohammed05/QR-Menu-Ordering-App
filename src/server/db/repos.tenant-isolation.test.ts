@@ -224,6 +224,24 @@ describe('tenant isolation (integration)', () => {
     expect(await reposA.items.findById(free.id)).toBeNull();
   });
 
+  it('keeps dish options tenant-scoped: visible to A only, cross-tenant delete a no-op', async () => {
+    const option = await reposA.options.create({
+      menuItemId: itemA.id,
+      nameAr: 'طحينة إضافية',
+      priceDeltaPiastres: 500
+    });
+    expect((await reposA.options.listByItem(itemA.id)).map((o) => o.id)).toContain(option.id);
+    // Tenant B sees nothing of A's options on the same dish id.
+    expect(await reposB.options.listByItem(itemA.id)).toHaveLength(0);
+    expect(await reposB.options.listActiveByItem(itemA.id)).toHaveLength(0);
+    // A cross-tenant delete is a silent no-op.
+    expect(await reposB.options.remove(option.id)).toBe(false);
+    expect((await reposA.options.listByItem(itemA.id)).map((o) => o.id)).toContain(option.id);
+    // Own-tenant delete applies.
+    expect(await reposA.options.remove(option.id)).toBe(true);
+    expect((await reposA.options.listByItem(itemA.id)).map((o) => o.id)).not.toContain(option.id);
+  });
+
   it('makes a cross-tenant category update and delete a no-op', async () => {
     expect(await reposB.categories.update(categoryA.id, {nameAr: 'معدّل'})).toBeNull();
     expect((await reposA.categories.findById(categoryA.id))?.nameAr).toBe('المشويات');

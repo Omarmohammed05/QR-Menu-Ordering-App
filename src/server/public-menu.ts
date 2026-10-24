@@ -5,6 +5,14 @@ import {createRestaurantRepos, restaurantsRepo, tablesByToken} from '@/server/db
  * Serializable menu for the public customer page: active categories holding
  * available dishes, the scanned table (if any) and the open/closed badge.
  */
+/** A selectable extra on a dish (e.g. "extra cheese +500 piastres"). */
+export type PublicMenuOption = {
+  id: string;
+  nameAr: string;
+  nameEn: string | null;
+  priceDeltaPiastres: number;
+};
+
 export type PublicMenuItem = {
   id: string;
   categoryId: string;
@@ -14,6 +22,7 @@ export type PublicMenuItem = {
   descriptionEn: string | null;
   pricePiastres: number;
   imageUrl: string | null;
+  options: PublicMenuOption[];
 };
 
 export type PublicMenuCategory = {
@@ -51,12 +60,24 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
   if (!restaurant || !restaurant.isActive) return null;
 
   const repos = createRestaurantRepos(restaurant.id);
-  const [categories, items, slots, addresses] = await Promise.all([
+  const [categories, items, options, slots, addresses] = await Promise.all([
     repos.categories.list(),
     repos.items.list(),
+    repos.options.listActive(),
     repos.hours.list() as Promise<OpeningHoursRow[]>,
     repos.addresses.list()
   ]);
+  const optionsByItem = new Map<string, PublicMenuOption[]>();
+  for (const option of options) {
+    const list = optionsByItem.get(option.menuItemId) ?? [];
+    list.push({
+      id: option.id,
+      nameAr: option.nameAr,
+      nameEn: option.nameEn ?? null,
+      priceDeltaPiastres: option.priceDeltaPiastres
+    });
+    optionsByItem.set(option.menuItemId, list);
+  }
 
   let table: PublicMenu['table'] = null;
   if (token) {
@@ -77,7 +98,8 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
       descriptionAr: item.descriptionAr,
       descriptionEn: item.descriptionEn ?? null,
       pricePiastres: item.pricePiastres,
-      imageUrl: item.imageUrl ?? null
+      imageUrl: item.imageUrl ?? null,
+      options: optionsByItem.get(item.id) ?? []
     }));
 
   return {
@@ -102,5 +124,40 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
         items: publicItems.filter((item) => item.categoryId === category.id)
       }))
       .filter((category) => category.items.length > 0)
+  };
+}
+
+/**
+ * One dish with its active options for the customer detail page. Tenant
+ * resolution and scoping mirror `loadPublicMenu`; an unavailable or foreign
+ * item id resolves to null (the page renders its 404).
+ */
+export async function loadPublicItemDetail(
+  slug: string,
+  itemId: string
+): Promise<PublicMenuItem | null> {
+  const restaurant = await restaurantsRepo.findBySlug(slug);
+  if (!restaurant || !restaurant.isActive) return null;
+
+  const repos = createRestaurantRepos(restaurant.id);
+  const item = await repos.items.findById(itemId);
+  if (!item || !item.isAvailable) return null;
+
+  const options = await repos.options.listActiveByItem(item.id);
+  return {
+    id: item.id,
+    categoryId: item.categoryId,
+    nameAr: item.nameAr,
+    nameEn: item.nameEn,
+    descriptionAr: item.descriptionAr ?? null,
+    descriptionEn: item.descriptionEn ?? null,
+    pricePiastres: item.pricePiastres,
+    imageUrl: item.imageUrl ?? null,
+    options: options.map((option) => ({
+      id: option.id,
+      nameAr: option.nameAr,
+      nameEn: option.nameEn ?? null,
+      priceDeltaPiastres: option.priceDeltaPiastres
+    }))
   };
 }

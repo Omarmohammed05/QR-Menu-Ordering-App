@@ -8,6 +8,7 @@ import {formatPrice} from '@/lib/format';
 import {buildOrderStatusUrl, orderStatusPath} from '@/lib/public-url';
 import {routing} from '@/i18n/routing';
 import {createRestaurantRepos, restaurantsRepo, tablesByToken} from '@/server/db/repos';
+import type {OrderItemOptionSnapshot} from '@/server/db/schema';
 import {consumeRateLimit, rateLimitKey} from '@/server/security/rate-limit';
 import {newIdempotencyKey} from '@/lib/ids';
 import {env} from '@/server/env';
@@ -40,7 +41,8 @@ const ORDER_RATE_WINDOW_SECONDS = 600;
 const cartSchema = z.array(
   z.object({
     id: z.string().uuid(),
-    quantity: z.number().int().min(1).max(MAX_QUANTITY)
+    quantity: z.number().int().min(1).max(MAX_QUANTITY),
+    optionIds: z.array(z.string().uuid()).max(MAX_LINES).default([])
   })
 );
 type CartLine = z.infer<typeof cartSchema>;
@@ -102,13 +104,31 @@ export async function placeOrderAction(
   for (const line of cart) {
     const item = await repos.items.findById(line.id);
     if (!item || !item.isAvailable) return {ok: false, error: 'cart'};
+
+    // Options are re-priced from the DB too: an unknown, inactive or foreign
+    // option id drops the whole order with the same stale-cart error.
+    const activeOptions = await repos.options.listActiveByItem(item.id);
+    const optionsById = new Map(activeOptions.map((option) => [option.id, option]));
+    const snapshots: OrderItemOptionSnapshot[] = [];
+    for (const optionId of new Set(line.optionIds)) {
+      const option = optionsById.get(optionId);
+      if (!option) return {ok: false, error: 'cart'};
+      snapshots.push({
+        id: option.id,
+        nameAr: option.nameAr,
+        nameEn: option.nameEn ?? null,
+        priceDeltaPiastres: option.priceDeltaPiastres
+      });
+    }
+    const unitPricePiastres =
+      item.pricePiastres + snapshots.reduce((sum, o) => sum + o.priceDeltaPiastres, 0);
     lines.push({
       menuItemId: item.id,
       quantity: line.quantity,
-      unitPricePiastres: item.pricePiastres,
+      unitPricePiastres,
       nameSnapshotAr: item.nameAr,
-      options: [],
-      lineTotalPiastres: item.pricePiastres * line.quantity
+      options: snapshots,
+      lineTotalPiastres: unitPricePiastres * line.quantity
     });
   }
 
@@ -174,7 +194,11 @@ export async function placeOrderAction(
       orderLabel: `طلب #${order.number}`,
       tableLabel: tableId ? (await repos.tables.findById(tableId))?.label : null,
       items: lines.map((line) => ({
-        name: line.nameSnapshotAr,
+        // The kitchen reads chosen options inline with the dish name.
+        name:
+          line.options.length > 0
+            ? `${line.nameSnapshotAr} (${line.options.map((o) => o.nameAr).join('، ')})`
+            : line.nameSnapshotAr,
         quantity: line.quantity,
         lineTotalPiastres: line.lineTotalPiastres
       })),

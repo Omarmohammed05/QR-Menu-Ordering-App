@@ -9,7 +9,14 @@ import {localizedName} from '@/lib/localize';
 import type {PlaceOrderState} from '@/server/actions/place-order';
 import type {PublicMenuItem} from '@/server/public-menu';
 
-export type CheckoutLine = {item: PublicMenuItem; quantity: number};
+export type CheckoutLine = {
+  item: PublicMenuItem;
+  /** Selected option ids — re-validated and re-priced by the server. */
+  optionIds: string[];
+  quantity: number;
+  /** Dish price + selected option deltas (piastres, display-only). */
+  unitPiastres: number;
+};
 
 type Props = {
   lines: CheckoutLine[];
@@ -89,16 +96,29 @@ export function CheckoutSheet({
         </div>
 
         <ul className="flex flex-col border-y border-hairline py-1 text-sm">
-          {lines.map(({item, quantity}) => (
-            <li key={item.id} className="flex items-center justify-between gap-3 py-2.5">
-              <span className="flex min-w-0 items-center gap-2">
-                <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tabular-nums">
-                  ×{formatNumber(quantity, locale)}
+          {lines.map(({item, optionIds, quantity, unitPiastres}) => (
+            <li
+              key={`${item.id}-${optionIds.join(',')}`}
+              className="flex items-center justify-between gap-3 py-2.5"
+            >
+              <span className="flex min-w-0 flex-col gap-0.5">
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tabular-nums">
+                    ×{formatNumber(quantity, locale)}
+                  </span>
+                  <span className="truncate">{localizedName(locale, item)}</span>
                 </span>
-                <span className="truncate">{localizedName(locale, item)}</span>
+                {optionIds.length > 0 ? (
+                  <span className="truncate text-xs text-muted-foreground">
+                    {item.options
+                      .filter((option) => optionIds.includes(option.id))
+                      .map((option) => localizedName(locale, option))
+                      .join('، ')}
+                  </span>
+                ) : null}
               </span>
               <span className="shrink-0 tabular-nums">
-                {formatPrice(item.pricePiastres * quantity, locale, currency)}
+                {formatPrice(unitPiastres * quantity, locale, currency)}
               </span>
             </li>
           ))}
@@ -116,7 +136,13 @@ export function CheckoutSheet({
           <input
             type="hidden"
             name="cart"
-            value={JSON.stringify(lines.map((line) => ({id: line.item.id, quantity: line.quantity})))}
+            value={JSON.stringify(
+              lines.map((line) => ({
+                id: line.item.id,
+                quantity: line.quantity,
+                optionIds: line.optionIds
+              }))
+            )}
           />
           {/* Honeypot: invisible to humans, irresistible to bots (spec §11). */}
           <div aria-hidden className="hidden">

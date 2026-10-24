@@ -2,6 +2,7 @@ import {createCategoriesRepo} from './categories';
 import {createHoursRepo} from './hours';
 import {createTeamRepo} from './members';
 import {createItemsRepo} from './items';
+import {createOptionsRepo} from './options';
 import {createOrdersRepo} from './orders';
 import {createTablesRepo} from './tables';
 import {createAddressesRepo} from './addresses';
@@ -17,6 +18,7 @@ export {
   type TeamRepo
 } from './members';
 export {type CategoriesRepo, type NewCategory} from './categories';
+export {type NewMenuItemOption, type OptionsRepo} from './options';
 export {type ItemsRepo, type NewMenuItem} from './items';
 export {
   type NewOrder,
@@ -48,6 +50,7 @@ export function createRestaurantRepos(restaurantId: string) {
     id: restaurantId,
     categories: createCategoriesRepo(restaurantId),
     items: createItemsRepo(restaurantId),
+    options: createOptionsRepo(restaurantId),
     orders: createOrdersRepo(restaurantId),
     tables: createTablesRepo(restaurantId),
     hours: createHoursRepo(restaurantId),

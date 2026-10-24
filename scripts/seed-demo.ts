@@ -11,6 +11,7 @@ import {db} from '../src/server/db';
 import {
   menuCategories,
   menuItems,
+  menuItemOptions,
   menuViews,
   openingHours,
   orderEvents,
@@ -91,6 +92,15 @@ const MENU: SeedCategory[] = [
 ];
 
 const TABLE_LABELS = ['طاولة ١', 'طاولة ٢', 'طاولة ٣', 'طاولة ٤', 'طاولة ٥', 'طاولة ٦'];
+
+/** Paid extras a customer can toggle on the dish detail page. */
+const OPTIONS: {item: string; nameAr: string; nameEn: string; priceDeltaPiastres: number}[] = [
+  {item: 'كشري مصري', nameAr: 'صلصة إضافية', nameEn: 'Extra sauce', priceDeltaPiastres: 500},
+  {item: 'كشري مصري', nameAr: 'بصل مقرمش إضافي', nameEn: 'Extra crispy onions', priceDeltaPiastres: 300},
+  {item: 'مشاوي مشكل', nameAr: 'أرز إضافي', nameEn: 'Extra rice', priceDeltaPiastres: 1500},
+  {item: 'شيش طاووق', nameAr: 'صوص ثوم إضافي', nameEn: 'Extra garlic sauce', priceDeltaPiastres: 300},
+  {item: 'كنافة بالمانجو', nameAr: 'مكسرات إضافية', nameEn: 'Extra nuts', priceDeltaPiastres: 500}
+];
 
 const TEAM: {id: string; name: string; email: string; role: 'owner' | 'manager' | 'staff'}[] = [
   {id: 'demo-user-owner', name: 'أحمد النيل', email: 'owner@demo.qr-menu.app', role: 'owner'},
@@ -217,6 +227,38 @@ async function seedMenu(restaurantId: string) {
       }))
     )
     .onConflictDoNothing();
+}
+
+/** Dish options — adds any of the demo extras that are missing (by name). */
+async function seedOptions(restaurantId: string) {
+  const itemRows = await db
+    .select()
+    .from(menuItems)
+    .where(eq(menuItems.restaurantId, restaurantId));
+  const itemByName = new Map(itemRows.map((row) => [row.nameAr, row]));
+
+  const existing = await db
+    .select({menuItemId: menuItemOptions.menuItemId, nameAr: menuItemOptions.nameAr})
+    .from(menuItemOptions)
+    .where(eq(menuItemOptions.restaurantId, restaurantId));
+  const existingKeys = new Set(existing.map((row) => `${row.menuItemId}:${row.nameAr}`));
+
+  let added = 0;
+  for (const [sortOrder, option] of OPTIONS.entries()) {
+    const item = itemByName.get(option.item);
+    if (!item) continue; // the menu changed shape — skip rather than guess
+    if (existingKeys.has(`${item.id}:${option.nameAr}`)) continue;
+    await db.insert(menuItemOptions).values({
+      restaurantId,
+      menuItemId: item.id,
+      nameAr: option.nameAr,
+      nameEn: option.nameEn,
+      priceDeltaPiastres: option.priceDeltaPiastres,
+      sortOrder
+    });
+    added++;
+  }
+  console.log(added > 0 ? `seeded ${added} dish options` : 'options already seeded — skipping');
 }
 
 /** QR tables — adds any of the six demo labels that are missing. */
@@ -409,6 +451,7 @@ async function seedViews(restaurant: {id: string; timezone: string}) {
 async function main() {
   const restaurant = await ensureRestaurant();
   await seedMenu(restaurant.id);
+  await seedOptions(restaurant.id);
   await seedTables(restaurant.id);
   await seedTeam(restaurant.id);
   await seedOrders(restaurant.id);

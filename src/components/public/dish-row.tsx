@@ -1,12 +1,15 @@
 'use client';
 
 import {useLocale, useTranslations} from 'next-intl';
+import {Link} from '@/i18n/navigation';
 import {MinusIcon, PlusIcon} from '@/components/icons';
 import {localizedDescription, localizedName} from '@/lib/localize';
 import type {PublicMenuItem} from '@/server/public-menu';
 
 type Props = {
   item: PublicMenuItem;
+  /** In-app path of the dish detail page (locale-prefixed by next-intl). */
+  href: string;
   quantity: number;
   priceLabel: string;
   onIncrement: () => void;
@@ -18,7 +21,7 @@ type Props = {
  * thumbnail, and the add control — a circular warm button that swaps into a
  * gradient stepper pill once in the cart.
  */
-export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: Props) {
+export function DishRow({item, href, quantity, priceLabel, onIncrement, onDecrement}: Props) {
   const t = useTranslations('publicMenu');
   const locale = useLocale();
 
@@ -28,16 +31,23 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
       className="flex items-start justify-between gap-4 rounded-2xl border border-warm-hairline bg-surface p-4 shadow-warm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#ff7043]/45 hover:shadow-warm-strong"
     >
       <div className="flex min-w-0 flex-col gap-1.5">
-        <span className="font-semibold leading-snug text-warm-ink">
-          {localizedName(locale, item)}
-        </span>
-        {localizedDescription(locale, item) ? (
-          <span className="line-clamp-2 text-sm leading-relaxed text-warm-muted">
-            {localizedDescription(locale, item)}
+        <Link href={href} className="min-w-0">
+          <span className="font-semibold leading-snug text-warm-ink transition-colors hover:text-brand-strong">
+            {localizedName(locale, item)}
           </span>
-        ) : null}
-        <span className="mt-0.5 w-fit rounded-full bg-brand-soft px-2.5 py-1 text-sm font-semibold text-brand-strong tabular-nums">
-          {priceLabel}
+          {localizedDescription(locale, item) ? (
+            <span className="mt-0.5 line-clamp-2 block text-sm leading-relaxed text-warm-muted">
+              {localizedDescription(locale, item)}
+            </span>
+          ) : null}
+        </Link>
+        <span className="mt-0.5 flex items-center gap-2">
+          <span className="w-fit rounded-full bg-brand-soft px-2.5 py-1 text-sm font-semibold text-brand-strong tabular-nums">
+            {priceLabel}
+          </span>
+          {item.options.length > 0 ? (
+            <span className="truncate text-xs text-warm-muted">{t('hasOptions')}</span>
+          ) : null}
         </span>
       </div>
 

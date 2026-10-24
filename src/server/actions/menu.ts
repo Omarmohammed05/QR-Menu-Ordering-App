@@ -15,6 +15,8 @@ export type UpdateCategoryState = {error?: 'nameAr' | 'forbidden' | 'generic'};
 export type DeleteCategoryState = {error?: 'forbidden' | 'inUse' | 'generic'};
 export type UpdateItemState = {error?: 'nameAr' | 'price' | 'forbidden' | 'generic'};
 export type DeleteItemState = {error?: 'forbidden' | 'inUse' | 'generic'};
+export type CreateOptionState = {error?: 'nameAr' | 'price' | 'item' | 'forbidden' | 'generic'};
+export type DeleteOptionState = {error?: 'forbidden' | 'generic'};
 
 const nameArSchema = z.string().trim().min(1, 'nameAr').max(200, 'nameAr');
 const descriptionSchema = z.string().trim().max(1000, 'generic').transform((value) => value || null);
@@ -247,4 +249,65 @@ export async function toggleItemAvailabilityAction(formData: FormData): Promise<
   const repos = createRestaurantRepos(membership.restaurant.id);
   await repos.items.setAvailable(itemId, makeAvailable);
   revalidatePath(`/${locale}/dashboard/menu`);
+}
+
+/** Add a paid extra to a dish (e.g. "extra cheese" +500 piastres). */
+export async function createOptionAction(
+  _prev: CreateOptionState,
+  formData: FormData
+): Promise<CreateOptionState> {
+  const locale = localeFrom(formData);
+  const {membership} = await requireMember(locale);
+  if (!canManage(membership.role)) return {error: 'forbidden'};
+
+  const parsed = z
+    .object({nameAr: nameArSchema, price: priceSchema.or(z.literal(''))})
+    .safeParse({nameAr: formData.get('nameAr') ?? '', price: formData.get('price') ?? ''});
+  if (!parsed.success) {
+    const first = parsed.error.issues[0]?.message;
+    return {error: first === 'price' ? 'price' : 'nameAr'};
+  }
+
+  const itemId = z.string().uuid().safeParse(formData.get('itemId'));
+  if (!itemId.success) return {error: 'generic'};
+
+  const repos = createRestaurantRepos(membership.restaurant.id);
+  // A foreign or nonexistent dish resolves to null through the scoped repo.
+  const item = await repos.items.findById(itemId.data);
+  if (!item) return {error: 'item'};
+
+  const priceDeltaPiastres = parsed.data.price ? Math.round(parseFloat(parsed.data.price) * 100) : 0;
+  const sortOrder = (await repos.options.listByItem(item.id)).length;
+  try {
+    await repos.options.create({
+      menuItemId: item.id,
+      nameAr: parsed.data.nameAr,
+      priceDeltaPiastres,
+      sortOrder
+    });
+  } catch {
+    return {error: 'generic'};
+  }
+  revalidatePath(`/${locale}/dashboard/menu`);
+  return {};
+}
+
+/** Delete a dish option — a cross-tenant id is a silent no-op. */
+export async function deleteOptionAction(
+  _prev: DeleteOptionState,
+  formData: FormData
+): Promise<DeleteOptionState> {
+  const locale = localeFrom(formData);
+  const {membership} = await requireMember(locale);
+  if (!canManage(membership.role)) return {error: 'forbidden'};
+
+  const optionId = z.string().uuid().safeParse(formData.get('optionId'));
+  if (!optionId.success) return {error: 'generic'};
+
+  const repos = createRestaurantRepos(membership.restaurant.id);
+  const removed = await repos.options.remove(optionId.data);
+  if (!removed) return {error: 'generic'};
+
+  revalidatePath(`/${locale}/dashboard/menu`);
+  return {};
 }

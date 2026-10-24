@@ -7,6 +7,14 @@ import {localizedName} from '@/lib/localize';
 import {MapPinIcon, MenuBookIcon} from '@/components/icons';
 import {placeOrderAction, type PlaceOrderState} from '@/server/actions/place-order';
 import type {PublicMenu} from '@/server/public-menu';
+import {
+  clearCart,
+  lineKey,
+  loadCart,
+  saveCart,
+  unitPiastres,
+  type CartLine
+} from '@/lib/public-cart';
 import {formatPrice} from '@/lib/format';
 import {CartBar} from './cart-bar';
 import {CategoryTabs, sectionId} from './category-tabs';
@@ -31,8 +39,13 @@ export function MenuView({menu, tableToken}: Props) {
   const t = useTranslations('publicMenu');
   const locale = useLocale();
   const router = useRouter();
-  /** itemId → quantity. */
-  const [cart, setCart] = useState<Record<string, number>>({});
+  /** The cart lives in sessionStorage, so it survives the trip to a dish's
+   * detail page and back (and a page refresh). Hydrated after mount. */
+  const [cart, setCart] = useState<CartLine[]>([]);
+
+  useEffect(() => {
+    setCart(loadCart(menu.restaurant.slug));
+  }, [menu.restaurant.slug]);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [state, formAction, pending] = useActionState(placeOrderAction, INITIAL_STATE);
   // Fresh key whenever the cart changes: a retry of the SAME cart is
@@ -52,17 +65,25 @@ export function MenuView({menu, tableToken}: Props) {
       /* storage unavailable — the status page still works, minus the fallback */
     }
     window.open(state.whatsappUrl, '_blank');
+    clearCart(menu.restaurant.slug); // the order is placed — the cart is spent
     router.push(state.statusUrl);
   }, [state, router]);
 
-  const change = (id: string, delta: number) => {
+  /** Bump one line: same dish + same option selection shares a quantity. */
+  const change = (itemId: string, optionIds: string[], delta: number) => {
     setIdempotencyKey(crypto.randomUUID()); // the cart is changing → new order
     setCart((prev) => {
-      const next = {...prev};
-      const quantity = (next[id] ?? 0) + delta;
-      if (quantity <= 0) delete next[id];
-      else next[id] = Math.min(quantity, 50);
-      return next;
+      const key = lineKey(itemId, optionIds);
+      const next = prev.map((line) => ({...line}));
+      const existing = next.find((line) => lineKey(line.itemId, line.optionIds) === key);
+      if (existing) {
+        existing.quantity = Math.min(existing.quantity + delta, 50);
+      } else if (delta > 0) {
+        next.push({itemId, optionIds, quantity: delta});
+      }
+      const kept = next.filter((line) => line.quantity > 0);
+      saveCart(menu.restaurant.slug, kept);
+      return kept;
     });
   };
 
@@ -70,13 +91,15 @@ export function MenuView({menu, tableToken}: Props) {
     () => new Map(menu.categories.flatMap((c) => c.items).map((i) => [i.id, i])),
     [menu.categories]
   );
-  const cartLines: CheckoutLine[] = Object.entries(cart).flatMap(([id, quantity]) => {
-    const item = itemsById.get(id);
-    return item ? [{item, quantity}] : [];
+  const cartLines: CheckoutLine[] = cart.flatMap((line) => {
+    const item = itemsById.get(line.itemId);
+    return item
+      ? [{item, optionIds: line.optionIds, quantity: line.quantity, unitPiastres: unitPiastres(item, line.optionIds)}]
+      : [];
   });
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
   const cartTotal = cartLines.reduce(
-    (sum, line) => sum + line.item.pricePiastres * line.quantity,
+    (sum, line) => sum + line.unitPiastres * line.quantity,
     0
   );
   const currency = menu.restaurant.currency;
@@ -121,10 +144,17 @@ export function MenuView({menu, tableToken}: Props) {
                     <DishRow
                       key={item.id}
                       item={item}
-                      quantity={cart[item.id] ?? 0}
+                      href={`/${menu.restaurant.slug}/item/${item.id}${
+                        tableToken ? `?t=${tableToken}` : ''
+                      }`}
+                      quantity={
+                        cart.find(
+                          (line) => line.itemId === item.id && line.optionIds.length === 0
+                        )?.quantity ?? 0
+                      }
                       priceLabel={formatPrice(item.pricePiastres, locale, currency)}
-                      onIncrement={() => change(item.id, 1)}
-                      onDecrement={() => change(item.id, -1)}
+                      onIncrement={() => change(item.id, [], 1)}
+                      onDecrement={() => change(item.id, [], -1)}
                     />
                   ))}
                 </ul>

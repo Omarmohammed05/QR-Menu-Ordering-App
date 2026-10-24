@@ -10,6 +10,7 @@ import {EditCategoryForm} from '@/components/dashboard/edit-category-form';
 import {DeleteCategoryButton} from '@/components/dashboard/delete-category-button';
 import {EditItemForm} from '@/components/dashboard/edit-item-form';
 import {DeleteItemButton} from '@/components/dashboard/delete-item-button';
+import {ItemOptionsSection} from '@/components/dashboard/item-options-section';
 import {formatPrice} from '@/lib/format';
 
 type Props = {params: Promise<{locale: string}>};
@@ -23,13 +24,24 @@ export default async function MenuManagementPage({params}: Props) {
   const {membership} = await requireMember(locale);
   const t = await getTranslations('menuManagement');
   const repos = createRestaurantRepos(membership.restaurant.id);
-  const [categories, items] = await Promise.all([repos.categories.list(), repos.items.list()]);
+  const [categories, items, options] = await Promise.all([
+    repos.categories.list(),
+    repos.items.list(),
+    repos.options.listActive()
+  ]);
 
   const itemsByCategory = new Map<string, typeof items>();
   for (const item of items) {
     const list = itemsByCategory.get(item.categoryId) ?? [];
     list.push(item);
     itemsByCategory.set(item.categoryId, list);
+  }
+
+  const optionsByItem = new Map<string, typeof options>();
+  for (const option of options) {
+    const list = optionsByItem.get(option.menuItemId) ?? [];
+    list.push(option);
+    optionsByItem.set(option.menuItemId, list);
   }
 
   const unavailableCount = items.filter((item) => !item.isAvailable).length;
@@ -156,6 +168,18 @@ export default async function MenuManagementPage({params}: Props) {
                               imageUrl: item.imageUrl ?? null
                             }}
                           />
+                          <div className="border-t border-hairline pt-4">
+                            <ItemOptionsSection
+                              locale={locale}
+                              currency={membership.restaurant.currency}
+                              itemId={item.id}
+                              options={(optionsByItem.get(item.id) ?? []).map((option) => ({
+                                id: option.id,
+                                nameAr: option.nameAr,
+                                priceDeltaPiastres: option.priceDeltaPiastres
+                              }))}
+                            />
+                          </div>
                           <div className="border-t border-hairline pt-4">
                             <DeleteItemButton locale={locale} itemId={item.id} />
                           </div>

@@ -369,7 +369,11 @@
       "timeline": "Order timeline",
       "from": "after {from}",
       "cancelReason": "Cancellation reason: {reason}"
-    }
+    },
+    "options": "Extras",
+    "hasOptions": "Options available",
+    "addToCart": "Add to cart",
+    "addedToCart": "Added"
   },
   "menuManagement": {
     "title": "Menu management",
@@ -399,12 +403,20 @@
       "forbidden": "You don't have permission to edit the menu",
       "generic": "Something went wrong, try again",
       "itemInUse": "This dish has past orders — hide it instead",
-      "categoryInUse": "This section still has dishes — delete them first"
+      "categoryInUse": "This section still has dishes — delete them first",
+      "item": "Dish not found"
     },
     "edit": "Edit",
     "save": "Save",
     "deleteItem": "Delete dish",
-    "deleteCategory": "Delete section"
+    "deleteCategory": "Delete section",
+    "options": "Dish options",
+    "optionName": "Option name (e.g. extra cheese)",
+    "optionPrice": "Extra price (optional)",
+    "optionPricePlaceholder": "+5",
+    "addOption": "Add option",
+    "noOptions": "No options for this dish yet",
+    "deleteOption": "Delete"
   },
   "dashboardDemo": {
     "badge": "Demo — read only",

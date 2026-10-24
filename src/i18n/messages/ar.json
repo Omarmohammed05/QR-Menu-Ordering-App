@@ -369,7 +369,11 @@
       "timeline": "سجل الطلب",
       "from": "بعد {from}",
       "cancelReason": "سبب الإلغاء: {reason}"
-    }
+    },
+    "options": "الإضافات",
+    "hasOptions": "خيارات متاحة",
+    "addToCart": "أضف إلى السلة",
+    "addedToCart": "تمت الإضافة"
   },
   "menuManagement": {
     "title": "إدارة القائمة",
@@ -399,12 +403,20 @@
       "forbidden": "ليست لديك صلاحية تعديل القائمة",
       "generic": "حدث خطأ ما، حاول مرة أخرى",
       "itemInUse": "لا يمكن حذف طبق له طلبات سابقة — أخفِه بدلًا من ذلك",
-      "categoryInUse": "القسم يحتوي أطباقًا — احذف أطباقه أولًا"
+      "categoryInUse": "القسم يحتوي أطباقًا — احذف أطباقه أولًا",
+      "item": "الطبق غير موجود"
     },
     "edit": "تحرير",
     "save": "حفظ",
     "deleteItem": "حذف الطبق",
-    "deleteCategory": "حذف القسم"
+    "deleteCategory": "حذف القسم",
+    "options": "خيارات الطبق",
+    "optionName": "اسم الخيار (مثال: جبن إضافي)",
+    "optionPrice": "السعر الإضافي (اختياري)",
+    "optionPricePlaceholder": "+5",
+    "addOption": "إضافة خيار",
+    "noOptions": "لا توجد خيارات لهذا الطبق بعد",
+    "deleteOption": "حذف"
   },
   "dashboardDemo": {
     "badge": "نسخة تجريبية — للعرض فقط",

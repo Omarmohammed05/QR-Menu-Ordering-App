@@ -1,8 +1,8 @@
 {
   "placeholder": {
     "title": "Menu",
-    "tagline": "Digital menus for restaurants — under construction",
-    "phase": "Phase 3 · Tenant scoping",
+    "tagline": "Scan-to-open digital menu — order on WhatsApp in seconds",
+    "phase": "Digital menus for restaurants",
     "switchLocale": "العربية",
     "login": "Log in"
   },
@@ -45,7 +45,7 @@
     }
   },
   "dashboard": {
-    "phase": "Phase 3 · Tenant scoping",
+    "phase": "Restaurant dashboard",
     "signedInAs": "Signed in as",
     "publicSlug": "Public link:",
     "whatsappLabel": "WhatsApp for orders:",
@@ -57,7 +57,69 @@
     },
     "nav": {
       "overview": "Overview",
-      "menu": "Menu"
+      "menu": "Menu",
+      "orders": "Orders",
+      "tables": "Tables"
+    },
+    "orders": {
+      "title": "Orders",
+      "tagline": "Newest first — refreshes automatically every 15 seconds",
+      "empty": "No orders yet — the first one appears here the moment it lands",
+      "unknownTable": "Unknown table",
+      "total": "Total",
+      "customerName": "Name",
+      "customerPhone": "Phone",
+      "note": "Note",
+      "status": {
+        "pending": "New",
+        "accepted": "Accepted",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "action": {
+        "accepted": "Accept",
+        "completed": "Complete",
+        "cancelled": "Cancel"
+      }
+    },
+    "tables": {
+      "title": "Tables & QR codes",
+      "tagline": "Print the code and stick it on the table — customers scan to open the menu",
+      "label": "Table label",
+      "labelPlaceholder": "e.g. Table 3",
+      "create": "Add table",
+      "working": "One moment…",
+      "empty": "No tables yet — add the first one to print its QR",
+      "active": "Active",
+      "archived": "Archived",
+      "archive": "Archive",
+      "restore": "Restore",
+      "errors": {
+        "label": "Enter the table label",
+        "forbidden": "You don't have permission to manage tables",
+        "generic": "Something went wrong, try again"
+      }
+    }
+  },
+  "publicMenu": {
+    "openNow": "Open now",
+    "closedNow": "Closed now",
+    "add": "Add",
+    "quantity": "Quantity",
+    "cartCount": "{count, plural, =0 {Cart empty} one {# item} other {# items}}",
+    "checkout": "Review order",
+    "checkoutTitle": "Confirm order",
+    "total": "Total",
+    "customerName": "Name (optional)",
+    "customerPhone": "Phone (optional)",
+    "note": "Note (optional)",
+    "sendOnWhatsApp": "Send on WhatsApp",
+    "working": "One moment…",
+    "close": "Close",
+    "errors": {
+      "cart": "Your cart is no longer valid — refresh the page and try again",
+      "closed": "The restaurant is closed right now",
+      "generic": "Something went wrong, try again"
     }
   },
   "menuManagement": {

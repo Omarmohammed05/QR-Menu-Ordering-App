@@ -10,3 +10,11 @@ export function formatPrice(piastres: number, locale: string): string {
     maximumFractionDigits: 2
   }).format(piastres / 100);
 }
+
+/** Locale-aware date-time for order timestamps (timestamptz from the DB). */
+export function formatDateTime(date: Date, locale: string): string {
+  return new Intl.DateTimeFormat(locale === 'en' ? 'en-EG' : 'ar-EG', {
+    dateStyle: 'short',
+    timeStyle: 'short'
+  }).format(date);
+}

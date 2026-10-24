@@ -1,6 +1,8 @@
 import {createCategoriesRepo} from './categories';
+import {createHoursRepo} from './hours';
 import {createItemsRepo} from './items';
 import {createOrdersRepo} from './orders';
+import {createTablesRepo} from './tables';
 
 export {restaurantsRepo, type NewRestaurant} from './restaurants';
 export {
@@ -10,7 +12,15 @@ export {
 } from './members';
 export {type CategoriesRepo, type NewCategory} from './categories';
 export {type ItemsRepo, type NewMenuItem} from './items';
-export {type NewOrder, type NewOrderItem, type OrdersRepo} from './orders';
+export {
+  type NewOrder,
+  type NewOrderItem,
+  type OrderStatus,
+  type OrdersRepo,
+  type OrderWithItems
+} from './orders';
+export {tablesByToken, type NewTable, type TablesRepo} from './tables';
+export {type HoursRepo} from './hours';
 
 /**
  * The scoped repo factory (ADR-002): build one repos bundle per request with
@@ -26,7 +36,9 @@ export function createRestaurantRepos(restaurantId: string) {
     id: restaurantId,
     categories: createCategoriesRepo(restaurantId),
     items: createItemsRepo(restaurantId),
-    orders: createOrdersRepo(restaurantId)
+    orders: createOrdersRepo(restaurantId),
+    tables: createTablesRepo(restaurantId),
+    hours: createHoursRepo(restaurantId)
   };
 }
 

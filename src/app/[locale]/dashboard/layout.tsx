@@ -31,6 +31,12 @@ export default async function DashboardLayout({children, params}: Props) {
               <Link href="/dashboard/menu" className="transition-colors hover:text-foreground">
                 {t('nav.menu')}
               </Link>
+              <Link href="/dashboard/orders" className="transition-colors hover:text-foreground">
+                {t('nav.orders')}
+              </Link>
+              <Link href="/dashboard/tables" className="transition-colors hover:text-foreground">
+                {t('nav.tables')}
+              </Link>
             </nav>
           </div>
           <SignOutButton />

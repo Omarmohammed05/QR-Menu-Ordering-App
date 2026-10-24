@@ -1,6 +1,9 @@
-import {and, desc, eq} from 'drizzle-orm';
+import {and, asc, desc, eq, inArray} from 'drizzle-orm';
 import {db} from '@/server/db';
 import {orderItems, orders, type OrderItemOptionSnapshot} from '@/server/db/schema';
+
+/** Lifecycle statuses the dashboard may move an order to. */
+export type OrderStatus = (typeof orders.$inferSelect)['status'];
 
 export type NewOrderItem = {
   menuItemId: string;
@@ -63,8 +66,50 @@ export function createOrdersRepo(restaurantId: string) {
         .where(eq(orders.restaurantId, restaurantId))
         .orderBy(desc(orders.createdAt))
         .limit(limit);
+    },
+
+    /** Orders with their lines joined in — the dashboard board view. */
+    async listWithItems(limit = 50): Promise<OrderWithItems[]> {
+      const recent = await this.list(limit);
+      if (recent.length === 0) return [];
+      const lines = await db
+        .select()
+        .from(orderItems)
+        .where(
+          and(
+            eq(orderItems.restaurantId, restaurantId),
+            inArray(
+              orderItems.orderId,
+              recent.map((o) => o.id)
+            )
+          )
+        )
+        .orderBy(asc(orderItems.nameSnapshotAr));
+      return recent.map((order) => ({
+        order,
+        items: lines.filter((line) => line.orderId === order.id)
+      }));
+    },
+
+    /**
+     * Move an order along its lifecycle. A foreign-tenant (or unknown) id is
+     * a no-op returning false (ADR-002).
+     */
+    async setStatus(id: string, status: OrderStatus) {
+      const rows = await db
+        .update(orders)
+        .set({status, updatedAt: new Date()})
+        .where(and(eq(orders.id, id), eq(orders.restaurantId, restaurantId)))
+        .returning({id: orders.id});
+      return rows.length > 0;
     }
   };
 }
+
+/** One dashboard order card: the order header plus its snapshotted lines. */
+export type OrderWithItems = {
+  order: typeof orders.$inferSelect;
+  items: (typeof orderItems.$inferSelect)[];
+};
 
 export type OrdersRepo = ReturnType<typeof createOrdersRepo>;

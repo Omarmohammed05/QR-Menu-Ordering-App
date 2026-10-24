@@ -11,7 +11,7 @@ import {
   restaurantTables,
   restaurants
 } from '@/server/db/schema';
-import {createRestaurantRepos, restaurantsRepo} from '@/server/db/repos';
+import {createRestaurantRepos, restaurantsRepo, tablesByToken} from '@/server/db/repos';
 
 /**
  * Tenancy-isolation integration tests (ADR-002).
@@ -166,5 +166,34 @@ describe('tenant isolation (integration)', () => {
     expect(await reposA.items.setAvailable(itemA.id, false)).toBe(true);
     expect((await reposA.items.findById(itemA.id))?.isAvailable).toBe(false);
     await reposA.items.setAvailable(itemA.id, true);
+  });
+
+  it('keeps tenant A’s tables and order lines invisible to tenant B', async () => {
+    expect(await reposB.tables.findById(tableA.id)).toBeNull();
+    expect((await reposB.tables.list()).map((t) => t.id)).not.toContain(tableA.id);
+    expect(await reposB.orders.listWithItems()).toHaveLength(0);
+    const aBoard = await reposA.orders.listWithItems();
+    expect(aBoard).toHaveLength(1);
+    expect(aBoard[0]?.items.map((line) => line.nameSnapshotAr)).toContain('كفتة');
+  });
+
+  it('makes a cross-tenant order status update a no-op', async () => {
+    expect(await reposB.orders.setStatus(orderA.id, 'cancelled')).toBe(false);
+    expect((await reposA.orders.findById(orderA.id))?.status).toBe('pending');
+    expect(await reposA.orders.setStatus(orderA.id, 'accepted')).toBe(true);
+    expect((await reposA.orders.findById(orderA.id))?.status).toBe('accepted');
+    await reposA.orders.setStatus(orderA.id, 'pending');
+  });
+
+  it('resolves QR tokens to active tables only, and honors the archive switch', async () => {
+    const resolved = await tablesByToken.findActive(tableA.token);
+    expect(resolved?.restaurant.id).toBe(restaurantA.id);
+    expect(resolved?.table.id).toBe(tableA.id);
+
+    expect(await reposA.tables.setActive(tableA.id, false)).toBe(true);
+    expect(await tablesByToken.findActive(tableA.token)).toBeNull();
+    // An archived table must stay invisible to tenant B’s repo as well.
+    expect(await reposB.tables.setActive(tableA.id, true)).toBe(false);
+    expect(await reposA.tables.setActive(tableA.id, true)).toBe(true);
   });
 });

@@ -5,7 +5,6 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   BETTER_AUTH_SECRET: z.string().min(32, 'BETTER_AUTH_SECRET must be at least 32 chars'),
   AUTH_URL: z.string().min(1).optional(),
-  BLOB_READ_WRITE_TOKEN: z.string().min(1).optional(),
   /**
    * The absolute public origin (`https://baitelsham.com`) that public URLs are
    * built from — QR codes, canonical/hreflang, Open Graph, sitemap. Never

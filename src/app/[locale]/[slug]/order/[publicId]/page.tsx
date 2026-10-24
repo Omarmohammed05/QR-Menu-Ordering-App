@@ -4,6 +4,7 @@ import {Link} from '@/i18n/navigation';
 import {routing} from '@/i18n/routing';
 import {restaurantsRepo, createRestaurantRepos} from '@/server/db/repos';
 import {publicMenuPath} from '@/lib/public-url';
+import {localizedName} from '@/lib/localize';
 import {formatNumber, formatPrice} from '@/lib/format';
 import {OrderStatusLive} from '@/components/public/order-status-live';
 import {StoreIcon, ChevronDownIcon} from '@/components/icons';
@@ -53,14 +54,16 @@ export default async function OrderStatusPage({params}: Props) {
         <div className="flex items-center gap-3">
           {restaurant.logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image
-            <img src={restaurant.logoUrl} alt={restaurant.nameAr} className="size-10 rounded-xl object-cover" />
+            <img src={restaurant.logoUrl} alt={localizedName(routeLocale, restaurant)} className="size-10 rounded-xl object-cover" />
           ) : (
             <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-foreground text-background">
               <StoreIcon className="size-5" />
             </span>
           )}
           <div className="flex min-w-0 flex-col">
-            <h1 className="truncate text-xl font-semibold tracking-tight">{restaurant.nameAr}</h1>
+            <h1 className="truncate text-xl font-semibold tracking-tight">
+              {localizedName(routeLocale, restaurant)}
+            </h1>
             <p className="text-xs text-muted-foreground">
               {t('orderNumber', {number: formatNumber(order.order.number, routeLocale)})}
             </p>

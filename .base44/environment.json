@@ -7,11 +7,6 @@
       "name": "BETTER_AUTH_SECRET",
       "description": "Better Auth session signing secret (>= 32 chars)",
       "requiredAtBoot": true
-    },
-    {
-      "name": "BLOB_READ_WRITE_TOKEN",
-      "description": "File storage token for image uploads (Phase 2+; not needed at boot)",
-      "requiredAtBoot": false
     }
   ]
 }

@@ -13,6 +13,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
+    "e2e": "playwright test",
+    "seed": "tsx scripts/seed-demo.ts",
     "format": "prettier --write .",
     "prepare": "husky"
   },
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.7",
+    "@playwright/test": "1.64.1",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "22.20.5",
     "@types/qrcode": "^1.5.6",
@@ -41,6 +44,7 @@
     "lint-staged": "17.6.0",
     "prettier": "3.9.10",
     "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
     "typescript": "5.9.3",
 
     "vitest": "5.0.5"

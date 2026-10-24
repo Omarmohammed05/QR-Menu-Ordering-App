@@ -8,6 +8,8 @@ export default defineConfig({
     }
   },
   test: {
-    environment: 'node'
+    environment: 'node',
+    // e2e/ is Playwright's (pnpm e2e) — vitest must not try to run it.
+    exclude: ['**/node_modules/**', '**/dist/**', 'e2e/**']
   }
 });

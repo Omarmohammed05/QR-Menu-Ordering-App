@@ -11,6 +11,7 @@ export type PublicMenuItem = {
   nameAr: string;
   nameEn: string | null;
   descriptionAr: string | null;
+  descriptionEn: string | null;
   pricePiastres: number;
   imageUrl: string | null;
 };
@@ -74,6 +75,7 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
       nameAr: item.nameAr,
       nameEn: item.nameEn,
       descriptionAr: item.descriptionAr,
+      descriptionEn: item.descriptionEn ?? null,
       pricePiastres: item.pricePiastres,
       imageUrl: item.imageUrl ?? null
     }));

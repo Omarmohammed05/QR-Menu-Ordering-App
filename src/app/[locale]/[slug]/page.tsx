@@ -6,6 +6,7 @@ import {routing} from '@/i18n/routing';
 import {loadPublicMenu} from '@/server/public-menu';
 import {createRestaurantRepos, restaurantsRepo} from '@/server/db/repos';
 import {buildPublicMenuUrl} from '@/lib/public-url';
+import {localizedName} from '@/lib/localize';
 import {MenuView} from '@/components/public/menu-view';
 import {StoreIcon, TableIcon} from '@/components/icons';
 
@@ -26,6 +27,7 @@ function isLocale(value: string): value is (typeof routing.locales)[number] {
  */
 export default async function PublicMenuPage({params, searchParams}: Props) {
   const {locale, slug} = await params;
+  const currentLocale = isLocale(locale) ? locale : routing.defaultLocale;
   const {t} = await searchParams;
   const token = Array.isArray(t) ? t[0] : t;
 
@@ -44,11 +46,16 @@ export default async function PublicMenuPage({params, searchParams}: Props) {
   if (restaurant) {
     await createRestaurantRepos(restaurant.id).analytics.recordMenuView({
       tableId: menu.table?.id ?? null,
-      locale: isLocale(locale) ? locale : routing.defaultLocale
+      locale: currentLocale
     });
   }
 
   const tMenu = await getTranslations({locale, namespace: 'publicMenu'});
+
+  // The page shows the current locale's name as the h1; the other language's
+  // name becomes the small secondary line.
+  const alternateName =
+    currentLocale === 'en' ? menu.restaurant.nameAr : menu.restaurant.nameEn;
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 pb-32 pt-8 sm:pt-12">
@@ -57,7 +64,7 @@ export default async function PublicMenuPage({params, searchParams}: Props) {
           // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote images, no loader config for them
           <img
             src={menu.restaurant.logoUrl}
-            alt={menu.restaurant.nameAr}
+            alt={localizedName(currentLocale, menu.restaurant)}
             className="size-12 rounded-xl object-cover"
           />
         ) : (
@@ -67,11 +74,11 @@ export default async function PublicMenuPage({params, searchParams}: Props) {
         )}
         <div className="flex flex-col gap-1">
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            {menu.restaurant.nameAr}
+            {localizedName(currentLocale, menu.restaurant)}
           </h1>
-          {menu.restaurant.nameEn ? (
-            <p dir="ltr" className="text-end text-sm text-muted-foreground">
-              {menu.restaurant.nameEn}
+          {alternateName ? (
+            <p dir={currentLocale === 'en' ? 'rtl' : 'ltr'} className="text-end text-sm text-muted-foreground">
+              {alternateName}
             </p>
           ) : null}
         </div>
@@ -114,7 +121,7 @@ export async function generateMetadata({params}: GenerateMetadataProps): Promise
 
   const canonical = buildPublicMenuUrl(env.NEXT_PUBLIC_APP_URL, restaurant.slug, currentLocale);
   return {
-    title: restaurant.nameAr,
+    title: localizedName(currentLocale, restaurant),
     description: restaurant.nameEn ?? restaurant.nameAr,
     alternates: {
       canonical,
@@ -124,7 +131,7 @@ export async function generateMetadata({params}: GenerateMetadataProps): Promise
       }
     },
     openGraph: {
-      title: restaurant.nameAr,
+      title: localizedName(currentLocale, restaurant),
       description: restaurant.nameEn ?? restaurant.nameAr,
       url: canonical,
       siteName: restaurant.nameAr,

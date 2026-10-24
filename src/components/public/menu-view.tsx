@@ -3,6 +3,7 @@
 import {useActionState, useEffect, useMemo, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {useRouter} from '@/i18n/navigation';
+import {localizedName} from '@/lib/localize';
 import {MenuBookIcon} from '@/components/icons';
 import {placeOrderAction, type PlaceOrderState} from '@/server/actions/place-order';
 import type {PublicMenu} from '@/server/public-menu';
@@ -101,11 +102,11 @@ export function MenuView({menu, tableToken}: Props) {
                       // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image
                       <img
                         src={category.imageUrl}
-                        alt={category.nameAr}
+                        alt={localizedName(locale, category)}
                         className="size-7 rounded-full object-cover"
                       />
                     ) : null}
-                    {category.nameAr}
+                    {localizedName(locale, category)}
                   </h2>
                   <span className="shrink-0 text-xs text-muted-foreground">
                     {t('dishCount', {count: category.items.length})}

@@ -5,6 +5,7 @@ import {useLocale, useTranslations} from 'next-intl';
 import {CloseIcon} from '@/components/icons';
 import {ImageUpload} from '@/components/dashboard/image-upload';
 import {formatNumber, formatPrice} from '@/lib/format';
+import {localizedName} from '@/lib/localize';
 import type {PlaceOrderState} from '@/server/actions/place-order';
 import type {PublicMenuItem} from '@/server/public-menu';
 
@@ -94,7 +95,7 @@ export function CheckoutSheet({
                 <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tabular-nums">
                   ×{formatNumber(quantity, locale)}
                 </span>
-                <span className="truncate">{item.nameAr}</span>
+                <span className="truncate">{localizedName(locale, item)}</span>
               </span>
               <span className="shrink-0 tabular-nums">
                 {formatPrice(item.pricePiastres * quantity, locale, currency)}

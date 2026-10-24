@@ -1,8 +1,9 @@
 {
-  "placeholder": {
+  "landing": {
     "title": "Menu",
     "tagline": "Scan-to-open digital menu — order on WhatsApp in seconds",
-    "phase": "Digital menus for restaurants",
+    "badge": "Digital menus for restaurants",
+    "demo": "View a live demo menu",
     "switchLocale": "العربية",
     "login": "Log in"
   },

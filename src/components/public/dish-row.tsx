@@ -1,7 +1,8 @@
 'use client';
 
-import {useTranslations} from 'next-intl';
+import {useLocale, useTranslations} from 'next-intl';
 import {MinusIcon, PlusIcon} from '@/components/icons';
+import {localizedDescription, localizedName} from '@/lib/localize';
 import type {PublicMenuItem} from '@/server/public-menu';
 
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
  */
 export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: Props) {
   const t = useTranslations('publicMenu');
+  const locale = useLocale();
 
   return (
     <li data-menu-item-id={item.id} className="flex items-start justify-between gap-4 py-4">
@@ -27,15 +29,15 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
             // eslint-disable-next-line @next/next/no-img-element -- imgbb-hosted remote image
             <img
               src={item.imageUrl}
-              alt={item.nameAr}
+              alt={localizedName(locale, item)}
               className="size-10 shrink-0 rounded-lg object-cover"
             />
           ) : null}
-          <span className="truncate font-medium">{item.nameAr}</span>
+          <span className="truncate font-medium">{localizedName(locale, item)}</span>
         </span>
-        {item.descriptionAr ? (
+        {localizedDescription(locale, item) ? (
           <span className="text-sm leading-relaxed text-muted-foreground">
-            {item.descriptionAr}
+            {localizedDescription(locale, item)}
           </span>
         ) : null}
         <span className="mt-1 text-sm font-medium tabular-nums">{priceLabel}</span>
@@ -45,7 +47,7 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
         <button
           type="button"
           onClick={onIncrement}
-          aria-label={`${t('add')} ${item.nameAr}`}
+          aria-label={`${t('add')} ${localizedName(locale, item)}`}
           className="grid size-10 shrink-0 place-items-center rounded-full border border-hairline-strong transition duration-100 hover:bg-muted active:scale-95"
         >
           <PlusIcon className="size-4" />

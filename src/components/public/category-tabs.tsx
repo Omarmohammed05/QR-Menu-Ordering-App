@@ -1,7 +1,8 @@
 'use client';
 
 import {useEffect, useRef, useState, type MouseEvent} from 'react';
-import {useTranslations} from 'next-intl';
+import {useLocale, useTranslations} from 'next-intl';
+import {localizedName} from '@/lib/localize';
 import type {PublicMenuCategory} from '@/server/public-menu';
 
 type Props = {categories: PublicMenuCategory[]};
@@ -21,6 +22,7 @@ const ACTIVE_LINE = 96;
  */
 export function CategoryTabs({categories}: Props) {
   const t = useTranslations('publicMenu');
+  const locale = useLocale();
   const [active, setActive] = useState(categories[0]?.id ?? '');
   const tabRefs = useRef(new Map<string, HTMLAnchorElement>());
 
@@ -76,7 +78,7 @@ export function CategoryTabs({categories}: Props) {
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              {category.nameAr}
+              {localizedName(locale, category)}
             </a>
           );
         })}

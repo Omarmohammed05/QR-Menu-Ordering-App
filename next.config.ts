@@ -10,7 +10,14 @@ const nextConfig: NextConfig = {
     ? {
         // Hostname only — Next matches the bare Origin/Referer host against
         // these patterns; a protocol prefix would never match.
-        allowedDevOrigins: [`3000-${process.env.BASE44_PUBLIC_HOST_SUFFIX}`]
+        allowedDevOrigins: [`3000-${process.env.BASE44_PUBLIC_HOST_SUFFIX}`],
+      // Next 16.4.3 defaults experimental.reactDebugChannel to true. React then
+      // closes the flight response only after BOTH the RSC stream and the
+      // debug channel finish — and the debug chunks are delivered over the HMR
+      // WebSocket, which can never connect through the preview gateway (502
+      // on upgrade). Without this the page never hydrates in the sandbox. On a
+      // normal dev machine the socket connects, so keep the default there.
+      experimental: {reactDebugChannel: false}
       }
     : {})
 };

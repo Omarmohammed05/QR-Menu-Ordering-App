@@ -58,7 +58,28 @@
       "tables": "Tables & QR",
       "settings": "Settings",
       "admin": "Platform admin",
-      "team": "Team"
+      "team": "Team",
+      "analytics": "Analytics"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "tagline": "Menu views and best sellers",
+      "stats": {
+        "views7d": "Views (7 days)",
+        "orders7d": "Orders (7 days)",
+        "topDish": "Most ordered dish"
+      },
+      "chart": {
+        "title": "Last 14 days",
+        "views": "Views",
+        "orders": "Orders",
+        "tip": "{views} views · {orders} orders",
+        "none": "No views yet — the first QR scan shows up here"
+      },
+      "topDishes": {
+        "title": "Most ordered dishes — last 30 days",
+        "empty": "No orders yet — best sellers appear with the first order"
+      }
     },
     "orders": {
       "title": "Orders",

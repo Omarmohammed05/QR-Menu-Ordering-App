@@ -11,6 +11,7 @@ import {CartBar} from './cart-bar';
 import {CategoryTabs, sectionId} from './category-tabs';
 import {CheckoutSheet, type CheckoutLine} from './checkout-sheet';
 import {DishRow} from './dish-row';
+import {DishViewTracker} from './dish-view-tracker';
 
 type Props = {
   menu: PublicMenu;
@@ -81,6 +82,8 @@ export function MenuView({menu, tableToken}: Props) {
 
   return (
     <>
+      <DishViewTracker slug={menu.restaurant.slug} tableToken={tableToken} />
+
       {menu.categories.length > 0 ? (
         <>
           <CategoryTabs categories={menu.categories} />

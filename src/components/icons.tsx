@@ -37,6 +37,16 @@ export function MenuBookIcon(props: IconProps) {
   );
 }
 
+export function ChartIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M5 20v-6" />
+      <path d="M12 20V6" />
+      <path d="M19 20v-10" />
+    </svg>
+  );
+}
+
 export function QrCodeIcon(props: IconProps) {
   return (
     <svg {...base(props)}>

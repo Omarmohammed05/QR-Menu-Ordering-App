@@ -5,6 +5,7 @@ import {createItemsRepo} from './items';
 import {createOrdersRepo} from './orders';
 import {createTablesRepo} from './tables';
 import {createAddressesRepo} from './addresses';
+import {createAnalyticsRepo} from './analytics';
 
 export {restaurantsRepo, type NewRestaurant} from './restaurants';
 export {
@@ -31,6 +32,7 @@ export {
   generateInviteCode
 } from './invites';
 export {type AddressesRepo, type NewAddress} from './addresses';
+export {type AnalyticsRepo, type DailyPoint, type TopDish} from './analytics';
 
 /**
  * The scoped repo factory (ADR-002): build one repos bundle per request with
@@ -50,6 +52,7 @@ export function createRestaurantRepos(restaurantId: string) {
     tables: createTablesRepo(restaurantId),
     hours: createHoursRepo(restaurantId),
     addresses: createAddressesRepo(restaurantId),
+    analytics: createAnalyticsRepo(restaurantId),
     team: createTeamRepo(restaurantId)
   };
 }

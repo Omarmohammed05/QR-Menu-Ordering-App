@@ -20,7 +20,7 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
   const t = useTranslations('publicMenu');
 
   return (
-    <li className="flex items-start justify-between gap-4 py-4">
+    <li data-menu-item-id={item.id} className="flex items-start justify-between gap-4 py-4">
       <div className="flex min-w-0 flex-col gap-0.5">
         <span className="flex items-center gap-2">
           {item.imageUrl ? (

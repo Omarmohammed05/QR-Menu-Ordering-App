@@ -7,6 +7,7 @@ import {Link} from '@/i18n/navigation';
 import {SignOutButton} from '@/components/auth/sign-out-button';
 import {RestaurantSwitcher} from '@/components/dashboard/restaurant-switcher';
 import {
+  ChartIcon,
   CloudIcon,
   CloseIcon,
   LogoGlyphIcon,
@@ -52,6 +53,7 @@ export function DashboardShell({
   const nav: NavItem[] = [
     {href: '/dashboard', label: t('nav.overview'), icon: <LogoGlyphIcon className="size-[18px]" />},
     {href: '/dashboard/orders', label: t('nav.orders'), icon: <OrdersIcon className="size-[18px]" />},
+    {href: '/dashboard/analytics', label: t('nav.analytics'), icon: <ChartIcon className="size-[18px]" />},
     {href: '/dashboard/menu', label: t('nav.menu'), icon: <MenuBookIcon className="size-[18px]" />},
     {href: '/dashboard/tables', label: t('nav.tables'), icon: <QrCodeIcon className="size-[18px]" />},
     {href: '/dashboard/team', label: t('nav.team'), icon: <PersonIcon className="size-[18px]" />},

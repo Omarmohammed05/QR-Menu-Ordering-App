@@ -4,7 +4,7 @@ import {getTranslations} from 'next-intl/server';
 import {env} from '@/server/env';
 import {routing} from '@/i18n/routing';
 import {loadPublicMenu} from '@/server/public-menu';
-import {restaurantsRepo} from '@/server/db/repos';
+import {createRestaurantRepos, restaurantsRepo} from '@/server/db/repos';
 import {buildPublicMenuUrl} from '@/lib/public-url';
 import {MenuView} from '@/components/public/menu-view';
 import {StoreIcon, TableIcon} from '@/components/icons';
@@ -38,6 +38,15 @@ export default async function PublicMenuPage({params, searchParams}: Props) {
 
   const menu = await loadPublicMenu(slug, token);
   if (!menu) notFound();
+
+  // QR telemetry: one menu view per load, attributed to the scanned table
+  // when the URL carried a QR token. Dish impressions beacon separately.
+  if (restaurant) {
+    await createRestaurantRepos(restaurant.id).analytics.recordMenuView({
+      tableId: menu.table?.id ?? null,
+      locale: isLocale(locale) ? locale : routing.defaultLocale
+    });
+  }
 
   const tMenu = await getTranslations({locale, namespace: 'publicMenu'});
 

@@ -26,7 +26,7 @@ const {addMemberAction, updateMemberRoleAction, removeMemberAction} = await impo
 
 describe('team actions (integration)', () => {
   const slug = `team-${randomUUID().slice(0, 8)}`;
-  const emails = [`teammate-${randomUUID().slice(0, 8)}@example.com`];
+  const inviteeEmail = `teammate-${randomUUID().slice(0, 8)}@example.com`;
   let restaurantId: string;
 
   const listMembers = () => createRestaurantRepos(restaurantId).team.list();
@@ -37,11 +37,11 @@ describe('team actions (integration)', () => {
     formData.set('role', role);
     return formData;
   };
-  const target = (userId: string, role: string) => {
+  const target = (userId: string, role?: string) => {
     const formData = new FormData();
     formData.set('locale', 'en');
     formData.set('userId', userId);
-    formData.set('role', role);
+    if (role !== undefined) formData.set('role', role);
     return formData;
   };
 
@@ -58,13 +58,13 @@ describe('team actions (integration)', () => {
     // seat is what the guard stub stands in for.
     seat.userId = randomUUID();
     await db.insert(users).values({id: seat.userId, name: 'المالك', email: `owner-${randomUUID().slice(0, 8)}@example.com`});
-    await db.insert(users).values({id: randomUUID(), name: 'زميل', email: emails[0]});
+    await db.insert(users).values({id: randomUUID(), name: 'زميل', email: inviteeEmail});
     await createRestaurantRepos(restaurantId).team.addSeat(seat.userId, 'owner');
   }, 60_000);
 
   afterAll(async () => {
     await db.delete(restaurants).where(eq(restaurants.slug, slug));
-    await db.delete(users).where(eq(users.email, emails[0]));
+    await db.delete(users).where(eq(users.email, inviteeEmail));
     await client.end();
   });
 
@@ -77,24 +77,24 @@ describe('team actions (integration)', () => {
 
   it('seats an existing account and persists the role', async () => {
     seat.role = 'owner';
-    await expect(addMemberAction({}, seatOf(emails[0], 'staff'))).resolves.toEqual({saved: true});
+    await expect(addMemberAction({}, seatOf(inviteeEmail, 'staff'))).resolves.toEqual({saved: true});
     expect(await listMembers()).toEqual(
-      expect.arrayContaining([expect.objectContaining({email: emails[0], role: 'staff'})])
+      expect.arrayContaining([expect.objectContaining({email: inviteeEmail, role: 'staff'})])
     );
   });
 
   it('refuses seating the same person twice', async () => {
     seat.role = 'owner';
-    await expect(addMemberAction({}, seatOf(emails[0], 'manager'))).resolves.toEqual({
+    await expect(addMemberAction({}, seatOf(inviteeEmail, 'manager'))).resolves.toEqual({
       error: 'alreadyMember'
     });
   });
 
   it('refuses non-owners from mutating the team', async () => {
     seat.role = 'manager';
-    const [member] = (await listMembers()).filter((m) => m.email === emails[0]);
+    const [member] = (await listMembers()).filter((m) => m.email === inviteeEmail);
     if (!member) throw new Error('fixture seat missing');
-    await expect(addMemberAction({}, seatOf(emails[0], 'staff'))).resolves.toEqual({
+    await expect(addMemberAction({}, seatOf(inviteeEmail, 'staff'))).resolves.toEqual({
       error: 'forbidden'
     });
     await expect(updateMemberRoleAction({}, target(member.userId, 'manager'))).resolves.toEqual({
@@ -107,13 +107,13 @@ describe('team actions (integration)', () => {
 
   it('changes a member role as the owner', async () => {
     seat.role = 'owner';
-    const [member] = (await listMembers()).filter((m) => m.email === emails[0]);
+    const [member] = (await listMembers()).filter((m) => m.email === inviteeEmail);
     if (!member) throw new Error('fixture seat missing');
     await expect(updateMemberRoleAction({}, target(member.userId, 'manager'))).resolves.toEqual({
       saved: true
     });
     expect(await listMembers()).toEqual(
-      expect.arrayContaining([expect.objectContaining({email: emails[0], role: 'manager'})])
+      expect.arrayContaining([expect.objectContaining({email: inviteeEmail, role: 'manager'})])
     );
   });
 
@@ -127,12 +127,12 @@ describe('team actions (integration)', () => {
 
   it('removes a member as the owner', async () => {
     seat.role = 'owner';
-    const [member] = (await listMembers()).filter((m) => m.email === emails[0]);
+    const [member] = (await listMembers()).filter((m) => m.email === inviteeEmail);
     if (!member) throw new Error('fixture seat missing');
     const formData = new FormData();
     formData.set('locale', 'en');
     formData.set('userId', member.userId);
     await expect(removeMemberAction({}, formData)).resolves.toEqual({saved: true});
-    expect((await listMembers()).filter((m) => m.email === emails[0])).toEqual([]);
+    expect((await listMembers()).filter((m) => m.email === inviteeEmail)).toEqual([]);
   });
 });

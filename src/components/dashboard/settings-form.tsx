@@ -23,7 +23,7 @@ export function SettingsForm({locale, restaurant}: Props) {
   const error = state.error ? tErrors(state.error) : null;
 
   const inputClass =
-    'rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground placeholder:text-muted-foreground';
+    'rounded-base border border-hairline bg-surface px-3.5 py-2.5 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground';
 
   return (
     <form action={formAction} className="flex flex-col gap-4" noValidate>
@@ -68,12 +68,14 @@ export function SettingsForm({locale, restaurant}: Props) {
         <button
           type="submit"
           disabled={pending}
-          className="self-start rounded-base bg-foreground px-4 py-2 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
+          className="self-start rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
         >
           {pending ? t('working') : t('save')}
         </button>
         {state.saved && !error ? (
-          <span className="text-sm font-medium text-muted-foreground">{t('saved')}</span>
+          <span className="animate-pop-in text-sm font-medium text-muted-foreground">
+            {t('saved')}
+          </span>
         ) : null}
       </div>
       {error ? (

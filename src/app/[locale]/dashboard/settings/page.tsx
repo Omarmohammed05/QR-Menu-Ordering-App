@@ -30,7 +30,10 @@ export default async function SettingsPage({params}: Props) {
         <p className="text-sm text-muted-foreground">{t('tagline')}</p>
       </div>
 
-      <section className="rounded-xl border border-hairline bg-surface p-5 sm:p-6">
+      <section
+        style={{animationDelay: '0ms'}}
+        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+      >
         <h2 className="text-sm font-semibold">{t('profile.title')}</h2>
         <p className="mt-1 text-xs text-muted-foreground">{t('profile.tagline')}</p>
         <div className="mt-5">
@@ -45,11 +48,17 @@ export default async function SettingsPage({params}: Props) {
         </div>
       </section>
 
-      <section className="rounded-xl border border-hairline bg-surface p-5 sm:p-6">
+      <section
+        style={{animationDelay: '70ms'}}
+        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 sm:p-6"
+      >
         <h2 className="text-sm font-semibold">{t('info.title')}</h2>
-        <dl className="mt-4 flex flex-col gap-3 border-t border-hairline pt-4 text-sm">
+        <dl className="mt-4 flex flex-col divide-y divide-hairline border-t border-hairline pt-1 text-sm">
           {facts.map(({label, value, ltr}) => (
-            <div key={label} className="flex items-center justify-between gap-2">
+            <div
+              key={label}
+              className="-mx-2 flex items-center justify-between gap-2 rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/60"
+            >
               <dt className="text-muted-foreground">{label}</dt>
               <dd dir={ltr ? 'ltr' : undefined} className="font-mono text-xs sm:text-sm">
                 {value}

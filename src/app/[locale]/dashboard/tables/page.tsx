@@ -55,7 +55,10 @@ export default async function TablesPage({params}: Props) {
 
       {/* Operational overview */}
       <div className="grid grid-cols-2 gap-3 print:hidden">
-        <div className="flex items-center justify-between rounded-xl border border-hairline bg-surface p-4">
+        <div
+          style={{animationDelay: '0ms'}}
+          className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-xl border border-hairline bg-surface p-4"
+        >
           <span className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">{t('stats.total')}</span>
             <span className="text-lg font-semibold">{tables.length}</span>
@@ -64,11 +67,14 @@ export default async function TablesPage({params}: Props) {
             <QrCodeIcon className="size-4" />
           </span>
         </div>
-        <div className="flex items-center justify-between rounded-xl border border-hairline bg-surface p-4">
+        <div
+          style={{animationDelay: '60ms'}}
+          className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-xl border border-hairline bg-surface p-4"
+        >
           <span className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">{t('stats.active')}</span>
             <span className="flex items-center gap-1.5 text-lg font-semibold">
-              <span className="inline-block size-2 rounded-full bg-foreground" />
+              <span className="inline-block size-2 rounded-full bg-foreground motion-safe:animate-pulse" />
               {activeCount}
             </span>
           </span>
@@ -79,7 +85,10 @@ export default async function TablesPage({params}: Props) {
       </div>
 
       {/* Master QR banner */}
-      <section className="flex flex-col gap-6 rounded-xl border border-hairline bg-surface p-6 lg:flex-row lg:items-center">
+      <section
+        style={{animationDelay: '120ms'}}
+        className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-6 rounded-xl border border-hairline bg-surface p-6 lg:flex-row lg:items-center"
+      >
         <div
           className="grid size-36 shrink-0 place-items-center self-center overflow-hidden rounded-lg border border-hairline bg-surface p-2 [&>svg]:size-full"
           dangerouslySetInnerHTML={{__html: masterQr}}
@@ -109,15 +118,23 @@ export default async function TablesPage({params}: Props) {
       </section>
 
       {/* Tables & their QRs */}
-      <CreateTableForm locale={locale} />
+      <div
+        style={{animationDelay: '180ms'}}
+        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 print:hidden"
+      >
+        <CreateTableForm locale={locale} />
+      </div>
       {cards.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t('empty')}</p>
+        <p className="animate-fade-in rounded-xl border border-dashed border-hairline px-3 py-6 text-center text-sm text-muted-foreground print:hidden">
+          {t('empty')}
+        </p>
       ) : (
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 print:grid-cols-2 print:gap-2">
-          {cards.map((card) => (
+          {cards.map((card, index) => (
             <li
               key={card.id}
-              className="flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-4 print:break-inside-avoid"
+              style={{animationDelay: `${(index + 2) * 70}ms`}}
+              className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-4 transition-[transform,border-color,box-shadow] duration-100 hover:border-hairline-strong hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)] print:break-inside-avoid print:hover:shadow-none"
             >
               <div className="flex items-center justify-between gap-2 print:hidden">
                 <span className="font-semibold">{card.label}</span>

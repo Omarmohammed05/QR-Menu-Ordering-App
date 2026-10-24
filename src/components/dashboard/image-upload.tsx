@@ -12,6 +12,12 @@ type Props = {
   /** Aspect of the preview box. */
   rounded?: 'lg' | 'full';
   onUploaded?: (url: string) => void;
+  /**
+   * Immediate persistence (settings logo): called with the fresh imgbb URL
+   * right after upload and with null on removal, so the image survives a
+   * refresh without the enclosing form being saved.
+   */
+  persist?: (url: string | null) => Promise<{ok: boolean}>;
 };
 
 /**
@@ -19,7 +25,7 @@ type Props = {
  * → URL lands in a hidden input the enclosing form submits with its save.
  * No imgbb key or failed upload surfaces a locale error, never a silent no-op.
  */
-export function ImageUpload({value, name, rounded = 'lg', onUploaded}: Props) {
+export function ImageUpload({value, name, rounded = 'lg', onUploaded, persist}: Props) {
   const t = useTranslations('images');
   const fileRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState(value);
@@ -32,13 +38,31 @@ export function ImageUpload({value, name, rounded = 'lg', onUploaded}: Props) {
     const data = new FormData();
     data.set('file', file);
     const result = await uploadImageAction(data);
-    setBusy(false);
     if (result.url) {
+      const saved = persist ? await persist(result.url) : {ok: true};
+      if (!saved.ok) {
+        setError(t('errors.save'));
+        setBusy(false);
+        return;
+      }
       setUrl(result.url);
       onUploaded?.(result.url);
     } else {
       setError(t(`errors.${result.error ?? 'imgbb'}`));
     }
+    setBusy(false);
+  }
+
+  async function remove() {
+    if (persist) {
+      const saved = await persist(null);
+      if (!saved.ok) {
+        setError(t('errors.save'));
+        return;
+      }
+    }
+    setError(null);
+    setUrl(null);
   }
 
   return (
@@ -75,7 +99,7 @@ export function ImageUpload({value, name, rounded = 'lg', onUploaded}: Props) {
           {url ? (
             <button
               type="button"
-              onClick={() => setUrl(null)}
+              onClick={() => void remove()}
               className="text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
               {t('remove')}

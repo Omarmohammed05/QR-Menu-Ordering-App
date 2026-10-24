@@ -277,7 +277,8 @@
       "file": "Pick a valid image file",
       "size": "Image is too large — max 5MB",
       "forbidden": "You are not allowed to upload images",
-      "imgbb": "Upload failed — check the imgbb key and try again"
+      "imgbb": "Upload failed — check the imgbb key and try again",
+      "save": "Could not save the image — try again"
     }
   }
 }

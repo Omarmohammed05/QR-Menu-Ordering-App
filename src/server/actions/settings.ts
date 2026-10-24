@@ -13,19 +13,22 @@ export type UpdateRestaurantState = {
   saved?: boolean;
 };
 
+/** imgbb URL of the public logo — an empty string drops the logo. */
+const logoUrlSchema = z
+  .string()
+  .trim()
+  .url('generic')
+  .max(500, 'generic')
+  .or(z.literal(''))
+  .transform((value) => value || null);
+
 const payloadSchema = z.object({
   nameAr: z.string().trim().min(1, 'nameAr').max(200, 'nameAr'),
   nameEn: z.string().trim().max(200, 'nameEn').transform((value) => value || null),
   // E.164 without the double-zero variant — the WhatsApp handoff needs it exact.
   whatsappNumber: z.string().trim().regex(/^\+[1-9]\d{7,14}$/, 'whatsapp'),
   /** imgbb URL of the public logo, or empty to drop the current one. */
-  logoUrl: z
-    .string()
-    .trim()
-    .url('generic')
-    .max(500, 'generic')
-    .or(z.literal(''))
-    .transform((value) => value || null)
+  logoUrl: logoUrlSchema
 });
 
 type Locale = (typeof routing.locales)[number];
@@ -86,4 +89,29 @@ export async function updateRestaurantAction(
   // root, so revalidate the whole dashboard subtree.
   revalidatePath(`/${locale}/dashboard`, 'layout');
   return {saved: true};
+}
+
+/** Machine-readable outcome for the settings logo picker. */
+export type SetLogoState = {ok: boolean};
+
+/**
+ * Immediate logo persistence for the settings screen: the picker uploads to
+ * imgbb and this action saves the URL at once — tenant-root branding is not a
+ * draft form field, so it must survive a refresh without pressing Save.
+ * Removing the logo persists the same way (null drops it).
+ */
+export async function setLogoAction(url: string | null): Promise<SetLogoState> {
+  const {membership} = await requireMember('ar');
+  if (membership.role === 'staff') return {ok: false};
+
+  const parsed = logoUrlSchema.safeParse(url ?? '');
+  if (!parsed.success) return {ok: false};
+
+  const updated = await restaurantsRepo.update(membership.restaurant.id, {logoUrl: parsed.data});
+  if (!updated) return {ok: false};
+
+  // The logo renders in the dashboard shell and on the public menu — revalidate
+  // the whole tree so every locale reflects it on the next load.
+  revalidatePath('/', 'layout');
+  return {ok: true};
 }

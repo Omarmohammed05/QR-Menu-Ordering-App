@@ -2,7 +2,11 @@
 
 import {useActionState, useEffect, useRef, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
-import {updateRestaurantAction, type UpdateRestaurantState} from '@/server/actions/settings';
+import {
+  setLogoAction,
+  updateRestaurantAction,
+  type UpdateRestaurantState
+} from '@/server/actions/settings';
 import {ImageUpload} from '@/components/dashboard/image-upload';
 
 type Props = {
@@ -75,7 +79,7 @@ export function SettingsForm({locale, restaurant}: Props) {
   return (
     <form action={formAction} className="flex flex-col gap-4" noValidate>
       <input type="hidden" name="locale" value={locale} />
-      <ImageUpload name="logoUrl" value={restaurant.logoUrl} rounded="full" />
+      <ImageUpload name="logoUrl" value={restaurant.logoUrl} rounded="full" persist={setLogoAction} />
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">{t('nameAr')}</span>
         <input

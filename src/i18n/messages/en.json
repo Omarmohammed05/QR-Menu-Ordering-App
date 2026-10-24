@@ -60,7 +60,8 @@
       "overview": "Overview",
       "menu": "Menu",
       "orders": "Orders",
-      "tables": "Tables & QR"
+      "tables": "Tables & QR",
+      "settings": "Settings"
     },
     "orders": {
       "title": "Orders",
@@ -143,6 +144,34 @@
         "download": "Download SVG",
         "copyLink": "Copy link",
         "copied": "Copied"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "tagline": "Restaurant profile and contact details",
+      "profile": {
+        "title": "Restaurant profile",
+        "tagline": "Shown to customers on the public menu",
+        "nameAr": "Restaurant name (Arabic)",
+        "nameEn": "English name (optional)",
+        "whatsapp": "WhatsApp order number",
+        "whatsappHint": "International format starting with +, e.g. +201234567890",
+        "save": "Save changes",
+        "working": "Working…",
+        "saved": "Saved"
+      },
+      "info": {
+        "title": "Branch info",
+        "slug": "Public link",
+        "timezone": "Timezone",
+        "currency": "Currency",
+        "role": "Your role"
+      },
+      "errors": {
+        "nameAr": "Enter the name in Arabic",
+        "whatsapp": "Invalid number — must start with + and a country code",
+        "forbidden": "You don't have permission to edit settings",
+        "generic": "Something went wrong, try again"
       }
     },
     "shell": {

@@ -30,5 +30,21 @@ export const restaurantsRepo = {
     const [row] = await db.insert(restaurants).values(values).returning();
     if (!row) throw new Error('restaurant insert returned no row');
     return row;
+  },
+
+  /**
+   * Settings-screen update. The id always comes from the session's own
+   * membership (never caller input), so no tenant scope can be forged.
+   */
+  async update(
+    id: string,
+    values: Pick<Partial<NewRestaurant>, 'nameAr' | 'nameEn' | 'whatsappNumber'>
+  ) {
+    const [row] = await db
+      .update(restaurants)
+      .set({...values, updatedAt: new Date()})
+      .where(eq(restaurants.id, id))
+      .returning();
+    return row ?? null;
   }
 };

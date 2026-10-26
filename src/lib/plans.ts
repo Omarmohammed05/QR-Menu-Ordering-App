@@ -39,7 +39,7 @@ export function limitsForPlan(plan: string | null | undefined): PlanLimits {
  * Monthly price per tier in piastres — the landing pricing cards and the
  * admin duration preview are computed from these (money never floats).
  */
-export const PLAN_PRICES: Record<PlanId, number> = {basic: 29900, pro: 59900, chain: 119900};
+export const PLAN_PRICES: Record<PlanId, number> = {basic: 9900, pro: 19900, chain: 39900};
 
 /** Feature lines rendered per plan card on the landing page (i18n order). */
 export const PLAN_FEATURE_COUNTS: Record<PlanId, number> = {basic: 4, pro: 5, chain: 4};

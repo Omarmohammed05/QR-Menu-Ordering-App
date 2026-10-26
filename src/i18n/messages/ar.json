@@ -728,33 +728,19 @@
     "notice": "نسخة تجريبية للعرض فقط — اشترك الآن لتخصيص مطعمك",
     "minutesAgo": "منذ {count} د",
     "table": "طاولة",
-    "hasOptions": "أحجام وإضافات",
-    "tabs": {
-      "overview": "نظرة عامة",
-      "orders": "الطلبات",
-      "menu": "القائمة"
-    },
-    "overview": {
-      "title": "كيف تسير الأمور الآن؟",
-      "subtitle": "هكذا تبدو الرئيسية في لوحتك — الأرقام تتحدث لحظة وصول كل طلب."
-    },
     "ordersSection": {
-      "title": "الطلبات الحية",
-      "subtitle": "كل طلب واتساب يصل هنا فور إرساله — جرّب أي زر وسترى رسالة النسخة التجريبية."
+      "title": "الطلبات الحية"
     },
-    "menuSection": {
-      "title": "إدارة القائمة",
-      "subtitle": "أقسام وأطباق بأحجام وإضافات وأسعار — التعديل هنا للعرض فقط."
+    "links": {
+      "analytics": "أطباقك الأكثر مبيعًا في آخر ٣٠ يوم",
+      "team": "أدوار وفريق العمل"
     },
     "mock": {
       "restaurant": "مطعم النيل",
-      "orderSummaries": {
-        "grill2": "مشويات مشكلة ×٢",
-        "grill1": "مشويات مشكلة ×١",
-        "koshary1": "كشري إسكندراني ×١",
-        "hawawshi1": "حواوشي فراخ ×١",
-        "pudding2": "أرز باللبن ×٢"
-      },
+      "restaurantEn": "Nile Grill House",
+      "slug": "nile-grill",
+      "phone": "+20 100 123 4567",
+      "instapay": "nilegrill@instapay",
       "categories": {
         "main": "الأطباق الرئيسية",
         "grills": "المشويات",
@@ -764,7 +750,50 @@
         "koshary": "كشري إسكندراني",
         "grill": "مشويات مشكلة",
         "pudding": "أرز باللبن",
-        "hawawshi": "حواوشي فراخ"
+        "hawawshi": "حواوشي فراخ",
+        "mango": "عصير مانجو طازج"
+      },
+      "descriptions": {
+        "koshary": "أرز وعدس ومكرونة مع الصلصة الحارة",
+        "grill": "كباب وكفتة وشيش طاووق على الفحم",
+        "pudding": "أرز باللبن مع المكسرات والقرفة",
+        "hawawshi": "عيش بلدي محشو بلحم مفروم متبل",
+        "mango": "مانجو طبيعي 100٪"
+      },
+      "optionNames": {
+        "size": "الحجم",
+        "addons": "إضافات",
+        "spice": "مستوى الحار"
+      },
+      "customers": {
+        "maged": "مجدي عبد الله",
+        "sara": "سارة حسن"
+      },
+      "notes": {
+        "cutlery": "بدون سكاكين وأشواك من فضلك"
+      },
+      "tableLabels": {
+        "t1": "طاولة ١",
+        "t2": "طاولة ٢",
+        "t3": "طاولة ٣"
+      },
+      "team": {
+        "ownerName": "مجدي عبد الله",
+        "ownerEmail": "magdy@nilegrill.com",
+        "managerName": "سارة حسن",
+        "managerEmail": "sara@nilegrill.com",
+        "staffName": "أحمد علي",
+        "staffEmail": "ahmed@nilegrill.com"
+      },
+      "addresses": {
+        "label1": "فرع وسط البلد",
+        "address1": "١٥ شارع طلعت حرب، وسط البلد، القاهرة",
+        "label2": "فرع المعادي",
+        "address2": "٩ شارع ٩، المعادي، القاهرة"
+      },
+      "hours": {
+        "opens": "١٢:٠٠ م",
+        "closes": "١١:٠٠ م"
       }
     }
   },

@@ -728,33 +728,19 @@
     "notice": "Demo preview (Read-Only) — Subscribe to customize your restaurant",
     "minutesAgo": "{count} min ago",
     "table": "Table",
-    "hasOptions": "Sizes & add-ons",
-    "tabs": {
-      "overview": "Overview",
-      "orders": "Orders",
-      "menu": "Menu"
-    },
-    "overview": {
-      "title": "How is the restaurant doing right now?",
-      "subtitle": "This is your dashboard home — the numbers update the moment each order arrives."
-    },
     "ordersSection": {
-      "title": "Live orders",
-      "subtitle": "Every WhatsApp order lands here the second it's sent — tap any button to see the demo notice."
+      "title": "Live orders"
     },
-    "menuSection": {
-      "title": "Menu management",
-      "subtitle": "Sections and dishes with sizes, add-ons and prices — editing is preview-only here."
+    "links": {
+      "analytics": "Your best sellers over the last 30 days",
+      "team": "Roles and your staff"
     },
     "mock": {
       "restaurant": "Nile Grill House",
-      "orderSummaries": {
-        "grill2": "Mixed grill ×2",
-        "grill1": "Mixed grill ×1",
-        "koshary1": "Koshary ×1",
-        "hawawshi1": "Chicken hawawshi ×1",
-        "pudding2": "Rice pudding ×2"
-      },
+      "restaurantEn": "Nile Grill House",
+      "slug": "nile-grill",
+      "phone": "+20 100 123 4567",
+      "instapay": "nilegrill@instapay",
       "categories": {
         "main": "Main dishes",
         "grills": "Grills",
@@ -764,7 +750,50 @@
         "koshary": "Koshary",
         "grill": "Mixed grill",
         "pudding": "Rice pudding",
-        "hawawshi": "Chicken hawawshi"
+        "hawawshi": "Chicken hawawshi",
+        "mango": "Fresh mango juice"
+      },
+      "descriptions": {
+        "koshary": "Rice, lentils and pasta with spicy tomato sauce",
+        "grill": "Kebab, kofta and shish tawook over charcoal",
+        "pudding": "Rice pudding with nuts and cinnamon",
+        "hawawshi": "Baladi bread stuffed with spiced minced beef",
+        "mango": "100% natural mango"
+      },
+      "optionNames": {
+        "size": "Size",
+        "addons": "Add-ons",
+        "spice": "Spice level"
+      },
+      "customers": {
+        "maged": "Magdy Abdullah",
+        "sara": "Sara Hassan"
+      },
+      "notes": {
+        "cutlery": "No cutlery, please"
+      },
+      "tableLabels": {
+        "t1": "Table 1",
+        "t2": "Table 2",
+        "t3": "Table 3"
+      },
+      "team": {
+        "ownerName": "Magdy Abdullah",
+        "ownerEmail": "magdy@nilegrill.com",
+        "managerName": "Sara Hassan",
+        "managerEmail": "sara@nilegrill.com",
+        "staffName": "Ahmed Ali",
+        "staffEmail": "ahmed@nilegrill.com"
+      },
+      "addresses": {
+        "label1": "Downtown branch",
+        "address1": "15 Talat Harb St., Downtown, Cairo",
+        "label2": "Maadi branch",
+        "address2": "9 Street 9, Maadi, Cairo"
+      },
+      "hours": {
+        "opens": "12:00 PM",
+        "closes": "11:00 PM"
       }
     }
   },

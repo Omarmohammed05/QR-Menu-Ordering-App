@@ -1,6 +1,6 @@
 import {getTranslations} from 'next-intl/server';
 import {Link} from '@/i18n/navigation';
-import {QrCodeIcon, WhatsAppIcon} from '@/components/icons';
+import {ChartIcon, QrCodeIcon, WhatsAppIcon} from '@/components/icons';
 import {formatPrice} from '@/lib/format';
 
 /** Static showcase dish rows (marketing mock — no data, no tenant). */
@@ -38,6 +38,13 @@ export async function Hero({locale}: {locale: string}) {
             className="flex items-center justify-center rounded-base border border-hairline px-6 py-3 text-sm font-medium transition-colors hover:bg-muted"
           >
             {t('hero.secondaryCta')}
+          </Link>
+          <Link
+            href="/dashboard-demo"
+            className="flex items-center justify-center gap-2 rounded-base border border-accent px-6 py-3 text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-white"
+          >
+            <ChartIcon className="size-4" />
+            {t('hero.dashboardCta')}
           </Link>
         </div>
       </div>

@@ -19,6 +19,7 @@
     "hero": {
       "primaryCta": "View the live demo",
       "secondaryCta": "Get started",
+      "dashboardCta": "Try the dashboard",
       "mock": {
         "restaurant": "Nile Grill House",
         "category": "Bestsellers",
@@ -711,6 +712,59 @@
         "duplicate": "This duration already exists",
         "invalid": "Enter 1–60 months and a 0–90% discount",
         "generic": "Something went wrong, try again"
+      }
+    }
+  },
+  "dashboardDemo": {
+    "meta": {
+      "title": "Dashboard demo — Qaima QR"
+    },
+    "badge": "Demo",
+    "backHome": "Back to home",
+    "shellTagline": "Restaurant dashboard",
+    "bannerTitle": "Demo preview — read only",
+    "bannerBody": "This is how you'll run your restaurant after subscribing: live orders, menu, tables and analytics — all with your real data.",
+    "subscribeCta": "Subscribe to customize your restaurant",
+    "notice": "Demo preview (Read-Only) — Subscribe to customize your restaurant",
+    "minutesAgo": "{count} min ago",
+    "table": "Table",
+    "hasOptions": "Sizes & add-ons",
+    "tabs": {
+      "overview": "Overview",
+      "orders": "Orders",
+      "menu": "Menu"
+    },
+    "overview": {
+      "title": "How is the restaurant doing right now?",
+      "subtitle": "This is your dashboard home — the numbers update the moment each order arrives."
+    },
+    "ordersSection": {
+      "title": "Live orders",
+      "subtitle": "Every WhatsApp order lands here the second it's sent — tap any button to see the demo notice."
+    },
+    "menuSection": {
+      "title": "Menu management",
+      "subtitle": "Sections and dishes with sizes, add-ons and prices — editing is preview-only here."
+    },
+    "mock": {
+      "restaurant": "Nile Grill House",
+      "orderSummaries": {
+        "grill2": "Mixed grill ×2",
+        "grill1": "Mixed grill ×1",
+        "koshary1": "Koshary ×1",
+        "hawawshi1": "Chicken hawawshi ×1",
+        "pudding2": "Rice pudding ×2"
+      },
+      "categories": {
+        "main": "Main dishes",
+        "grills": "Grills",
+        "desserts": "Desserts"
+      },
+      "dishes": {
+        "koshary": "Koshary",
+        "grill": "Mixed grill",
+        "pudding": "Rice pudding",
+        "hawawshi": "Chicken hawawshi"
       }
     }
   },

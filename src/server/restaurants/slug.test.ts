@@ -49,6 +49,7 @@ describe('reserved slugs', () => {
       'r',
       'order',
       'demo-internal',
+      'dashboard-demo',
       '_next',
       'favicon.ico',
       'robots.txt',

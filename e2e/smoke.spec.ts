@@ -16,13 +16,16 @@ test('landing renders in Arabic with RTL', async ({page}) => {
   // Default locale is Arabic and stays unprefixed (`as-needed` routing).
   await expect(page).toHaveURL('/');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-  await expect(page.locator('h1')).toHaveText('قائمة');
+  await expect(page.locator('h1')).toHaveText('منيو مطعمك، على بُعد مسحة واحدة');
+  // The landing page now carries the pricing plans section.
+  await expect(page.locator('#pricing')).toBeVisible();
 });
 
 test('landing renders in English with LTR', async ({page}) => {
   await page.goto('/en');
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
-  await expect(page.locator('h1')).toHaveText('Menu');
+  await expect(page.locator('h1')).toHaveText('Your menu, one scan away');
+  await expect(page.locator('#pricing')).toBeVisible();
 });
 
 test('demo public menu renders in Arabic', async ({page}) => {

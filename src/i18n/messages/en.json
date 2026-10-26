@@ -1,11 +1,130 @@
 {
   "landing": {
-    "title": "Menu",
-    "tagline": "Scan-to-open digital menu — order on WhatsApp in seconds",
-    "badge": "Digital menus for restaurants",
+    "meta": {
+      "title": "Qaima QR — Digital menus & WhatsApp ordering for restaurants",
+      "description": "Scan-to-open digital menu for Egyptian restaurants and cafés. Guests scan the table card and order on WhatsApp in seconds. Plans from EGP 299/month."
+    },
+    "brand": "Qaima QR",
+    "badge": "Digital menus for Egyptian restaurants",
+    "title": "Your menu, one scan away",
+    "tagline": "A digital menu your guests open by scanning the card on the table — with sizes, add-ons and WhatsApp ordering built in.",
     "demo": "View a live demo menu",
+    "login": "Log in",
     "switchLocale": "العربية",
-    "login": "Log in"
+    "nav": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "demo": "Demo menu"
+    },
+    "hero": {
+      "primaryCta": "View the live demo",
+      "secondaryCta": "Get started",
+      "mock": {
+        "restaurant": "Nile Grill House",
+        "category": "Bestsellers",
+        "dish1": "Koshary",
+        "dish2": "Mixed grill",
+        "dish3": "Rice pudding",
+        "orderOnWhatsApp": "Order on WhatsApp"
+      }
+    },
+    "features": {
+      "title": "Everything your menu needs",
+      "subtitle": "From the first scan to the last order — built for restaurants and cafés across Egypt.",
+      "items": {
+        "0": {
+          "title": "Instant QR menu",
+          "description": "Guests scan the card on the table and your menu opens instantly — no app, no signup."
+        },
+        "1": {
+          "title": "WhatsApp ordering",
+          "description": "Orders arrive as ready-to-send WhatsApp messages with table number, sizes and add-ons."
+        },
+        "2": {
+          "title": "Sizes & add-ons",
+          "description": "Offer dish sizes, spice levels and extras, each with its own price."
+        },
+        "3": {
+          "title": "Always up to date",
+          "description": "Change a price, hide a sold-out dish or add tonight's special in seconds."
+        },
+        "4": {
+          "title": "Printable table cards",
+          "description": "Generate and print a QR tent card for every table with one click."
+        },
+        "5": {
+          "title": "Menu analytics",
+          "description": "See which dishes guests view and order the most, day by day."
+        }
+      }
+    },
+    "steps": {
+      "title": "Up and running in one day",
+      "subtitle": "No hardware, no staff training, no waiting.",
+      "items": {
+        "0": {
+          "title": "Send us your menu",
+          "description": "Photos or a PDF are enough — we build your digital menu for you."
+        },
+        "1": {
+          "title": "Put the cards on the tables",
+          "description": "Print the QR tent cards we generate for each of your tables."
+        },
+        "2": {
+          "title": "Start taking orders",
+          "description": "Guests scan, pick their dishes, and the order lands on your WhatsApp."
+        }
+      }
+    },
+    "pricing": {
+      "title": "Simple monthly pricing",
+      "subtitle": "No setup fees. Cancel anytime. All prices in Egyptian pounds.",
+      "perMonth": "/month",
+      "popular": "Most popular",
+      "cta": "Get started",
+      "demoNote": "Not sure yet? Explore the demo menu first —",
+      "plans": {
+        "0": {
+          "name": "Basic",
+          "description": "For small cafés and food carts",
+          "features": {
+            "0": "Digital QR menu",
+            "1": "Up to 30 dishes",
+            "2": "WhatsApp ordering",
+            "3": "One QR code"
+          }
+        },
+        "1": {
+          "name": "Pro",
+          "description": "For full-service restaurants",
+          "features": {
+            "0": "Everything in Basic",
+            "1": "Unlimited dishes & categories",
+            "2": "Sizes, add-ons & modifiers",
+            "3": "QR card for every table",
+            "4": "Menu analytics"
+          }
+        },
+        "2": {
+          "name": "Chain",
+          "description": "For multi-branch groups",
+          "features": {
+            "0": "Everything in Pro",
+            "1": "Multiple branches",
+            "2": "Opening hours per branch",
+            "3": "Priority WhatsApp support"
+          }
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to digitize your menu?",
+      "body": "Talk to us on WhatsApp — your digital menu can be live by tomorrow.",
+      "button": "Get started"
+    },
+    "footer": {
+      "rights": "© {year} Qaima QR. All rights reserved."
+    }
   },
   "auth": {
     "loginTitle": "Log in",

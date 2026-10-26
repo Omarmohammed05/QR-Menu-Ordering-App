@@ -2,14 +2,27 @@
 
 import {useEffect, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
-import {CloseIcon} from '@/components/icons';
+import {CloseIcon, TableIcon} from '@/components/icons';
 import {ImageUpload} from '@/components/dashboard/image-upload';
 import {formatNumber, formatPrice} from '@/lib/format';
 import {localizedName} from '@/lib/localize';
+import {describeSelection, type PublicOptionGroup} from '@/lib/options';
 import type {PlaceOrderState} from '@/server/actions/place-order';
-import type {PublicMenuItem} from '@/server/public-menu';
 
-export type CheckoutLine = {item: PublicMenuItem; quantity: number};
+export type CheckoutLine = {
+  item: {
+    id: string;
+    nameAr: string;
+    nameEn: string | null;
+    pricePiastres: number;
+    optionGroups: PublicOptionGroup[];
+  };
+  quantity: number;
+  /** Selected option choice ids for this line (empty for plain dishes). */
+  options: string[];
+  unitPricePiastres: number;
+  lineTotalPiastres: number;
+};
 
 type Props = {
   lines: CheckoutLine[];
@@ -18,7 +31,9 @@ type Props = {
   slug: string;
   /** InstaPay address — null means the sheet offers cash only. */
   instapayHandle: string | null;
+  /** Set when the customer scanned a table QR — pins the order to dine-in. */
   tableToken: string | null;
+  tableLabel: string | null;
   /** One per cart content — a resubmit (double tap, retry) is idempotent. */
   idempotencyKey: string;
   action: (formData: FormData) => void;
@@ -33,7 +48,9 @@ const inputClass =
 /**
  * Order confirmation as an Apple-style sheet: rises from the bottom edge on
  * phones, centered on larger screens. The form posts the exact same hidden
- * fields the server action re-validates and re-prices.
+ * fields the server action re-validates and re-prices. Dine-in comes from
+ * the scanned table; otherwise the customer toggles delivery (address
+ * required) or takeaway.
  */
 export function CheckoutSheet({
   lines,
@@ -42,6 +59,7 @@ export function CheckoutSheet({
   slug,
   instapayHandle,
   tableToken,
+  tableLabel,
   idempotencyKey,
   action,
   state,
@@ -51,6 +69,8 @@ export function CheckoutSheet({
   const t = useTranslations('publicMenu');
   const locale = useLocale();
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'instapay'>('cash');
+  const [orderType, setOrderType] = useState<'delivery' | 'takeaway'>('delivery');
+  const isDineIn = Boolean(tableToken);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -88,18 +108,62 @@ export function CheckoutSheet({
           </button>
         </div>
 
+        {/* Order type: dine-in badge from the table QR, else the customer's toggle */}
+        <div className="mb-4 flex flex-col gap-2">
+          {isDineIn ? (
+            <span className="flex w-fit items-center gap-1.5 rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium">
+              <TableIcon className="size-3.5 text-muted-foreground" />
+              {tableLabel ? t('orderType.dineInTable', {label: tableLabel}) : t('orderType.dineIn')}
+            </span>
+          ) : (
+            <>
+              <span className="text-sm font-medium">{t('orderType.label')}</span>
+              <div className="grid grid-cols-2 gap-1.5 rounded-full border border-hairline p-1">
+                {(['delivery', 'takeaway'] as const).map((type) => {
+                  const selected = orderType === type;
+                  return (
+                    <label
+                      key={type}
+                      className={`flex cursor-pointer items-center justify-center rounded-full px-3 py-2 text-sm transition-[transform,background-color] duration-100 active:scale-[0.98] ${
+                        selected ? 'bg-foreground font-medium text-background' : 'text-muted-foreground'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="orderTypeChoice"
+                        value={type}
+                        checked={selected}
+                        onChange={() => setOrderType(type)}
+                        className="sr-only"
+                      />
+                      {t(`orderType.${type}`)}
+                    </label>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
+
         <ul className="flex flex-col border-y border-hairline py-1 text-sm">
-          {lines.map(({item, quantity}) => (
-            <li key={item.id} className="flex items-center justify-between gap-3 py-2.5">
-              <span className="flex min-w-0 items-center gap-2">
-                <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tabular-nums">
-                  ×{formatNumber(quantity, locale)}
+          {lines.map((line) => (
+            <li key={`${line.item.id}-${line.options.join(',')}`} className="flex flex-col gap-0.5 py-2.5">
+              <span className="flex items-center justify-between gap-3">
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tabular-nums">
+                    ×{formatNumber(line.quantity, locale)}
+                  </span>
+                  <span className="truncate">{localizedName(locale, line.item)}</span>
                 </span>
-                <span className="truncate">{localizedName(locale, item)}</span>
+                <span className="shrink-0 tabular-nums">
+                  {formatPrice(line.lineTotalPiastres, locale, currency)}
+                </span>
               </span>
-              <span className="shrink-0 tabular-nums">
-                {formatPrice(item.pricePiastres * quantity, locale, currency)}
-              </span>
+              {line.options.length > 0 ? (
+                <span className="ps-9 text-xs leading-relaxed text-muted-foreground">
+                  {describeSelection(locale, line.item.optionGroups, line.options, currency)}
+                </span>
+              ) : null}
             </li>
           ))}
           <li className="flex items-center justify-between gap-3 py-2.5 font-semibold">
@@ -111,12 +175,19 @@ export function CheckoutSheet({
         <form action={action} className="mt-4 flex flex-col gap-3" noValidate>
           <input type="hidden" name="slug" value={slug} />
           <input type="hidden" name="tableToken" value={tableToken ?? ''} />
+          {!isDineIn ? <input type="hidden" name="orderType" value={orderType} /> : null}
           <input type="hidden" name="locale" value={locale} />
           <input type="hidden" name="idempotencyKey" value={idempotencyKey} />
           <input
             type="hidden"
             name="cart"
-            value={JSON.stringify(lines.map((line) => ({id: line.item.id, quantity: line.quantity})))}
+            value={JSON.stringify(
+              lines.map((line) => ({
+                id: line.item.id,
+                quantity: line.quantity,
+                options: line.options
+              }))
+            )}
           />
           {/* Honeypot: invisible to humans, irresistible to bots (spec §11). */}
           <div aria-hidden className="hidden">
@@ -125,6 +196,18 @@ export function CheckoutSheet({
               <input type="text" name="company" tabIndex={-1} autoComplete="off" />
             </label>
           </div>
+          {orderType === 'delivery' && !isDineIn ? (
+            <label className="flex flex-col gap-1.5">
+              <span className="text-sm font-medium">{t('deliveryAddress')}</span>
+              <input
+                type="text"
+                name="deliveryAddress"
+                autoComplete="street-address"
+                placeholder={t('deliveryAddressPlaceholder')}
+                className={inputClass}
+              />
+            </label>
+          ) : null}
           {/* Payment: cash always; InstaPay only with a configured handle. */}
           {instapayHandle ? (
             <div className="flex flex-col gap-2">
@@ -181,7 +264,11 @@ export function CheckoutSheet({
             <input type="text" name="customerName" autoComplete="name" className={inputClass} />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium">{t('customerPhone')}</span>
+            <span className="text-sm font-medium">
+              {orderType === 'delivery' && !isDineIn
+                ? t('customerPhoneRequired')
+                : t('customerPhone')}
+            </span>
             <input
               type="tel"
               name="customerPhone"

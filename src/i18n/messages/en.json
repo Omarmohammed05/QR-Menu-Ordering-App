@@ -165,6 +165,15 @@
       },
       "printAll": "Print codes (A4)",
       "downloadSvg": "Download QR",
+      "tent": {
+        "open": "Table tent card",
+        "close": "Close",
+        "title": "Printable table tent card",
+        "ctaAr": "امسح الكود واطلب من القائمة",
+        "ctaEn": "Scan to order from the menu",
+        "poweredBy": "Smart ordering for your table via a QR menu",
+        "print": "Print"
+      },
       "masterQr": {
         "badge": "Master QR",
         "title": "Restaurant master QR",
@@ -318,6 +327,7 @@
     "openNow": "Open now",
     "closedNow": "Closed now",
     "add": "Add",
+    "hasOptions": "Options available",
     "sectionsNav": "Menu sections",
     "dishCount": "{count, plural, one {# dish} other {# dishes}}",
     "empty": "No dishes available right now",
@@ -330,7 +340,10 @@
     "total": "Total",
     "customerName": "Name (optional)",
     "customerPhone": "Phone (optional)",
+    "customerPhoneRequired": "Phone (required)",
     "note": "Note (optional)",
+    "deliveryAddress": "Delivery address",
+    "deliveryAddressPlaceholder": "Street, building, floor…",
     "paymentLabel": "Payment method",
     "payment": {
       "cash": "Cash",
@@ -341,6 +354,24 @@
     "sendOnWhatsApp": "Send on WhatsApp",
     "working": "One moment…",
     "close": "Close",
+    "orderType": {
+      "label": "Order type",
+      "dineIn": "Dine-in",
+      "dineInTable": "Dine-in — {label}",
+      "delivery": "Delivery",
+      "takeaway": "Takeaway"
+    },
+    "options": {
+      "close": "Close",
+      "required": "Required",
+      "quantity": "Quantity",
+      "increase": "Increase quantity",
+      "decrease": "Decrease quantity",
+      "pickOne": "Pick one",
+      "pickAny": "Pick any",
+      "chooseRequired": "Complete the required options",
+      "addToCart": "Add to cart"
+    },
     "errors": {
       "cart": "Your cart is no longer valid — refresh the page and try again",
       "closed": "The restaurant is closed right now",
@@ -401,7 +432,28 @@
     "edit": "Edit",
     "save": "Save",
     "deleteItem": "Delete dish",
-    "deleteCategory": "Delete section"
+    "deleteCategory": "Delete section",
+    "options": {
+      "title": "Sizes & add-ons",
+      "hint": "Sizes, modifiers or add-ons the customer picks when ordering",
+      "addGroup": "Add group",
+      "empty": "No options yet — add a size or add-on group",
+      "kindLabel": "Group type",
+      "kind": {
+        "size": "Size",
+        "modifier": "Modifier",
+        "addon": "Add-on"
+      },
+      "groupNameAr": "Group name (Arabic)",
+      "groupNameEn": "Group name (English)",
+      "required": "Required",
+      "removeGroup": "Remove group",
+      "choiceNameAr": "Choice name (Arabic)",
+      "choiceNameEn": "Choice name (English)",
+      "priceDelta": "Price delta (EGP)",
+      "removeChoice": "Remove choice",
+      "addChoice": "Add choice"
+    }
   },
   "images": {
     "upload": "Add image",

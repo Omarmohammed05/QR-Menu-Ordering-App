@@ -1,6 +1,9 @@
 import {and, asc, desc, eq, inArray, sql} from 'drizzle-orm';
 import {db} from '@/server/db';
 import {orderEvents, orderItems, orders, restaurants, type OrderItemOptionSnapshot} from '@/server/db/schema';
+
+// Re-exported so callers of the repos barrel see the snapshot type too.
+export type {OrderItemOptionSnapshot};
 import {canTransition, type OrderLifecycleStatus} from '@/lib/order-status';
 import {publicOrderId} from '@/lib/ids';
 
@@ -20,6 +23,10 @@ export type NewOrderItem = {
 export type NewOrder = {
   tableId?: string | null;
   status?: (typeof orders.$inferInsert)['status'];
+  /** Dine-in / delivery / takeaway — dine-in always pairs with a table. */
+  orderType?: (typeof orders.$inferInsert)['orderType'];
+  /** Delivery orders only: where to bring the food. */
+  deliveryAddress?: string | null;
   customerName?: string;
   customerPhone?: string;
   note?: string;
@@ -77,6 +84,8 @@ export function createOrdersRepo(restaurantId: string) {
               restaurantId,
               tableId: values.tableId ?? null,
               status: values.status,
+              orderType: values.orderType ?? (values.tableId ? 'dine_in' : 'takeaway'),
+              deliveryAddress: values.deliveryAddress ?? null,
               customerName: values.customerName,
               customerPhone: values.customerPhone,
               note: values.note,

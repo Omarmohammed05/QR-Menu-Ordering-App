@@ -20,6 +20,9 @@
   /* Destructive — the one non-monochrome exception (spec: cancel/error only) */
   --destructive: #dc2626;
 
+  /* Brand accent (Qaima QR) — pricing CTAs, tent-card frames, highlights */
+  --accent: #ff5722;
+
   /* Focus & overlays */
   --focus: #000000;
   --backdrop: rgb(0 0 0 / 0.4);

@@ -1,5 +1,6 @@
 import {isOpenAt, type OpeningHoursRow} from '@/lib/opening-hours';
 import {createRestaurantRepos, restaurantsRepo, tablesByToken} from '@/server/db/repos';
+import type {PublicOptionGroup} from '@/lib/options';
 
 /**
  * Serializable menu for the public customer page: active categories holding
@@ -14,6 +15,8 @@ export type PublicMenuItem = {
   descriptionEn: string | null;
   pricePiastres: number;
   imageUrl: string | null;
+  /** Sizes/modifiers/add-ons configured for this dish — the sheet's choices. */
+  optionGroups: PublicOptionGroup[];
 };
 
 export type PublicMenuCategory = {
@@ -51,12 +54,14 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
   if (!restaurant || !restaurant.isActive) return null;
 
   const repos = createRestaurantRepos(restaurant.id);
-  const [categories, items, slots, addresses] = await Promise.all([
+  const [categories, items, slots, addresses, optionBuckets] = await Promise.all([
     repos.categories.list(),
     repos.items.list(),
     repos.hours.list() as Promise<OpeningHoursRow[]>,
-    repos.addresses.list()
+    repos.addresses.list(),
+    repos.options.listByItem()
   ]);
+  const optionsByItem = new Map(optionBuckets.map((bucket) => [bucket.itemId, bucket.groups]));
 
   let table: PublicMenu['table'] = null;
   if (token) {
@@ -66,7 +71,8 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
     }
   }
 
-  // Only what a customer may order: active sections, available dishes.
+  // Only what a customer may order: active sections, available dishes — with
+  // their active option groups (sizes/modifiers/add-ons).
   const publicItems: PublicMenuItem[] = items
     .filter((item) => item.isAvailable)
     .map((item) => ({
@@ -77,7 +83,20 @@ export async function loadPublicMenu(slug: string, token?: string): Promise<Publ
       descriptionAr: item.descriptionAr,
       descriptionEn: item.descriptionEn ?? null,
       pricePiastres: item.pricePiastres,
-      imageUrl: item.imageUrl ?? null
+      imageUrl: item.imageUrl ?? null,
+      optionGroups: (optionsByItem.get(item.id) ?? []).map((group) => ({
+        id: group.id,
+        nameAr: group.nameAr,
+        nameEn: group.nameEn,
+        kind: group.kind,
+        isRequired: group.isRequired,
+        choices: group.choices.map((choice) => ({
+          id: choice.id,
+          nameAr: choice.nameAr,
+          nameEn: choice.nameEn,
+          priceDeltaPiastres: choice.priceDeltaPiastres
+        }))
+      }))
     }));
 
   return {

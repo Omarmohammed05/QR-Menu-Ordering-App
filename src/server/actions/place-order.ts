@@ -11,17 +11,18 @@ import {createRestaurantRepos, restaurantsRepo, tablesByToken} from '@/server/db
 import {consumeRateLimit, rateLimitKey} from '@/server/security/rate-limit';
 import {newIdempotencyKey} from '@/lib/ids';
 import {env} from '@/server/env';
-import type {NewOrderItem} from '@/server/db/repos';
+import type {NewOrderItem, OrderItemOptionSnapshot} from '@/server/db/repos';
 
 /**
  * Public order placement — the ONLY unauthenticated write path, so the server
- * is the sole authority: cart ids are re-priced from the DB, quantities and
- * totals recomputed, the tenant injected from the slug, submissions rate
- * limited per IP, and a resubmit with the same idempotency key returns the
- * original order. The client never supplies a price.
+ * is the sole authority: cart ids and selected option choices are re-priced
+ * from the DB, quantities and totals recomputed, the tenant injected from
+ * the slug, submissions rate limited per IP, and a resubmit with the same
+ * idempotency key returns the original order. The client never supplies a
+ * price.
  */
 export type PlaceOrderState =
-  | {ok: false; error: 'cart' | 'closed' | 'rate' | 'generic' | null}
+  | {ok: false; error: 'cart' | 'options' | 'address' | 'closed' | 'rate' | 'generic' | null}
   | {
       ok: true;
       whatsappUrl: string;
@@ -40,7 +41,9 @@ const ORDER_RATE_WINDOW_SECONDS = 600;
 const cartSchema = z.array(
   z.object({
     id: z.string().uuid(),
-    quantity: z.number().int().min(1).max(MAX_QUANTITY)
+    quantity: z.number().int().min(1).max(MAX_QUANTITY),
+    /** Selected option choice ids (sizes/modifiers/add-ons). */
+    options: z.array(z.string().uuid()).max(50).optional()
   })
 );
 type CartLine = z.infer<typeof cartSchema>;
@@ -102,23 +105,66 @@ export async function placeOrderAction(
   for (const line of cart) {
     const item = await repos.items.findById(line.id);
     if (!item || !item.isAvailable) return {ok: false, error: 'cart'};
+
+    // Selected choices are re-priced from the DB exactly like the base price:
+    // an unknown/foreign/retired choice id fails the whole cart, and a
+    // required group the customer never answered fails with `options`.
+    const selectedIds = [...new Set(line.options ?? [])];
+    const {groups, chosen} = await repos.options.findActiveChoices(item.id, selectedIds);
+    if (chosen.size !== selectedIds.length) return {ok: false, error: 'cart'};
+    const unanswered = groups.filter(
+      (group) => group.isRequired && !group.choices.some((choice) => chosen.has(choice.id))
+    );
+    if (unanswered.length > 0) return {ok: false, error: 'options'};
+
+    const options: OrderItemOptionSnapshot[] = [...chosen.entries()].map(([choiceId, group]) => {
+      const choice = group.choices.find((entry) => entry.id === choiceId)!;
+      return {
+        id: choice.id,
+        nameAr: choice.nameAr,
+        nameEn: choice.nameEn ?? null,
+        priceDeltaPiastres: choice.priceDeltaPiastres,
+        kind: group.kind,
+        groupNameAr: group.nameAr,
+        groupNameEn: group.nameEn ?? null
+      };
+    });
+    const unitPricePiastres =
+      item.pricePiastres +
+      options.reduce((sum, option) => sum + option.priceDeltaPiastres, 0);
+
     lines.push({
       menuItemId: item.id,
       quantity: line.quantity,
-      unitPricePiastres: item.pricePiastres,
+      unitPricePiastres,
       nameSnapshotAr: item.nameAr,
-      options: [],
-      lineTotalPiastres: item.pricePiastres * line.quantity
+      options,
+      lineTotalPiastres: unitPricePiastres * line.quantity
     });
   }
 
-  // Table QR token → seat, only when it belongs to THIS restaurant.
+  // Table QR token → seat, only when it belongs to THIS restaurant. A scanned
+  // table pins the order to dine-in; without it the customer's own toggle
+  // decides between delivery and takeaway.
   const token = formData.get('tableToken');
   let tableId: string | null = null;
   if (typeof token === 'string' && token) {
     const resolved = await tablesByToken.findActive(token);
     if (resolved && resolved.restaurant.id === restaurant.id) tableId = resolved.table.id;
   }
+
+  // Order type: dine-in comes from the table; otherwise the form's own field
+  // (default takeaway). Delivery requires an address.
+  let orderType: 'dine_in' | 'delivery' | 'takeaway';
+  if (tableId) orderType = 'dine_in';
+  else {
+    const rawType = formData.get('orderType');
+    orderType = rawType === 'delivery' ? 'delivery' : 'takeaway';
+  }
+  const rawAddress = z.string().trim().min(5).max(300).safeParse(formData.get('deliveryAddress') ?? '');
+  const deliveryAddress =
+    orderType === 'delivery' ? (rawAddress.success ? rawAddress.data : null) : null;
+  if (orderType === 'delivery' && !deliveryAddress) return {ok: false, error: 'address'};
 
   // Payment: cash by default. InstaPay is honored only when the restaurant
   // has a handle configured — otherwise the order lands as cash, because a
@@ -158,6 +204,8 @@ export async function placeOrderAction(
   try {
     const {order} = await repos.orders.create({
       tableId,
+      orderType,
+      deliveryAddress,
       customerName: optionalText(formData.get('customerName'), 100),
       customerPhone: optionalText(formData.get('customerPhone'), 20),
       note: optionalText(formData.get('note'), 500),
@@ -172,11 +220,14 @@ export async function placeOrderAction(
     const message = buildOrderMessage({
       restaurantName: restaurant.nameAr,
       orderLabel: `طلب #${order.number}`,
+      orderType,
       tableLabel: tableId ? (await repos.tables.findById(tableId))?.label : null,
+      deliveryAddress: order.deliveryAddress,
       items: lines.map((line) => ({
         name: line.nameSnapshotAr,
         quantity: line.quantity,
-        lineTotalPiastres: line.lineTotalPiastres
+        lineTotalPiastres: line.lineTotalPiastres,
+        options: line.options
       })),
       totalPiastres,
       customerName: order.customerName,

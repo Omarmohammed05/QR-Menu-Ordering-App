@@ -23,7 +23,12 @@ export default async function MenuManagementPage({params}: Props) {
   const {membership} = await requireMember(locale);
   const t = await getTranslations('menuManagement');
   const repos = createRestaurantRepos(membership.restaurant.id);
-  const [categories, items] = await Promise.all([repos.categories.list(), repos.items.list()]);
+  const [categories, items, optionBuckets] = await Promise.all([
+    repos.categories.list(),
+    repos.items.list(),
+    repos.options.listByItem()
+  ]);
+  const optionsByItem = new Map(optionBuckets.map((bucket) => [bucket.itemId, bucket.groups]));
 
   const itemsByCategory = new Map<string, typeof items>();
   for (const item of items) {
@@ -140,6 +145,21 @@ export default async function MenuManagementPage({params}: Props) {
                                 {item.descriptionAr}
                               </span>
                             ) : null}
+                            {optionsByItem.get(item.id) !== undefined ? (
+                              <span className="flex flex-wrap items-center gap-1">
+                                {optionsByItem.get(item.id)!.map((group) => (
+                                  <span
+                                    key={group.id}
+                                    className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+                                  >
+                                    {group.nameAr}
+                                    {group.choices.length > 0
+                                      ? ` · ${formatNumber(group.choices.length, locale)}`
+                                      : ''}
+                                  </span>
+                                ))}
+                              </span>
+                            ) : null}
                           </div>
                           <span className="shrink-0 text-xs text-muted-foreground transition-colors hover:text-foreground">
                             {t('edit')}
@@ -153,7 +173,20 @@ export default async function MenuManagementPage({params}: Props) {
                               nameAr: item.nameAr,
                               descriptionAr: item.descriptionAr,
                               pricePiastres: item.pricePiastres,
-                              imageUrl: item.imageUrl ?? null
+                              imageUrl: item.imageUrl ?? null,
+                              optionGroups: (optionsByItem.get(item.id) ?? []).map((group) => ({
+                                id: group.id,
+                                nameAr: group.nameAr,
+                                nameEn: group.nameEn,
+                                kind: group.kind,
+                                isRequired: group.isRequired,
+                                choices: group.choices.map((choice) => ({
+                                  id: choice.id,
+                                  nameAr: choice.nameAr,
+                                  nameEn: choice.nameEn,
+                                  priceDeltaPiastres: choice.priceDeltaPiastres
+                                }))
+                              }))
                             }}
                           />
                           <div className="border-t border-hairline pt-4">

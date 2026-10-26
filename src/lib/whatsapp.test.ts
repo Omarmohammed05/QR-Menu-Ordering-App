@@ -8,6 +8,7 @@ describe('buildOrderMessage', () => {
     const text = buildOrderMessage({
       restaurantName: 'مطعم النور',
       orderLabel: 'طلب #a1b2c3',
+      orderType: 'dine_in',
       tableLabel: 'طاولة ٣',
       items: [
         {name: 'كفتة', quantity: 2, lineTotalPiastres: 17000},
@@ -31,6 +32,7 @@ describe('buildOrderMessage', () => {
     const text = buildOrderMessage({
       restaurantName: 'مطعم',
       orderLabel: 'طلب',
+      orderType: 'takeaway',
       items: [{name: 'شوربة', quantity: 1, lineTotalPiastres: 5000}],
       totalPiastres: 5000,
       formatPrice
@@ -44,6 +46,7 @@ describe('buildOrderMessage', () => {
     const text = buildOrderMessage({
       restaurantName: 'مطعم',
       orderLabel: 'طلب #3',
+      orderType: 'takeaway',
       items: [{name: 'شوربة', quantity: 1, lineTotalPiastres: 5000}],
       totalPiastres: 5000,
       statusUrl: 'https://menu.example/bait/order/Ab3xK9mQ2pZ1wYt4',

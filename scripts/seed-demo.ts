@@ -5,15 +5,112 @@
  *
  * Run after migrations: `pnpm seed`
  */
-import {eq} from 'drizzle-orm';
+import {and, eq} from 'drizzle-orm';
 import {db} from '../src/server/db';
 import {
   menuCategories,
+  menuItemOptionChoices,
+  menuItemOptionGroups,
   menuItems,
   openingHours,
   restaurantTables,
   restaurants
 } from '../src/server/db/schema';
+
+type SeedChoice = {nameAr: string; nameEn: string; priceDeltaPiastres: number};
+type SeedOptionGroup = {
+  nameAr: string;
+  nameEn: string;
+  kind: 'size' | 'modifier' | 'addon';
+  isRequired: boolean;
+  choices: SeedChoice[];
+};
+
+/** Showcase for the sizes/modifiers/add-ons feature — all on the Koshari dish. */
+const KOSHARI_OPTIONS: SeedOptionGroup[] = [
+  {
+    nameAr: 'الحجم',
+    nameEn: 'Size',
+    kind: 'size',
+    isRequired: true,
+    choices: [
+      {nameAr: 'وسط', nameEn: 'Medium', priceDeltaPiastres: 0},
+      {nameAr: 'كبير', nameEn: 'Large', priceDeltaPiastres: 1500}
+    ]
+  },
+  {
+    nameAr: 'مستوى الحار',
+    nameEn: 'Spice level',
+    kind: 'modifier',
+    isRequired: true,
+    choices: [
+      {nameAr: 'عادي', nameEn: 'Mild', priceDeltaPiastres: 0},
+      {nameAr: 'وسط', nameEn: 'Medium', priceDeltaPiastres: 0},
+      {nameAr: 'حراق', nameEn: 'Hot', priceDeltaPiastres: 0}
+    ]
+  },
+  {
+    nameAr: 'إضافات',
+    nameEn: 'Add-ons',
+    kind: 'addon',
+    isRequired: false,
+    choices: [
+      {nameAr: 'بصل مقرمش', nameEn: 'Crispy onion', priceDeltaPiastres: 500},
+      {nameAr: 'دقة إضافية', nameEn: 'Extra daqa', priceDeltaPiastres: 500},
+      {nameAr: 'صوص إضافي', nameEn: 'Extra sauce', priceDeltaPiastres: 1000}
+    ]
+  }
+];
+
+/** Adds the Koshari option groups when the tenant has none yet (idempotent). */
+async function seedOptionShowcase(restaurantId: string) {
+  const [existingGroup] = await db
+    .select()
+    .from(menuItemOptionGroups)
+    .where(eq(menuItemOptionGroups.restaurantId, restaurantId))
+    .limit(1);
+  if (existingGroup) {
+    console.log('demo restaurant already has option groups — nothing to add');
+    return;
+  }
+
+  const [koshari] = await db
+    .select()
+    .from(menuItems)
+    .where(and(eq(menuItems.restaurantId, restaurantId), eq(menuItems.nameAr, 'كشري مصري')))
+    .limit(1);
+  if (!koshari) throw new Error('demo seed is missing the Koshari item for option groups');
+
+  for (const [groupIndex, seedGroup] of KOSHARI_OPTIONS.entries()) {
+    const group = (
+      await db
+        .insert(menuItemOptionGroups)
+        .values({
+          restaurantId,
+          menuItemId: koshari.id,
+          nameAr: seedGroup.nameAr,
+          nameEn: seedGroup.nameEn,
+          kind: seedGroup.kind,
+          isRequired: seedGroup.isRequired,
+          sortOrder: groupIndex
+        })
+        .returning()
+    )[0];
+    if (!group) throw new Error('failed to create a demo option group');
+
+    await db.insert(menuItemOptionChoices).values(
+      seedGroup.choices.map((choice, choiceIndex) => ({
+        restaurantId,
+        optionGroupId: group.id,
+        nameAr: choice.nameAr,
+        nameEn: choice.nameEn,
+        priceDeltaPiastres: choice.priceDeltaPiastres,
+        sortOrder: choiceIndex
+      }))
+    );
+  }
+  console.log('seeded option-group showcase on the Koshari dish');
+}
 
 const DEMO_SLUG = 'demo';
 
@@ -92,7 +189,8 @@ async function main() {
       .where(eq(menuCategories.restaurantId, existing.id))
       .limit(1);
     if (category) {
-      console.log(`demo restaurant already has content — nothing to seed`);
+      console.log(`demo restaurant already has content — completing option groups only`);
+      await seedOptionShowcase(existing.id);
       return;
     }
   }
@@ -161,6 +259,8 @@ async function main() {
     .insert(restaurantTables)
     .values({restaurantId: restaurant.id, label: 'طاولة ١'})
     .onConflictDoNothing();
+
+  await seedOptionShowcase(restaurant.id);
 
   console.log(`seeded demo restaurant (${restaurant.id})`);
 }

@@ -21,3 +21,16 @@ export const orderStatus = pgEnum('order_status', [
   'completed',
   'cancelled'
 ]);
+
+/**
+ * How an item option group is chosen on the customer sheet (feature: sizes,
+ * modifiers & add-ons). `size` and required `modifier` groups render as
+ * radio choices; `addon` groups are checkboxes.
+ */
+export const menuOptionKind = pgEnum('menu_option_kind', ['size', 'modifier', 'addon']);
+
+/**
+ * Where the order is consumed. Dine-in comes from a table QR (`?t=`);
+ * delivery and takeaway are the customer's toggle on the checkout sheet.
+ */
+export const orderType = pgEnum('order_type', ['dine_in', 'delivery', 'takeaway']);

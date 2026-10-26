@@ -11,15 +11,19 @@ type Props = {
   priceLabel: string;
   onIncrement: () => void;
   onDecrement: () => void;
+  /** Dishes with sizes/add-ons open the selection sheet instead of quick-adding. */
+  onConfigure?: () => void;
 };
 
 /**
  * One dish line: name, description, price, and the add control — a circular
  * hairline button that swaps into a black stepper pill once in the cart.
+ * Dishes configured with sizes or add-ons open the bottom sheet first.
  */
-export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: Props) {
+export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement, onConfigure}: Props) {
   const t = useTranslations('publicMenu');
   const locale = useLocale();
+  const hasOptions = item.optionGroups.length > 0;
 
   return (
     <li data-menu-item-id={item.id} className="flex items-start justify-between gap-4 py-4">
@@ -40,13 +44,20 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
             {localizedDescription(locale, item)}
           </span>
         ) : null}
-        <span className="mt-1 text-sm font-medium tabular-nums">{priceLabel}</span>
+        <span className="flex items-center gap-2">
+          <span className="text-sm font-medium tabular-nums">{priceLabel}</span>
+          {hasOptions ? (
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+              {t('hasOptions')}
+            </span>
+          ) : null}
+        </span>
       </div>
 
       {quantity === 0 ? (
         <button
           type="button"
-          onClick={onIncrement}
+          onClick={hasOptions && onConfigure ? onConfigure : onIncrement}
           aria-label={`${t('add')} ${localizedName(locale, item)}`}
           className="grid size-10 shrink-0 place-items-center rounded-full border border-hairline-strong transition duration-100 hover:bg-muted active:scale-95"
         >
@@ -71,7 +82,7 @@ export function DishRow({item, quantity, priceLabel, onIncrement, onDecrement}: 
           </span>
           <button
             type="button"
-            onClick={onIncrement}
+            onClick={hasOptions && onConfigure ? onConfigure : onIncrement}
             aria-label={t('increase')}
             className="grid size-9 place-items-center rounded-full transition duration-100 hover:bg-background/10 active:scale-90"
           >

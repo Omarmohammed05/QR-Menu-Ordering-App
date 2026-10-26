@@ -10,10 +10,66 @@ type Locale = (typeof routing.locales)[number];
 
 /** Machine-readable failure codes; the forms map them to locale strings. */
 export type CreateCategoryState = {error?: 'nameAr' | 'forbidden' | 'generic'};
-export type CreateItemState = {error?: 'nameAr' | 'price' | 'category' | 'forbidden' | 'generic'};
+export type CreateItemState = {error?: 'nameAr' | 'price' | 'category' | 'options' | 'forbidden' | 'generic'};
 export type UpdateCategoryState = {error?: 'nameAr' | 'forbidden' | 'generic'};
 export type DeleteCategoryState = {error?: 'forbidden' | 'inUse' | 'generic'};
-export type UpdateItemState = {error?: 'nameAr' | 'price' | 'forbidden' | 'generic'};
+export type UpdateItemState = {error?: 'nameAr' | 'price' | 'options' | 'forbidden' | 'generic'};
+
+/**
+ * Sizes/modifiers/add-ons as the dashboard editor submits them: one JSON
+ * array of groups, each with bilingual names and EGP-text price deltas.
+ */
+const optionGroupSchema = z.array(
+  z.object({
+    kind: z.enum(['size', 'modifier', 'addon']),
+    nameAr: z.string().trim().min(1).max(200),
+    nameEn: z.string().trim().max(200).transform((value) => value || null),
+    isRequired: z.boolean(),
+    choices: z
+      .array(
+        z.object({
+          nameAr: z.string().trim().min(1).max(200),
+          nameEn: z.string().trim().max(200).transform((value) => value || null),
+          price: z.string().trim().regex(/^\d{1,5}(\.\d{1,2})?$/).default('0')
+        })
+      )
+      .min(1)
+      .max(20)
+  })
+);
+type OptionGroupInput = z.infer<typeof optionGroupSchema>[number];
+
+/** Parses the hidden `options` JSON field; `undefined` when the field is absent. */
+function parseOptions(
+  formData: FormData
+): {ok: true; groups: OptionGroupInput[] | undefined} | {ok: false} {
+  const raw = formData.get('options');
+  if (raw === null || typeof raw !== 'string' || raw === '') return {ok: true, groups: undefined};
+  let json: unknown;
+  try {
+    json = JSON.parse(raw);
+  } catch {
+    return {ok: false};
+  }
+  const parsed = optionGroupSchema.safeParse(json);
+  if (!parsed.success) return {ok: false};
+  return {ok: true, groups: parsed.data};
+}
+
+/** EGP text deltas ("15", "15.50") → integer piastres, for the repo insert. */
+function optionsForRepo(groups: OptionGroupInput[]) {
+  return groups.map((group) => ({
+    kind: group.kind,
+    nameAr: group.nameAr,
+    nameEn: group.nameEn,
+    isRequired: group.isRequired,
+    choices: group.choices.map((choice) => ({
+      nameAr: choice.nameAr,
+      nameEn: choice.nameEn,
+      priceDeltaPiastres: Math.round(parseFloat(choice.price) * 100)
+    }))
+  }));
+}
 export type DeleteItemState = {error?: 'forbidden' | 'inUse' | 'generic'};
 
 const nameArSchema = z.string().trim().min(1, 'nameAr').max(200, 'nameAr');
@@ -102,19 +158,25 @@ export async function createItemAction(
   const categoryId = z.string().uuid().safeParse(formData.get('categoryId'));
   if (!categoryId.success) return {error: 'category'};
 
+  const options = parseOptions(formData);
+  if (!options.ok) return {error: 'options'};
+
   const repos = createRestaurantRepos(membership.restaurant.id);
   const category = await repos.categories.findById(categoryId.data);
   if (!category) return {error: 'category'};
 
   const pricePiastres = Math.round(parseFloat(parsed.data.price) * 100);
   try {
-    await repos.items.create({
+    const item = await repos.items.create({
       categoryId: category.id,
       nameAr: parsed.data.nameAr,
       descriptionAr: parsed.data.descriptionAr,
       imageUrl: parsed.data.imageUrl,
       pricePiastres
     });
+    if (options.groups && options.groups.length > 0) {
+      await repos.options.replaceAllForItem(item.id, optionsForRepo(options.groups));
+    }
   } catch {
     return {error: 'generic'};
   }
@@ -200,6 +262,10 @@ export async function updateItemAction(
     return {error: first === 'price' ? 'price' : first === 'nameAr' ? 'nameAr' : 'generic'};
   }
 
+  // Options arrive as one JSON field from the editor; absent = keep as-is.
+  const options = parseOptions(formData);
+  if (!options.ok) return {error: 'options'};
+
   const repos = createRestaurantRepos(membership.restaurant.id);
   const updated = await repos.items.update(itemId.data, {
     nameAr: parsed.data.nameAr,
@@ -208,6 +274,14 @@ export async function updateItemAction(
     pricePiastres: Math.round(parseFloat(parsed.data.price) * 100)
   });
   if (!updated) return {error: 'generic'};
+  // The editor always submits the full group set — replace it wholesale.
+  if (options.groups) {
+    try {
+      await repos.options.replaceAllForItem(itemId.data, optionsForRepo(options.groups));
+    } catch {
+      return {error: 'generic'};
+    }
+  }
 
   revalidatePath(`/${locale}/dashboard/menu`);
   return {};

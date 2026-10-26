@@ -4,16 +4,25 @@
  * integration — just a `wa.me` deep link.
  */
 
+import type {OrderItemOptionSnapshot} from '@/server/db/schema/orders';
+
 export type OrderMessageItem = {
   name: string;
   quantity: number;
   lineTotalPiastres: number;
+  /** Selected sizes/modifiers/add-ons, frozen snapshots on the order line. */
+  options?: OrderItemOptionSnapshot[];
 };
 
 export type OrderMessage = {
   restaurantName: string;
   orderLabel: string;
+  /** Where the order is consumed — drives the "نوع الطلب" line. */
+  orderType: 'dine_in' | 'delivery' | 'takeaway';
+  /** Dine-in: the scanned table's label ("طاولة ٣"). */
   tableLabel?: string | null;
+  /** Delivery: the address the customer typed on the checkout sheet. */
+  deliveryAddress?: string | null;
   items: OrderMessageItem[];
   totalPiastres: number;
   customerName?: string | null;
@@ -30,13 +39,41 @@ export type OrderMessage = {
   formatPrice: (piastres: number) => string;
 };
 
+/** "الحجم: كيلو، الإضافات: جبنة (+15 ج.م)" — one line's selected options. */
+export function formatItemOptions(
+  options: OrderItemOptionSnapshot[],
+  formatPrice: (piastres: number) => string
+): string | null {
+  if (!options || options.length === 0) return null;
+  const byGroup = new Map<string, string[]>();
+  for (const option of options) {
+    const names = byGroup.get(option.groupNameAr) ?? [];
+    const delta =
+      option.priceDeltaPiastres !== 0 ? ` (+${formatPrice(option.priceDeltaPiastres)})` : '';
+    names.push(`${option.nameAr}${delta}`);
+    byGroup.set(option.groupNameAr, names);
+  }
+  return [...byGroup.entries()].map(([group, names]) => `${group}: ${names.join('، ')}`).join('، ');
+}
+
 /** Arabic-first message — the customer sends it to the restaurant as-is. */
 export function buildOrderMessage(message: OrderMessage): string {
   const lines: string[] = [`${message.restaurantName} — ${message.orderLabel}`];
-  if (message.tableLabel) lines.push(message.tableLabel);
+  if (message.orderType === 'dine_in' && message.tableLabel) {
+    lines.push(`نوع الطلب: داخل المطعم — ${message.tableLabel}`);
+  } else if (message.orderType === 'dine_in') {
+    lines.push('نوع الطلب: داخل المطعم');
+  } else if (message.orderType === 'delivery') {
+    lines.push('نوع الطلب: توصيل للمنزل');
+    if (message.deliveryAddress) lines.push(`العنوان: ${message.deliveryAddress}`);
+  } else {
+    lines.push('نوع الطلب: استلام من الفرع');
+  }
   lines.push('');
   for (const item of message.items) {
-    lines.push(`${item.name} × ${item.quantity} — ${message.formatPrice(item.lineTotalPiastres)}`);
+    const options = item.options ? formatItemOptions(item.options, message.formatPrice) : null;
+    const name = options ? `${item.name} (${options})` : item.name;
+    lines.push(`${name} × ${item.quantity} — ${message.formatPrice(item.lineTotalPiastres)}`);
   }
   lines.push('', `الإجمالي: ${message.formatPrice(message.totalPiastres)}`);
   if (message.customerName) lines.push('', `الاسم: ${message.customerName}`);

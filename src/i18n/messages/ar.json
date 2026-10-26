@@ -165,6 +165,15 @@
       },
       "printAll": "طباعة الأكواد (A4)",
       "downloadSvg": "تنزيل QR",
+      "tent": {
+        "open": "بطاقة طاولة",
+        "close": "إغلاق",
+        "title": "بطاقة طاولة قابلة للطباعة",
+        "ctaAr": "امسح الكود واطلب من القائمة",
+        "ctaEn": "Scan to order from the menu",
+        "poweredBy": "الطلب الذكي لطاولتك عبر قائمة QR",
+        "print": "طباعة"
+      },
       "masterQr": {
         "badge": "الرمز الرئيسي العام",
         "title": "رمز QR العام للمطعم",
@@ -318,6 +327,7 @@
     "openNow": "مفتوح الآن",
     "closedNow": "مغلق حاليًا",
     "add": "إضافة",
+    "hasOptions": "خيارات متاحة",
     "sectionsNav": "أقسام القائمة",
     "dishCount": "{count, plural, zero {لا أطباق} one {طبق واحد} two {طبقان} few {# أطباق} many {# طبقًا} other {# طبق}}",
     "empty": "لا توجد أطباق متاحة الآن",
@@ -330,7 +340,10 @@
     "total": "الإجمالي",
     "customerName": "الاسم (اختياري)",
     "customerPhone": "رقم الهاتف (اختياري)",
+    "customerPhoneRequired": "رقم الهاتف (مطلوب)",
     "note": "ملاحظة (اختياري)",
+    "deliveryAddress": "عنوان التوصيل",
+    "deliveryAddressPlaceholder": "الشارع، رقم العمارة، الدور…",
     "paymentLabel": "طريقة الدفع",
     "payment": {
       "cash": "كاش",
@@ -341,6 +354,24 @@
     "sendOnWhatsApp": "إرسال عبر واتساب",
     "working": "لحظة…",
     "close": "إغلاق",
+    "orderType": {
+      "label": "نوع الطلب",
+      "dineIn": "صالة",
+      "dineInTable": "صالة — {label}",
+      "delivery": "دليفري",
+      "takeaway": "تيك أواي"
+    },
+    "options": {
+      "close": "إغلاق",
+      "required": "مطلوب",
+      "quantity": "الكمية",
+      "increase": "زيادة الكمية",
+      "decrease": "تقليل الكمية",
+      "pickOne": "اختر واحدًا",
+      "pickAny": "اختر ما تريد",
+      "chooseRequired": "أكمل الخيارات المطلوبة",
+      "addToCart": "أضف للسلة"
+    },
     "errors": {
       "cart": "السلة لم تعد صالحة — حدّث الصفحة وحاول مرة أخرى",
       "closed": "المطعم مغلق حاليًا",
@@ -401,7 +432,28 @@
     "edit": "تحرير",
     "save": "حفظ",
     "deleteItem": "حذف الطبق",
-    "deleteCategory": "حذف القسم"
+    "deleteCategory": "حذف القسم",
+    "options": {
+      "title": "الأحجام والإضافات",
+      "hint": "أحجام أو تعديلات أو إضافات يختار منها العميل عند الطلب",
+      "addGroup": "إضافة مجموعة",
+      "empty": "لا توجد خيارات بعد — أضف مجموعة أحجام أو إضافات",
+      "kindLabel": "نوع المجموعة",
+      "kind": {
+        "size": "حجم",
+        "modifier": "تعديل",
+        "addon": "إضافة"
+      },
+      "groupNameAr": "اسم المجموعة (عربي)",
+      "groupNameEn": "Group name (English)",
+      "required": "مطلوب",
+      "removeGroup": "حذف المجموعة",
+      "choiceNameAr": "اسم الخيار (عربي)",
+      "choiceNameEn": "Choice name (English)",
+      "priceDelta": "فرق السعر (جنيه)",
+      "removeChoice": "حذف الخيار",
+      "addChoice": "إضافة خيار"
+    }
   },
   "images": {
     "upload": "إضافة صورة",

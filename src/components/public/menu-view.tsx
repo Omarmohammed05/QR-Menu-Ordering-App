@@ -13,6 +13,7 @@ import {CategoryTabs, sectionId} from './category-tabs';
 import {CheckoutSheet, type CheckoutLine} from './checkout-sheet';
 import {DishRow} from './dish-row';
 import {DishViewTracker} from './dish-view-tracker';
+import {ItemOptionsSheet} from './item-options-sheet';
 
 type Props = {
   menu: PublicMenu;
@@ -21,18 +22,22 @@ type Props = {
 
 const INITIAL_STATE: PlaceOrderState = {ok: false, error: null};
 
+/** One cart entry: the dish plus its locked size/add-on selection. */
+type CartEntry = {itemId: string; options: string[]; quantity: number};
+
 /**
  * The customer's ordering surface: sticky category tabs, the dish list with
  * add steppers, a floating cart bar, and a checkout sheet. Cart prices are
- * display-only — the server re-prices every line from the DB inside
- * `placeOrderAction`.
+ * display-only — the server re-prices every line (base price and selected
+ * options) from the DB inside `placeOrderAction`.
  */
 export function MenuView({menu, tableToken}: Props) {
   const t = useTranslations('publicMenu');
   const locale = useLocale();
   const router = useRouter();
-  /** itemId → quantity. */
-  const [cart, setCart] = useState<Record<string, number>>({});
+  /** Each entry is one dish + one exact option selection. */
+  const [cart, setCart] = useState<CartEntry[]>([]);
+  const [configuring, setConfiguring] = useState<string | null>(null);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [state, formAction, pending] = useActionState(placeOrderAction, INITIAL_STATE);
   // Fresh key whenever the cart changes: a retry of the SAME cart is
@@ -55,13 +60,18 @@ export function MenuView({menu, tableToken}: Props) {
     router.push(state.statusUrl);
   }, [state, router]);
 
-  const change = (id: string, delta: number) => {
+  const change = (entry: Omit<CartEntry, 'quantity'>, delta: number) => {
     setIdempotencyKey(crypto.randomUUID()); // the cart is changing → new order
     setCart((prev) => {
-      const next = {...prev};
-      const quantity = (next[id] ?? 0) + delta;
-      if (quantity <= 0) delete next[id];
-      else next[id] = Math.min(quantity, 50);
+      const key = (line: Omit<CartEntry, 'quantity'>) =>
+        line.options.length === 0 ? line.itemId : `${line.itemId}|${[...line.options].sort().join(',')}`;
+      const index = prev.findIndex((line) => key(line) === key(entry));
+      if (index === -1 && delta > 0) return [...prev, {...entry, quantity: delta}];
+      if (index === -1) return prev;
+      const next = [...prev];
+      const quantity = Math.min(50, Math.max(0, next[index]!.quantity + delta));
+      if (quantity <= 0) next.splice(index, 1);
+      else next[index] = {...next[index]!, quantity};
       return next;
     });
   };
@@ -70,16 +80,44 @@ export function MenuView({menu, tableToken}: Props) {
     () => new Map(menu.categories.flatMap((c) => c.items).map((i) => [i.id, i])),
     [menu.categories]
   );
-  const cartLines: CheckoutLine[] = Object.entries(cart).flatMap(([id, quantity]) => {
-    const item = itemsById.get(id);
-    return item ? [{item, quantity}] : [];
+  const cartLines: CheckoutLine[] = cart.flatMap((entry) => {
+    const item = itemsById.get(entry.itemId);
+    if (!item) return [];
+    const unitPricePiastres =
+      entry.options.length === 0
+        ? item.pricePiastres
+        : // Deltas come from the same groups the sheet listed.
+          item.pricePiastres +
+          item.optionGroups
+            .flatMap((group) => group.choices)
+            .filter((choice) => entry.options.includes(choice.id))
+            .reduce((sum, choice) => sum + choice.priceDeltaPiastres, 0);
+    return [
+      {
+        item: {
+          id: item.id,
+          nameAr: item.nameAr,
+          nameEn: item.nameEn,
+          pricePiastres: item.pricePiastres,
+          optionGroups: item.optionGroups
+        },
+        quantity: entry.quantity,
+        options: entry.options,
+        unitPricePiastres,
+        lineTotalPiastres: unitPricePiastres * entry.quantity
+      }
+    ];
   });
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
-  const cartTotal = cartLines.reduce(
-    (sum, line) => sum + line.item.pricePiastres * line.quantity,
-    0
-  );
+  const cartTotal = cartLines.reduce((sum, line) => sum + line.lineTotalPiastres, 0);
   const currency = menu.restaurant.currency;
+  const configuringItem = configuring ? itemsById.get(configuring) : null;
+  const lineKey = (itemId: string, options: string[]) =>
+    options.length === 0 ? itemId : `${itemId}|${[...options].sort().join(',')}`;
+  const quantityFor = (itemId: string, options: string[] = []) =>
+    cart
+      .filter((line) => lineKey(line.itemId, line.options) === lineKey(itemId, options))
+      .reduce((sum, line) => sum + line.quantity, 0);
 
   return (
     <>
@@ -117,10 +155,11 @@ export function MenuView({menu, tableToken}: Props) {
                     <DishRow
                       key={item.id}
                       item={item}
-                      quantity={cart[item.id] ?? 0}
+                      quantity={quantityFor(item.id)}
                       priceLabel={formatPrice(item.pricePiastres, locale, currency)}
-                      onIncrement={() => change(item.id, 1)}
-                      onDecrement={() => change(item.id, -1)}
+                      onIncrement={() => change({itemId: item.id, options: []}, 1)}
+                      onDecrement={() => change({itemId: item.id, options: []}, -1)}
+                      onConfigure={() => setConfiguring(item.id)}
                     />
                   ))}
                 </ul>
@@ -171,11 +210,24 @@ export function MenuView({menu, tableToken}: Props) {
           slug={menu.restaurant.slug}
           instapayHandle={menu.restaurant.instapayHandle}
           tableToken={tableToken}
+          tableLabel={menu.table?.label ?? null}
           idempotencyKey={idempotencyKey}
           action={formAction}
           state={state}
           pending={pending}
           onClose={() => setCheckoutOpen(false)}
+        />
+      ) : null}
+
+      {configuringItem && !checkoutOpen ? (
+        <ItemOptionsSheet
+          item={configuringItem}
+          currency={currency}
+          onClose={() => setConfiguring(null)}
+          onAdd={(options, quantity) => {
+            change({itemId: configuringItem.id, options}, quantity);
+            setConfiguring(null);
+          }}
         />
       ) : null}
     </>

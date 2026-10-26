@@ -4,6 +4,7 @@ import {useActionState} from 'react';
 import {useTranslations} from 'next-intl';
 import {createItemAction, type CreateItemState} from '@/server/actions/menu';
 import {ImageUpload} from '@/components/dashboard/image-upload';
+import {OptionsEditor} from '@/components/dashboard/options-editor';
 
 /** New dish in one section. Price is typed in EGP and stored as piastres. */
 export function AddItemForm({locale, categoryId}: {locale: string; categoryId: string}) {
@@ -40,6 +41,7 @@ export function AddItemForm({locale, categoryId}: {locale: string; categoryId: s
           className={inputClass}
         />
       </label>
+      <OptionsEditor />
       {error ? (
         <p role="alert" className="text-sm font-medium">
           {error}

@@ -4,6 +4,8 @@ import {useActionState} from 'react';
 import {useTranslations} from 'next-intl';
 import {updateItemAction, type UpdateItemState} from '@/server/actions/menu';
 import {ImageUpload} from '@/components/dashboard/image-upload';
+import {OptionsEditor} from '@/components/dashboard/options-editor';
+import type {PublicOptionGroup} from '@/lib/options';
 
 type Props = {
   locale: string;
@@ -13,6 +15,7 @@ type Props = {
     descriptionAr: string | null;
     pricePiastres: number;
     imageUrl: string | null;
+    optionGroups: PublicOptionGroup[];
   };
 };
 
@@ -73,6 +76,7 @@ export function EditItemForm({locale, item}: Props) {
           className={inputClass}
         />
       </label>
+      <OptionsEditor optionGroups={item.optionGroups} />
       {error ? (
         <p role="alert" className="text-sm font-medium">
           {error}

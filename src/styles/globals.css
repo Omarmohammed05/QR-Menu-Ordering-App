@@ -11,6 +11,7 @@
   --color-hairline: var(--hairline);
   --color-hairline-strong: var(--hairline-strong);
   --color-destructive: var(--destructive);
+  --color-accent: var(--accent);
   --color-focus: var(--focus);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
@@ -50,6 +51,27 @@ html[dir='rtl'] body {
     background: var(--surface);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+}
+
+/*
+ * Table-tent printing: only the tent card reaches the paper. The modal sets
+ * `data-tent-print` on <body> before calling window.print() and removes it
+ * on afterprint — everything else on the page stays invisible.
+ */
+@media print {
+  body[data-tent-print] * {
+    visibility: hidden !important;
+  }
+  body[data-tent-print] #tent-print-root,
+  body[data-tent-print] #tent-print-root * {
+    visibility: visible !important;
+  }
+  body[data-tent-print] #tent-print-root {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
   }
 }
 

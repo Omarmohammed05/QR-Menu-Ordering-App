@@ -3,7 +3,7 @@ import {check, foreignKey, index, integer, jsonb, pgTable, text, timestamp, uniq
 import {sql} from 'drizzle-orm';
 import {restaurants, restaurantTables} from './restaurants';
 import {menuItems} from './menu';
-import {orderStatus, paymentMethod} from './enums';
+import {orderStatus, orderType, paymentMethod} from './enums';
 
 const tenantId = () =>
   uuid()
@@ -24,6 +24,11 @@ export type OrderItemOptionSnapshot = {
   nameAr: string;
   nameEn: string | null;
   priceDeltaPiastres: number;
+  /** Which kind of group the choice came from — shapes the WhatsApp line. */
+  kind: 'size' | 'modifier' | 'addon';
+  /** Group display names, frozen with the line (later menu edits keep history). */
+  groupNameAr: string;
+  groupNameEn: string | null;
 };
 
 /**
@@ -39,6 +44,10 @@ export const orders = pgTable(
     restaurantId: tenantId(),
     tableId: uuid(),
     status: orderStatus().notNull().default('pending'),
+    /** Dine-in (table QR), delivery, or takeaway — drives the WhatsApp line. */
+    orderType: orderType().notNull().default('takeaway'),
+    /** Delivery orders only — where to bring the food. */
+    deliveryAddress: text(),
     customerName: text(),
     customerPhone: text(),
     note: text(),

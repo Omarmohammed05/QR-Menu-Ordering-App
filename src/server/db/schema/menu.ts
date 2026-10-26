@@ -1,6 +1,7 @@
 import {boolean, check, foreignKey, index, integer, pgTable, text, timestamp, unique, uuid} from 'drizzle-orm/pg-core';
 import {sql} from 'drizzle-orm';
 import {restaurants} from './restaurants';
+import {menuOptionKind} from './enums';
 
 const tenantId = () =>
   uuid()
@@ -69,28 +70,61 @@ export const menuItems = pgTable(
   ]
 );
 
-/** Paid extras / sizes on a dish (e.g. "extra cheese +500 piastres"). */
-export const menuItemOptions = pgTable(
-  'menu_item_options',
+/**
+ * One group of choices on a dish (feature: sizes, modifiers & add-ons):
+ * "الحجم" (size, pick one), "مستوى الحار" (modifier, required pick), or
+ * "إضافات" (addon, any number). `(restaurant_id, id)` is the composite FK
+ * target for the choices — cross-tenant rows cannot exist (ADR-002).
+ */
+export const menuItemOptionGroups = pgTable(
+  'menu_item_option_groups',
   {
     id: uuid().primaryKey().defaultRandom(),
     restaurantId: tenantId(),
     menuItemId: uuid().notNull(),
     nameAr: text().notNull(),
     nameEn: text(),
-    /** Signed: a discount option would carry a negative delta. */
+    /** size → pick exactly one; modifier → pick one when required; addon → checkboxes. */
+    kind: menuOptionKind().notNull().default('addon'),
+    /** Required groups must be answered before the dish enters the cart. */
+    isRequired: boolean().notNull().default(false),
+    sortOrder: integer().notNull().default(0),
+    isActive: boolean().notNull().default(true),
+    ...timestamps()
+  },
+  (t) => [
+    unique('menu_item_option_groups_tenant_id_unique').on(t.restaurantId, t.id),
+    foreignKey({
+      name: 'menu_item_option_groups_item_fk',
+      columns: [t.restaurantId, t.menuItemId],
+      foreignColumns: [menuItems.restaurantId, menuItems.id]
+    }).onDelete('cascade'),
+    index('menu_item_option_groups_restaurant_idx').on(t.restaurantId)
+  ]
+);
+
+/** One selectable choice in an option group (e.g. "كيلو +4500 piastres"). */
+export const menuItemOptionChoices = pgTable(
+  'menu_item_option_choices',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    restaurantId: tenantId(),
+    optionGroupId: uuid().notNull(),
+    nameAr: text().notNull(),
+    nameEn: text(),
+    /** Non-negative delta added to the dish base price (integer piastres). */
     priceDeltaPiastres: integer().notNull().default(0),
     sortOrder: integer().notNull().default(0),
     isActive: boolean().notNull().default(true),
     ...timestamps()
   },
   (t) => [
-    unique('menu_item_options_tenant_id_unique').on(t.restaurantId, t.id),
+    unique('menu_item_option_choices_tenant_id_unique').on(t.restaurantId, t.id),
     foreignKey({
-      name: 'menu_item_options_item_fk',
-      columns: [t.restaurantId, t.menuItemId],
-      foreignColumns: [menuItems.restaurantId, menuItems.id]
+      name: 'menu_item_option_choices_group_fk',
+      columns: [t.restaurantId, t.optionGroupId],
+      foreignColumns: [menuItemOptionGroups.restaurantId, menuItemOptionGroups.id]
     }).onDelete('cascade'),
-    check('menu_item_options_delta_check', sql`${t.priceDeltaPiastres} >= 0`)
+    check('menu_item_option_choices_delta_check', sql`${t.priceDeltaPiastres} >= 0`)
   ]
 );

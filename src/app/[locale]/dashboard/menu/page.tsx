@@ -5,6 +5,7 @@ import {toggleItemAvailabilityAction} from '@/server/actions/menu';
 import {MenuBookIcon, OrdersIcon} from '@/components/icons';
 import {formatNumber} from '@/lib/format';
 import {AddCategoryForm} from '@/components/dashboard/add-category-form';
+import {limitsForPlan} from '@/lib/plans';
 import {AddItemForm} from '@/components/dashboard/add-item-form';
 import {EditCategoryForm} from '@/components/dashboard/edit-category-form';
 import {DeleteCategoryButton} from '@/components/dashboard/delete-category-button';
@@ -29,6 +30,10 @@ export default async function MenuManagementPage({params}: Props) {
     repos.options.listByItem()
   ]);
   const optionsByItem = new Map(optionBuckets.map((bucket) => [bucket.itemId, bucket.groups]));
+
+  // Plan gate (src/lib/plans.ts): Basic caps dishes and has no sizes/add-ons.
+  const limits = limitsForPlan(membership.restaurant.plan);
+  const itemCapReached = limits.maxItems !== null && items.length >= limits.maxItems;
 
   const itemsByCategory = new Map<string, typeof items>();
   for (const item of items) {
@@ -168,6 +173,7 @@ export default async function MenuManagementPage({params}: Props) {
                         <div className="mt-4 flex flex-col gap-4 border-t border-hairline pt-4">
                           <EditItemForm
                             locale={locale}
+                            optionsAllowed={limits.canUseOptions}
                             item={{
                               id: item.id,
                               nameAr: item.nameAr,
@@ -219,7 +225,12 @@ export default async function MenuManagementPage({params}: Props) {
                 </ul>
               )}
               <div className="border-t border-hairline pt-4">
-                <AddItemForm locale={locale} categoryId={category.id} />
+                <AddItemForm
+                  locale={locale}
+                  categoryId={category.id}
+                  optionsAllowed={limits.canUseOptions}
+                  itemCapReached={itemCapReached}
+                />
               </div>
             </section>
           );

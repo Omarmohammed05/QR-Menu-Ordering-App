@@ -23,7 +23,9 @@ const payloadSchema = z.object({
   nameAr: z.string().trim().min(1, 'nameAr').max(200, 'nameAr'),
   nameEn: z.string().trim().max(200, 'nameEn').transform((value) => value || null),
   // E.164 without the double-zero variant — the WhatsApp handoff needs it exact.
-  whatsappNumber: z.string().trim().regex(/^\+[1-9]\d{7,14}$/, 'whatsapp')
+  whatsappNumber: z.string().trim().regex(/^\+[1-9]\d{7,14}$/, 'whatsapp'),
+  // The chosen pricing tier; absent (older forms) keeps the `pro` default.
+  plan: z.enum(['basic', 'pro', 'chain']).default('pro')
 });
 
 const SLUG_ATTEMPTS = 5;
@@ -58,7 +60,8 @@ async function tryCreateRestaurantWithInvite(
           slug,
           nameAr: values.nameAr,
           nameEn: values.nameEn,
-          whatsappNumber: values.whatsappNumber
+          whatsappNumber: values.whatsappNumber,
+          plan: values.plan
         })
         .returning();
       if (!restaurant) throw new Error('restaurant insert returned no row');
@@ -88,7 +91,8 @@ export async function createRestaurantWithInviteAction(
   const parsed = payloadSchema.safeParse({
     nameAr: formData.get('nameAr') ?? '',
     nameEn: formData.get('nameEn') ?? '',
-    whatsappNumber: formData.get('whatsappNumber') ?? ''
+    whatsappNumber: formData.get('whatsappNumber') ?? '',
+    plan: formData.get('plan') ?? undefined
   });
   if (!parsed.success) {
     return {error: parsed.error.issues[0]?.message === 'whatsapp' ? 'whatsapp' : 'nameAr'};

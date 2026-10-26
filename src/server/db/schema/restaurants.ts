@@ -1,7 +1,7 @@
 import {boolean, check, integer, pgTable, smallint, text, time, timestamp, unique, uuid} from 'drizzle-orm/pg-core';
 import {sql} from 'drizzle-orm';
 import {users} from './auth';
-import {membershipRole} from './enums';
+import {membershipRole, restaurantPlan} from './enums';
 
 const tenantId = () =>
   uuid()
@@ -36,6 +36,8 @@ export const restaurants = pgTable('restaurants', {
   /** InstaPay address customers send to — empty means cash-only checkout. */
   instapayHandle: text(),
   currency: text().notNull().default('EGP'),
+  /** Subscription plan — gates dashboard features (see src/lib/plans.ts). */
+  plan: restaurantPlan().notNull().default('pro'),
   isActive: boolean().notNull().default(true),
   /** Handed out transactionally — the source of per-tenant order numbers. */
   orderCounter: integer().notNull().default(0),

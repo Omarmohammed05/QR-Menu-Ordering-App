@@ -3,6 +3,7 @@
 import {useActionState} from 'react';
 import {useTranslations} from 'next-intl';
 import {createRestaurantWithInviteAction, type AdminCreateState} from '@/server/actions/admin';
+import {PlanPicker} from '@/components/admin/plan-picker';
 
 const INITIAL_STATE: AdminCreateState = {};
 
@@ -44,6 +45,7 @@ export function CreateRestaurantForm({locale}: {locale: string}) {
           </button>
         </div>
       </label>
+      <PlanPicker />
       {error ? (
         <p role="alert" className="text-sm font-medium">
           {error}

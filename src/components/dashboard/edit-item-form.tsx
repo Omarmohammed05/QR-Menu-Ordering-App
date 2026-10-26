@@ -9,6 +9,8 @@ import type {PublicOptionGroup} from '@/lib/options';
 
 type Props = {
   locale: string;
+  /** Plan gate (src/lib/plans.ts): Basic has no sizes/add-ons editor. */
+  optionsAllowed?: boolean;
   item: {
     id: string;
     nameAr: string;
@@ -25,7 +27,7 @@ export function priceText(piastres: number): string {
 }
 
 /** Edit a dish: name, description, price. Uncontrolled inputs seeded with current values. */
-export function EditItemForm({locale, item}: Props) {
+export function EditItemForm({locale, optionsAllowed = true, item}: Props) {
   const t = useTranslations('menuManagement');
   const [state, formAction, pending] = useActionState<UpdateItemState, FormData>(
     updateItemAction,
@@ -76,7 +78,11 @@ export function EditItemForm({locale, item}: Props) {
           className={inputClass}
         />
       </label>
-      <OptionsEditor optionGroups={item.optionGroups} />
+      {optionsAllowed ? (
+        <OptionsEditor optionGroups={item.optionGroups} />
+      ) : (
+        <p className="text-xs leading-relaxed text-muted-foreground">{t('optionsUpsell')}</p>
+      )}
       {error ? (
         <p role="alert" className="text-sm font-medium">
           {error}

@@ -2,6 +2,8 @@ import {getTranslations} from 'next-intl/server';
 import {requireMember} from '@/server/dashboard';
 import {createRestaurantRepos} from '@/server/db/repos';
 import {AnalyticsView} from '@/components/dashboard/analytics-view';
+import {limitsForPlan} from '@/lib/plans';
+import {ChartIcon} from '@/components/icons';
 
 type Props = {params: Promise<{locale: string}>};
 
@@ -13,6 +15,25 @@ type Props = {params: Promise<{locale: string}>};
 export default async function AnalyticsPage({params}: Props) {
   const {locale} = await params;
   const {membership} = await requireMember(locale);
+  const t = await getTranslations('dashboard.analytics');
+
+  // Plan gate (src/lib/plans.ts): analytics is a Pro feature.
+  if (!limitsForPlan(membership.restaurant.plan).canUseAnalytics) {
+    return (
+      <div className="flex min-h-64 flex-col items-center justify-center gap-4 rounded-xl border border-hairline bg-surface p-8 text-center">
+        <span className="grid size-12 place-items-center rounded-full bg-muted text-muted-foreground">
+          <ChartIcon className="size-6" />
+        </span>
+        <div className="flex flex-col gap-1.5">
+          <h1 className="text-xl font-semibold tracking-tight">{t('planRequired.title')}</h1>
+          <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+            {t('planRequired.body')}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const repos = createRestaurantRepos(membership.restaurant.id);
 
   const [series, topDishes] = await Promise.all([
@@ -20,7 +41,6 @@ export default async function AnalyticsPage({params}: Props) {
     repos.analytics.topDishes(30, 5)
   ]);
 
-  const t = await getTranslations('dashboard.analytics');
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">

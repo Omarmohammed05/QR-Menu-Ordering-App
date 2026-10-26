@@ -43,6 +43,9 @@ export async function RestaurantCard({
           </span>
         </div>
         <div className="flex shrink-0 items-center gap-2">
+          <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+            {t(`plan.${restaurant.plan}`)}
+          </span>
           {restaurant.isActive ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-2.5 py-0.5 text-[11px] font-medium text-background">
               <span className="size-1.5 rounded-full bg-current" />

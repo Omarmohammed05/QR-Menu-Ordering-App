@@ -5,11 +5,12 @@ import {z} from 'zod';
 import {routing} from '@/i18n/routing';
 import {requireMember} from '@/server/dashboard';
 import {createRestaurantRepos} from '@/server/db/repos';
+import {limitsForPlan} from '@/lib/plans';
 
 type Locale = (typeof routing.locales)[number];
 
 /** Machine-readable failure codes; the forms map them to locale strings. */
-export type CreateTableState = {error?: 'label' | 'forbidden' | 'generic'};
+export type CreateTableState = {error?: 'label' | 'planTableLimit' | 'forbidden' | 'generic'};
 
 const labelSchema = z.string().trim().min(1, 'label').max(100, 'label');
 
@@ -36,6 +37,12 @@ export async function createTableAction(
   if (!parsed.success) return {error: 'label'};
 
   const repos = createRestaurantRepos(membership.restaurant.id);
+  // Plan gate: the Basic tier allows a single active QR'd table.
+  const limits = limitsForPlan(membership.restaurant.plan);
+  if (limits.maxTables !== null) {
+    const active = (await repos.tables.list()).filter((table) => table.isActive);
+    if (active.length >= limits.maxTables) return {error: 'planTableLimit'};
+  }
   try {
     await repos.tables.create({label: parsed.data});
   } catch {

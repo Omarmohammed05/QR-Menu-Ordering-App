@@ -5,6 +5,7 @@ import {env} from '@/server/env';
 import {buildPublicMenuUrl} from '@/lib/public-url';
 import {qrSvg} from '@/lib/qr';
 import {setTableActiveAction} from '@/server/actions/tables';
+import {limitsForPlan} from '@/lib/plans';
 import {CreateTableForm} from '@/components/dashboard/create-table-form';
 import {CopyLinkButton} from '@/components/dashboard/copy-link-button';
 import {PrintButton} from '@/components/dashboard/print-button';
@@ -47,6 +48,9 @@ export default async function TablesPage({params}: Props) {
     }))
   );
   const activeCount = cards.filter((card) => card.isActive).length;
+  // Plan gate (src/lib/plans.ts): the Basic tier allows one active QR table.
+  const limits = limitsForPlan(membership.restaurant.plan);
+  const capReached = limits.maxTables !== null && activeCount >= limits.maxTables;
 
   return (
     <div className="flex flex-col gap-6 print:gap-4">
@@ -124,7 +128,7 @@ export default async function TablesPage({params}: Props) {
         style={{animationDelay: '180ms'}}
         className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 print:hidden"
       >
-        <CreateTableForm locale={locale} />
+        <CreateTableForm locale={locale} capReached={capReached} />
       </div>
       {cards.length === 0 ? (
         <p className="animate-fade-in rounded-xl border border-dashed border-hairline px-3 py-6 text-center text-sm text-muted-foreground print:hidden">

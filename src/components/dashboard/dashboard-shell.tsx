@@ -27,6 +27,8 @@ type Props = {
   userEmail: string;
   /** Platform owner sees the admin link — sign-up is closed, only they creates restaurants. */
   showAdmin?: boolean;
+  /** Plan gate (src/lib/plans.ts): analytics is a Pro feature. */
+  canViewAnalytics?: boolean;
   children: ReactNode;
 };
 
@@ -43,6 +45,7 @@ export function DashboardShell({
   activeRestaurantId,
   userEmail,
   showAdmin = false,
+  canViewAnalytics = true,
   children
 }: Props) {
   const t = useTranslations('dashboard');
@@ -57,12 +60,18 @@ export function DashboardShell({
   const nav: NavItem[] = [
     {href: '/dashboard', label: t('nav.overview'), icon: <LogoGlyphIcon className="size-[18px]" />},
     {href: '/dashboard/orders', label: t('nav.orders'), icon: <OrdersIcon className="size-[18px]" />},
-    {href: '/dashboard/analytics', label: t('nav.analytics'), icon: <ChartIcon className="size-[18px]" />},
     {href: '/dashboard/menu', label: t('nav.menu'), icon: <MenuBookIcon className="size-[18px]" />},
     {href: '/dashboard/tables', label: t('nav.tables'), icon: <QrCodeIcon className="size-[18px]" />},
     {href: '/dashboard/team', label: t('nav.team'), icon: <PersonIcon className="size-[18px]" />},
     {href: '/dashboard/settings', label: t('nav.settings'), icon: <SettingsIcon className="size-[18px]" />}
   ];
+  if (canViewAnalytics) {
+    nav.splice(2, 0, {
+      href: '/dashboard/analytics',
+      label: t('nav.analytics'),
+      icon: <ChartIcon className="size-[18px]" />
+    });
+  }
   if (showAdmin) {
     nav.push({href: '/admin', label: t('nav.admin'), icon: <StoreIcon className="size-[18px]" />});
   }

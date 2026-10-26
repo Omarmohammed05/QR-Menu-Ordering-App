@@ -2,12 +2,25 @@
 
 import {useActionState} from 'react';
 import {useTranslations} from 'next-intl';
-import {createItemAction, type CreateItemState} from '@/server/actions/menu';
+import {createItemAction} from '@/server/actions/menu';
 import {ImageUpload} from '@/components/dashboard/image-upload';
 import {OptionsEditor} from '@/components/dashboard/options-editor';
 
-/** New dish in one section. Price is typed in EGP and stored as piastres. */
-export function AddItemForm({locale, categoryId}: {locale: string; categoryId: string}) {
+/**
+ * New dish in one section. Price is typed in EGP and stored as piastres.
+ * Plan props (src/lib/plans.ts): Basic has no sizes/add-ons and caps dishes.
+ */
+export function AddItemForm({
+  locale,
+  categoryId,
+  optionsAllowed = true,
+  itemCapReached = false
+}: {
+  locale: string;
+  categoryId: string;
+  optionsAllowed?: boolean;
+  itemCapReached?: boolean;
+}) {
   const t = useTranslations('menuManagement');
   const [state, formAction, pending] = useActionState(createItemAction, {});
   const error = state.error ? t(`errors.${state.error}`) : null;
@@ -41,7 +54,16 @@ export function AddItemForm({locale, categoryId}: {locale: string; categoryId: s
           className={inputClass}
         />
       </label>
-      <OptionsEditor />
+      {optionsAllowed ? (
+        <OptionsEditor />
+      ) : (
+        <p className="text-xs leading-relaxed text-muted-foreground">{t('optionsUpsell')}</p>
+      )}
+      {itemCapReached ? (
+        <p role="note" className="text-sm font-medium">
+          {t('itemCapNote')}
+        </p>
+      ) : null}
       {error ? (
         <p role="alert" className="text-sm font-medium">
           {error}
@@ -49,7 +71,7 @@ export function AddItemForm({locale, categoryId}: {locale: string; categoryId: s
       ) : null}
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || itemCapReached}
         className="self-start rounded-base border border-hairline px-4 py-2 text-sm font-medium transition-[transform] duration-100 active:scale-[0.98] disabled:opacity-50"
       >
         {pending ? t('working') : t('addItem')}

@@ -199,6 +199,10 @@
       "topDishes": {
         "title": "Most ordered dishes — last 30 days",
         "empty": "No orders yet — best sellers appear with the first order"
+      },
+      "planRequired": {
+        "title": "Analytics is a Pro feature",
+        "body": "Upgrade to Pro to see menu views, orders and best sellers."
       }
     },
     "orders": {
@@ -276,7 +280,8 @@
       "errors": {
         "label": "Enter the table label",
         "forbidden": "You don't have permission to manage tables",
-        "generic": "Something went wrong, try again"
+        "generic": "Something went wrong, try again",
+        "planTableLimit": "Your plan allows one active table — upgrade for more"
       },
       "stats": {
         "total": "Total tables",
@@ -300,7 +305,8 @@
         "download": "Download SVG",
         "copyLink": "Copy link",
         "copied": "Copied"
-      }
+      },
+      "capNote": "Your plan allows one active table — upgrade for more"
     },
     "settings": {
       "title": "Settings",
@@ -546,7 +552,9 @@
       "forbidden": "You don't have permission to edit the menu",
       "generic": "Something went wrong, try again",
       "itemInUse": "This dish has past orders — hide it instead",
-      "categoryInUse": "This section still has dishes — delete them first"
+      "categoryInUse": "This section still has dishes — delete them first",
+      "planItemLimit": "Your plan's dish limit is reached — upgrade to add more",
+      "planNoOptions": "Sizes & add-ons are available on the Pro plan"
     },
     "edit": "Edit",
     "save": "Save",
@@ -572,7 +580,9 @@
       "priceDelta": "Price delta (EGP)",
       "removeChoice": "Remove choice",
       "addChoice": "Add choice"
-    }
+    },
+    "optionsUpsell": "Sizes, modifiers & add-ons are available on the Pro plan",
+    "itemCapNote": "Dish limit reached for your plan"
   },
   "images": {
     "upload": "Add image",
@@ -649,7 +659,41 @@
       "sendInvite": "Send on WhatsApp",
       "regenerate": "New code",
       "issueInvite": "Issue invite code",
-      "shareText": "Hi {name}! Activate your restaurant account on the digital menus platform from this link:\n{url}\nActivation code: {code}"
+      "shareText": "Hi {name}! Activate your restaurant account on the digital menus platform from this link:\n{url}\nActivation code: {code}",
+      "plan": {
+        "basic": "Basic",
+        "pro": "Pro",
+        "chain": "Chain"
+      }
+    },
+    "plans": {
+      "label": "Plan",
+      "items": {
+        "basic": {
+          "name": "Basic",
+          "features": {
+            "0": "Up to 30 dishes",
+            "1": "One active QR table",
+            "2": "WhatsApp ordering"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "features": {
+            "0": "Unlimited dishes & tables",
+            "1": "Sizes, add-ons & modifiers",
+            "2": "Menu analytics"
+          }
+        },
+        "chain": {
+          "name": "Chain",
+          "features": {
+            "0": "Everything in Pro",
+            "1": "Multiple branches (coming soon)",
+            "2": "Priority WhatsApp support"
+          }
+        }
+      }
     }
   }
 }

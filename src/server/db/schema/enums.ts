@@ -34,3 +34,10 @@ export const menuOptionKind = pgEnum('menu_option_kind', ['size', 'modifier', 'a
  * delivery and takeaway are the customer's toggle on the checkout sheet.
  */
 export const orderType = pgEnum('order_type', ['dine_in', 'delivery', 'takeaway']);
+
+/**
+ * Subscription plan — the platform owner picks it when creating the
+ * restaurant (see src/lib/plans.ts for what each tier gates). Rows that
+ * predate plans default to `pro`, so no existing restaurant regresses.
+ */
+export const restaurantPlan = pgEnum('restaurant_plan', ['basic', 'pro', 'chain']);

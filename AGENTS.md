@@ -27,6 +27,7 @@ Next.js 16 (App Router, Turbopack) + React 19 + TypeScript (strict, `noUnchecked
 - DB: schema (Phase 1+) lives in `src/server/db/schema/` (split by domain, barreled via `src/server/db/schema.ts`); every query goes through `src/server/db` — the UI never imports `postgres` directly. See `docs/adr/ADR-001` (same migrations locally and on Neon; driver selected by env).
 - Tenancy (ADR-002): every tenant table carries `restaurant_id`; same-tenant references use composite FKs `(restaurant_id, target_id)` so cross-tenant rows cannot exist even via raw SQL. All tenant data access goes through `createRestaurantRepos(restaurantId)` in `src/server/db/repos/` — it injects and filters by the tenant id; callers never pass it. Column keys are camelCase; `snake_case` casing is set in BOTH `drizzle.config.ts` and the runtime client. `repos.tenant-isolation.test.ts` applies the committed `drizzle/` migrations itself and must stay green.
 - Money: integers (piastres) in DB. Time: UTC timestamptz + IANA timezone logic.
+- Plans: `src/lib/plans.ts` is the single source of per-tier limits (Basic = 30 dishes / 1 active table / no sizes-add-ons / no analytics; Pro & Chain unlimited). The platform owner picks the plan when creating a restaurant (`restaurants.plan`, migration 0008; rows default to `pro`). Server actions enforce the limits — the dashboard UI only mirrors them.
 - Imports use the `@/` alias → `src/`.
 
 ## Verify

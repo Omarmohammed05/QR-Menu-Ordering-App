@@ -5,15 +5,20 @@ import {z} from 'zod';
 import {routing} from '@/i18n/routing';
 import {requireMember} from '@/server/dashboard';
 import {createRestaurantRepos} from '@/server/db/repos';
+import {limitsForPlan} from '@/lib/plans';
 
 type Locale = (typeof routing.locales)[number];
 
 /** Machine-readable failure codes; the forms map them to locale strings. */
 export type CreateCategoryState = {error?: 'nameAr' | 'forbidden' | 'generic'};
-export type CreateItemState = {error?: 'nameAr' | 'price' | 'category' | 'options' | 'forbidden' | 'generic'};
+export type CreateItemState = {
+  error?: 'nameAr' | 'price' | 'category' | 'options' | 'planItemLimit' | 'planNoOptions' | 'forbidden' | 'generic';
+};
 export type UpdateCategoryState = {error?: 'nameAr' | 'forbidden' | 'generic'};
 export type DeleteCategoryState = {error?: 'forbidden' | 'inUse' | 'generic'};
-export type UpdateItemState = {error?: 'nameAr' | 'price' | 'options' | 'forbidden' | 'generic'};
+export type UpdateItemState = {
+  error?: 'nameAr' | 'price' | 'options' | 'planNoOptions' | 'forbidden' | 'generic';
+};
 
 /**
  * Sizes/modifiers/add-ons as the dashboard editor submits them: one JSON
@@ -162,6 +167,17 @@ export async function createItemAction(
   if (!options.ok) return {error: 'options'};
 
   const repos = createRestaurantRepos(membership.restaurant.id);
+
+  // Plan gate (src/lib/plans.ts): the Basic tier caps dishes and has no
+  // sizes/add-ons. Enforced here, not only in the hidden form UI.
+  const limits = limitsForPlan(membership.restaurant.plan);
+  if (options.groups && options.groups.length > 0 && !limits.canUseOptions) {
+    return {error: 'planNoOptions'};
+  }
+  if (limits.maxItems !== null && (await repos.items.list()).length >= limits.maxItems) {
+    return {error: 'planItemLimit'};
+  }
+
   const category = await repos.categories.findById(categoryId.data);
   if (!category) return {error: 'category'};
 
@@ -265,6 +281,9 @@ export async function updateItemAction(
   // Options arrive as one JSON field from the editor; absent = keep as-is.
   const options = parseOptions(formData);
   if (!options.ok) return {error: 'options'};
+  if (options.groups && !limitsForPlan(membership.restaurant.plan).canUseOptions) {
+    return {error: 'planNoOptions'};
+  }
 
   const repos = createRestaurantRepos(membership.restaurant.id);
   const updated = await repos.items.update(itemId.data, {

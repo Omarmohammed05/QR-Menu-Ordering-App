@@ -19,6 +19,9 @@ next-env.d.ts
 # Tooling
 coverage/
 .husky/_/
+.vercel/
 
 # OS
 .DS_Store
+.vercel
+.env*

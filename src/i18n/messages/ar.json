@@ -115,7 +115,10 @@
             "3": "دعم واتساب بأولوية"
           }
         }
-      }
+      },
+      "durationLabel": "مدة الاشتراك",
+      "discountBadge": "خصم {percent}٪",
+      "billedNote": "يُدفع {duration} مقدماً: {total}"
     },
     "cta": {
       "title": "جاهز لتحويل قائمتك لرقمية؟",
@@ -694,6 +697,27 @@
           }
         }
       }
+    },
+    "durations": {
+      "title": "مدد الاشتراك والخصومات",
+      "tagline": "أضف مددًا مثل شهر / ٣ شهور / ٦ شهور / سنة أو مدة مخصصة — كل مدة تظهر في صفحة الأسعار مع خصمها",
+      "months": "المدة (بالأشهر)",
+      "discount": "الخصم (٪)",
+      "submit": "إضافة مدة",
+      "working": "لحظة…",
+      "delete": "حذف",
+      "discountBadge": "خصم {percent}٪",
+      "errors": {
+        "duplicate": "هذه المدة موجودة بالفعل",
+        "invalid": "أدخل مدة من ١ إلى ٦٠ شهرًا وخصمًا من ٠ إلى ٩٠٪",
+        "generic": "حدث خطأ ما، حاول مرة أخرى"
+      }
     }
+  },
+  "durations": {
+    "months": "{count, plural, =1 {شهر واحد} =2 {شهرين} few {# أشهر} many {# شهرًا} other {# شهر}}",
+    "years": "{count, plural, =1 {سنة واحدة} =2 {سنتين} few {# سنوات} many {# سنة} other {# سنة}}",
+    "monthsShort": "{count, plural, =1 {شهر} =2 {شهرين} few {# أشهر} many {# شهرًا} other {# شهر}}",
+    "yearsShort": "{count, plural, =1 {سنة} =2 {سنتين} few {# سنوات} other {# سنوات}}"
   }
 }

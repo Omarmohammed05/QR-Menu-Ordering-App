@@ -36,6 +36,7 @@ export {
 export {type AddressesRepo, type NewAddress} from './addresses';
 export {type AnalyticsRepo, type DailyPoint, type TopDish} from './analytics';
 export {type NewOptionGroup, type OptionGroup, type OptionsRepo} from './options';
+export {durationsRepo, type SubscriptionDuration} from './durations';
 
 /**
  * The scoped repo factory (ADR-002): build one repos bundle per request with

@@ -64,6 +64,13 @@
       "when": 1793008447451,
       "tag": "0008_restaurant_plans",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793008988777,
+      "tag": "0009_subscription_durations",
+      "breakpoints": true
     }
   ]
 }

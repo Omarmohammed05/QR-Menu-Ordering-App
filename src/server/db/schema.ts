@@ -6,6 +6,7 @@
 export * from './schema/enums';
 export * from './schema/auth';
 export * from './schema/restaurants';
+export * from './schema/platform';
 export * from './schema/menu';
 export * from './schema/orders';
 export * from './schema/analytics';

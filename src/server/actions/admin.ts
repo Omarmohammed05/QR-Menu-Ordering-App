@@ -6,7 +6,13 @@ import {routing} from '@/i18n/routing';
 import {requirePlatformOwner} from '@/server/platform';
 import {db} from '@/server/db';
 import {restaurantInvites, restaurants} from '@/server/db/schema';
-import {generateInviteCode, invitesRepo, restaurantsRepo} from '@/server/db/repos';
+import {
+  durationsRepo,
+  generateInviteCode,
+  invitesRepo,
+  restaurantsRepo
+} from '@/server/db/repos';
+import {MAX_DISCOUNT_PERCENT, MAX_DURATION_MONTHS} from '@/lib/plans';
 import {slugSuggestions} from '@/server/restaurants/slug';
 
 /**
@@ -113,6 +119,63 @@ export async function createRestaurantWithInviteAction(
 
   revalidatePath(`/${locale}/admin`);
   return {};
+}
+
+/** Machine-readable failure codes for the duration form. */
+export type AdminDurationState = {error?: 'duplicate' | 'invalid' | 'generic'};
+
+const durationSchema = z.object({
+  months: z.coerce
+    .number()
+    .int()
+    .min(1, 'invalid')
+    .max(MAX_DURATION_MONTHS, 'invalid'),
+  discountPercent: z.coerce
+    .number()
+    .int()
+    .min(0, 'invalid')
+    .max(MAX_DISCOUNT_PERCENT, 'invalid')
+});
+
+/**
+ * Adds a billing duration (1/3/6/12 months or a custom length) with its
+ * discount — it immediately powers the landing pricing picker.
+ */
+export async function createDurationAction(
+  _prev: AdminDurationState,
+  formData: FormData
+): Promise<AdminDurationState> {
+  const locale = localeFrom(formData);
+  await requirePlatformOwner(locale);
+
+  const parsed = durationSchema.safeParse({
+    months: formData.get('months') ?? '',
+    discountPercent: formData.get('discountPercent') ?? ''
+  });
+  if (!parsed.success) return {error: 'invalid'};
+
+  try {
+    await durationsRepo.create(parsed.data.months, parsed.data.discountPercent);
+  } catch (error) {
+    if (isUniqueViolation(error)) return {error: 'duplicate'};
+    return {error: 'generic'};
+  }
+  revalidatePath(`/${locale}/admin`);
+  revalidatePath(`/${locale}`);
+  return {};
+}
+
+/** Removes one billing duration; the landing picker re-renders without it. */
+export async function deleteDurationAction(formData: FormData): Promise<void> {
+  const locale = localeFrom(formData);
+  await requirePlatformOwner(locale);
+
+  const durationId = z.string().uuid().safeParse(formData.get('durationId') ?? '');
+  if (durationId.success) {
+    await durationsRepo.remove(durationId.data);
+  }
+  revalidatePath(`/${locale}/admin`);
+  revalidatePath(`/${locale}`);
 }
 
 /** Revokes the old link/code and issues a fresh one for this restaurant. */

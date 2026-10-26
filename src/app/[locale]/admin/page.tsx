@@ -1,10 +1,11 @@
 import {getTranslations} from 'next-intl/server';
 import {Link} from '@/i18n/navigation';
 import {requirePlatformOwner} from '@/server/platform';
-import {invitesRepo, restaurantsRepo} from '@/server/db/repos';
+import {durationsRepo, invitesRepo, restaurantsRepo} from '@/server/db/repos';
 import {env} from '@/server/env';
 import {buildPublicMenuUrl} from '@/lib/public-url';
 import {CreateRestaurantForm} from '@/components/admin/create-restaurant-form';
+import {DurationsSection} from '@/components/admin/durations-section';
 import {RestaurantCard} from '@/components/admin/restaurant-card';
 import {CheckIcon, ChevronDownIcon, ClockIcon, PlusIcon, StoreIcon} from '@/components/icons';
 
@@ -21,9 +22,10 @@ export default async function AdminPage({params}: Props) {
   await requirePlatformOwner(locale);
   const t = await getTranslations('admin');
 
-  const [rows, invites] = await Promise.all([
+  const [rows, invites, durations] = await Promise.all([
     restaurantsRepo.listAllWithOwners(),
-    invitesRepo.listAll()
+    invitesRepo.listAll(),
+    durationsRepo.list()
   ]);
   const inviteByRestaurant = new Map(invites.map((invite) => [invite.restaurantId, invite]));
   const pending = invites.filter((invite) => !invite.claimedAt).length;
@@ -91,6 +93,8 @@ export default async function AdminPage({params}: Props) {
           <CreateRestaurantForm locale={locale} />
         </div>
       </section>
+
+      <DurationsSection locale={locale} durations={durations} />
 
       <section
         style={{animationDelay: '180ms'}}

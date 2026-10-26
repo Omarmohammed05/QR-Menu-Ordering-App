@@ -29,7 +29,20 @@ export type DemoOrder = {
   lines: DemoOrderLine[];
 };
 
-export type DemoOptionGroup = {nameKey: string; choiceCount: number};
+/**
+ * One choice inside a showcase option group — the key resolves in BOTH locale
+ * message files so the sizes & add-ons editor seeds its Arabic and English
+ * name inputs like on the real dashboard.
+ */
+export type DemoOptionChoice = {nameKey: string; priceDeltaPiastres: number};
+
+/** Showcase option group feeding the real `OptionsEditor` in the demo. */
+export type DemoOptionGroup = {
+  kind: 'size' | 'modifier' | 'addon';
+  nameKey: string;
+  isRequired: boolean;
+  choices: DemoOptionChoice[];
+};
 
 export type DemoMenuItem = {
   id: string;
@@ -151,8 +164,24 @@ export const DEMO_MENU: DemoMenuCategory[] = [
         pricePiastres: 7500,
         isAvailable: true,
         optionGroups: [
-          {nameKey: 'mock.optionNames.size', choiceCount: 2},
-          {nameKey: 'mock.optionNames.addons', choiceCount: 3}
+          {
+            kind: 'size',
+            nameKey: 'mock.optionNames.size',
+            isRequired: false,
+            choices: [
+              {nameKey: 'mock.optionChoices.small', priceDeltaPiastres: 0},
+              {nameKey: 'mock.optionChoices.large', priceDeltaPiastres: 2500}
+            ]
+          },
+          {
+            kind: 'addon',
+            nameKey: 'mock.optionNames.addons',
+            isRequired: false,
+            choices: [
+              {nameKey: 'mock.optionChoices.sauce', priceDeltaPiastres: 500},
+              {nameKey: 'mock.optionChoices.onions', priceDeltaPiastres: 500}
+            ]
+          }
         ]
       },
       {
@@ -161,7 +190,18 @@ export const DEMO_MENU: DemoMenuCategory[] = [
         descriptionKey: 'mock.descriptions.hawawshi',
         pricePiastres: 9500,
         isAvailable: true,
-        optionGroups: [{nameKey: 'mock.optionNames.spice', choiceCount: 3}]
+        optionGroups: [
+          {
+            kind: 'modifier',
+            nameKey: 'mock.optionNames.spice',
+            isRequired: true,
+            choices: [
+              {nameKey: 'mock.optionChoices.mild', priceDeltaPiastres: 0},
+              {nameKey: 'mock.optionChoices.medium', priceDeltaPiastres: 0},
+              {nameKey: 'mock.optionChoices.hot', priceDeltaPiastres: 0}
+            ]
+          }
+        ]
       }
     ]
   },
@@ -176,8 +216,25 @@ export const DEMO_MENU: DemoMenuCategory[] = [
         pricePiastres: 22000,
         isAvailable: true,
         optionGroups: [
-          {nameKey: 'mock.optionNames.size', choiceCount: 2},
-          {nameKey: 'mock.optionNames.addons', choiceCount: 3}
+          {
+            kind: 'size',
+            nameKey: 'mock.optionNames.size',
+            isRequired: false,
+            choices: [
+              {nameKey: 'mock.optionChoices.small', priceDeltaPiastres: 0},
+              {nameKey: 'mock.optionChoices.large', priceDeltaPiastres: 5000}
+            ]
+          },
+          {
+            kind: 'addon',
+            nameKey: 'mock.optionNames.addons',
+            isRequired: false,
+            choices: [
+              {nameKey: 'mock.optionChoices.meat', priceDeltaPiastres: 10000},
+              {nameKey: 'mock.optionChoices.sauce', priceDeltaPiastres: 500},
+              {nameKey: 'mock.optionChoices.onions', priceDeltaPiastres: 500}
+            ]
+          }
         ]
       }
     ]

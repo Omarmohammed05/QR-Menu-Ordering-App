@@ -1,6 +1,7 @@
 import {getTranslations} from 'next-intl/server';
 import {DEMO_ADDRESSES, DEMO_HOURS} from '@/components/dashboard-demo/demo-data';
 import {DemoButton} from '@/components/dashboard-demo/demo-button';
+import {DemoImagePicker} from '@/components/dashboard-demo/demo-image-picker';
 
 type Props = {params: Promise<{locale: string}>};
 
@@ -34,6 +35,8 @@ export default async function DashboardDemoSettingsPage({params}: Props) {
         <h2 className="text-sm font-semibold">{t('profile.title')}</h2>
         <p className="mt-1 text-xs text-muted-foreground">{t('profile.tagline')}</p>
         <div className="mt-5 flex flex-col gap-4">
+          {/* Logo — read-only stand-in for the real image upload */}
+          <DemoImagePicker rounded="full" />
           <label className={labelClasses}>
             <span className={labelSpan}>{t('profile.nameAr')}</span>
             <input type="text" defaultValue={tMock('mock.restaurant')} className={inputClasses} />

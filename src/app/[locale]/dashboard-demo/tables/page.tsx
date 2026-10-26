@@ -5,6 +5,7 @@ import {qrSvg} from '@/lib/qr';
 import {DEMO_TABLES} from '@/components/dashboard-demo/demo-data';
 import {DemoButton} from '@/components/dashboard-demo/demo-button';
 import {CopyLinkButton} from '@/components/dashboard/copy-link-button';
+import {PrintButton} from '@/components/dashboard/print-button';
 import {formatNumber} from '@/lib/format';
 import {DownloadIcon, QrCodeIcon} from '@/components/icons';
 
@@ -37,14 +38,14 @@ export default async function DashboardDemoTablesPage({params}: Props) {
   const activeCount = cards.filter((card) => card.isActive).length;
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-6 print:gap-4">
+      <div className="flex flex-col gap-1 print:hidden">
         <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
         <p className="text-sm text-muted-foreground">{t('tagline')}</p>
       </div>
 
       {/* Operational overview */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 print:hidden">
         <div className="animate-float-up [animation-fill-mode:backwards] flex items-center justify-between rounded-xl border border-hairline bg-surface p-4">
           <span className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">{t('stats.total')}</span>
@@ -74,7 +75,7 @@ export default async function DashboardDemoTablesPage({params}: Props) {
       {/* Master QR banner */}
       <section
         style={{animationDelay: '120ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-6 rounded-xl border border-hairline bg-surface p-6 lg:flex-row lg:items-center"
+        className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-6 rounded-xl border border-hairline bg-surface p-6 lg:flex-row lg:items-center print:hidden"
       >
         <div
           className="grid size-36 shrink-0 place-items-center self-center overflow-hidden rounded-lg border border-hairline bg-surface p-2 [&>svg]:size-full"
@@ -107,7 +108,7 @@ export default async function DashboardDemoTablesPage({params}: Props) {
       {/* New table */}
       <div
         style={{animationDelay: '180ms'}}
-        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5"
+        className="animate-float-up [animation-fill-mode:backwards] rounded-xl border border-hairline bg-surface p-5 print:hidden"
       >
         <div className="flex flex-wrap items-center gap-2">
           <input
@@ -122,14 +123,14 @@ export default async function DashboardDemoTablesPage({params}: Props) {
       </div>
 
       {/* Tables & their QRs */}
-      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 print:grid-cols-2 print:gap-2">
         {cards.map((card, index) => (
           <li
             key={card.id}
             style={{animationDelay: `${(index + 2) * 70}ms`}}
-            className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-4 transition-[transform,border-color,box-shadow] duration-100 hover:border-hairline-strong hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)]"
+            className="animate-float-up [animation-fill-mode:backwards] flex flex-col gap-3 rounded-xl border border-hairline bg-surface p-4 transition-[transform,border-color,box-shadow] duration-100 hover:border-hairline-strong hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)] print:break-inside-avoid print:hover:shadow-none"
           >
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-2 print:hidden">
               <span className="font-semibold">{tMock(card.labelKey)}</span>
               {card.isActive ? (
                 <span className="rounded-full bg-foreground px-2.5 py-0.5 text-[11px] font-medium text-background">
@@ -147,10 +148,10 @@ export default async function DashboardDemoTablesPage({params}: Props) {
               }`}
               dangerouslySetInnerHTML={{__html: card.qr}}
             />
-            <span dir="ltr" className="truncate text-center font-mono text-[11px] text-muted-foreground">
+            <span dir="ltr" className="truncate text-center font-mono text-[11px] text-muted-foreground print:hidden">
               {card.url}
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 print:hidden">
               <a
                 href={svgDataUrl(card.qr)}
                 download={`qr-${card.token.slice(0, 8)}.svg`}
@@ -163,9 +164,17 @@ export default async function DashboardDemoTablesPage({params}: Props) {
                 {card.isActive ? t('archive') : t('restore')}
               </DemoButton>
             </div>
+            {/* On paper the card is just label + QR */}
+            <span className="hidden text-center text-sm font-semibold print:block">
+              {tMock(card.labelKey)}
+            </span>
           </li>
         ))}
       </ul>
+
+      <div className="flex flex-wrap items-center gap-2 print:hidden">
+        <PrintButton />
+      </div>
     </div>
   );
 }

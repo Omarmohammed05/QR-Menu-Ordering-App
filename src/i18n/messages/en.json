@@ -765,6 +765,16 @@
         "addons": "Add-ons",
         "spice": "Spice level"
       },
+      "optionChoices": {
+        "small": "Small",
+        "large": "Large",
+        "sauce": "Extra sauce",
+        "onions": "Extra crispy onions",
+        "meat": "Extra meat",
+        "mild": "Mild",
+        "medium": "Medium",
+        "hot": "Hot"
+      },
       "customers": {
         "maged": "Magdy Abdullah",
         "sara": "Sara Hassan"
